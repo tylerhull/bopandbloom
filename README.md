@@ -65,7 +65,7 @@ The browser preview uses browser local storage and is separate from the installe
 
 ## Source and development
 
-- `app/`: HTML, CSS, JavaScript, and original vector icon. All graphics and music are generated locally; there are no third-party art downloads.
+- `app/`: HTML, CSS, JavaScript, and original vector icon. Nearly all graphics and music are generated locally with no third-party downloads, with one exception: the Country Match! map's country borders are traced from real geographic path data adapted from [South America-fr.svg](https://commons.wikimedia.org/wiki/File:South_America-fr.svg) (Sémhur, DavoO, Themightyquill, derived from Yug's South America-en.svg), CC BY-SA 3.0.
 - `launcher.py`: Python 3.6-compatible GTK desktop host, native profile storage, and local-only navigation.
 - `build-deb.sh`: builds an architecture-independent, gzip-compressed Debian package using `dpkg-deb`.
 - `tests/`: native storage tests and browser integration tests.
