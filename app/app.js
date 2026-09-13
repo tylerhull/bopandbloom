@@ -37,18 +37,20 @@ var MAZE_SIZE=5;
 var mazeKeyDirs={arrowup:'n',w:'n',arrowdown:'s',s:'s',arrowleft:'w',a:'w',arrowright:'e',d:'e'};
 var DIFF_LEVELS=['easy','medium','hard'];
 var diffLabels={easy:'Easy',medium:'Medium',hard:'Hard'};
-var GAME_IDS=['bop','bloom','scurry','bouquet','countries','gauchos'];
+var GAME_IDS=['bop','bloom','scurry','bouquet','countries','gauchos','peaks'];
+var PRE_KNOWN_GAME_IDS=['bop','bloom','scurry','bouquet','countries','gauchos'];
 var GAME_CATALOG=[
  {id:'bop',title:'Bop!',desc:'Peekaboo, little mice. Can you catch them?',label:'PEEK · BOP · GIGGLE',secondary:false,verb:'bop'},
  {id:'bloom',title:'Bloom!',desc:'Grow a little garden. Snip a bunch of flowers.',label:'GROW · SNIP · SMILE',secondary:true,verb:'bloom'},
  {id:'scurry',title:'Scurry!',desc:'A new maze appears every time. Drop cheese to guide a field mouse home.',label:'CHEESE · MAZE · HOME',secondary:false,verb:'scurry'},
  {id:'bouquet',title:'Bouquet!',desc:'A bouquet appears — snip the matching flowers and fill the vase to match it.',label:'MATCH · SNIP · BUNCH',secondary:true,verb:'bunch'},
  {id:'countries',title:'Country Match!',desc:'Learn South America — match every country to its place on the map.',label:'LEARN · MATCH · MAP',secondary:false,verb:'match'},
- {id:'gauchos',title:'Gaucho Herd!',desc:'Round up a wandering herd of cows on the Patagonian pampas.',label:'ROUND UP · HERD · HOME',secondary:true,verb:'herd'}
+ {id:'gauchos',title:'Gaucho Herd!',desc:'Round up a wandering herd of cows on the Patagonian pampas.',label:'ROUND UP · HERD · HOME',secondary:true,verb:'herd'},
+ {id:'peaks',title:'Peak Climber!',desc:'Guide a climber up the route to the top of famous Patagonian and Andean peaks.',label:'CLIMB · SUMMIT · LEARN',secondary:false,verb:'climb'}
 ];
-var gameNames={bop:'Bop!',bloom:'Bloom!',scurry:'Scurry!',bouquet:'Bouquet!',countries:'Country Match!',gauchos:'Gaucho Herd!'};
-var gameScores={bop:'BOPS',bloom:'FLOWERS',scurry:'MICE',bouquet:'BOUQUETS',countries:'COUNTRIES',gauchos:'COWS'};
-var gameLabels={bop:'happy little bops',bloom:'flowers snipped',scurry:'mice guided home',bouquet:'bouquets made',countries:'countries placed',gauchos:'cows herded home'};
+var gameNames={bop:'Bop!',bloom:'Bloom!',scurry:'Scurry!',bouquet:'Bouquet!',countries:'Country Match!',gauchos:'Gaucho Herd!',peaks:'Peak Climber!'};
+var gameScores={bop:'BOPS',bloom:'FLOWERS',scurry:'MICE',bouquet:'BOUQUETS',countries:'COUNTRIES',gauchos:'COWS',peaks:'SUMMITS'};
+var gameLabels={bop:'happy little bops',bloom:'flowers snipped',scurry:'mice guided home',bouquet:'bouquets made',countries:'countries placed',gauchos:'cows herded home',peaks:'peaks summited'};
 var saCountries=[
  {id:'venezuela',name:'Venezuela',color:'#e8a33d',d:'m 742.105,725.256 c 1.97,-2.324 2.956,-4.818 3.577,-7.748 0.596,-2.809 1.24991,-4.98954 2.71391,-7.44554 1.193,-2 3.89745,-3.16018 5.04145,-5.25818 1.304,-2.39 3.52837,-1.77264 5.65937,-3.08764 -0.868,2.118 -3.14237,1.29045 -4.39637,2.80045 -1.068,1.286 0.0716,4.06391 1.44364,4.61091 -1.241,-0.062 -0.044,2.691 0.076,3.211 0.368,1.599 -1.169,3.218 -2.234,4.226 -1.387,1.312 -2.063,2.907 -1.204,4.629 0.333,0.666 0.444,1.508 1.083,1.981 0.708,0.524 0.822,0.293 0.701,1.245 -0.255,2.001 1.28,2.452 2.888,1.538 1.66,-0.944 2.317,-2.34 2.531,-4.183 0.275,-2.364 -0.787,-3.687 -1.974,-5.616 -0.472,-0.766 -0.887,-1.628 -1.167,-2.485 -0.252,-0.772 0.405,-1.826 -0.196,-2.457 0.902,0.106 1.684,-1.258 2.376,-1.656 1.266,-0.729 2.451,-1.686 3.926,-1.945 1.276,-0.225 2.296,-0.399 3.416,-1.074 0.422,-0.254 1.678,-1.269 2.231,-1.012 -0.074,-0.402 -0.264,-0.738 -0.57,-1.009 0.55,0.224 2.228,1.628 2.8,0.965 0.388,-0.45 -0.014,-1.556 -0.514,-1.764 -0.855,-0.355 -2.001,0.453 -2.866,0.511 0.169,-0.992 -0.665,-6.251 2.275,-5.042 1.338,0.55 1.063,3.454 1.27,4.591 0.459,2.523 3.171,0.848 4.967,1.474 2.01,0.701 4.515,1.243 5.394,3.577 0.538,1.429 -0.86,4.635 1.52,5.14 2.831,0.601 6.416,-0.71 9.221,-1.083 2.405,-0.32 4.906,-0.833 6.379,1.316 0.61,0.89 1.464,1.617 2.484,1.976 0.831,0.293 1.693,0.487 2.543,0.712 -0.09,-0.024 2.79,0.588 1.456,0.588 2.264,1.227 3.341,-1.427 5.131,-1.593 1.088,-0.101 1.337,-1.234 2.24,-1.656 1.245,-0.58 2.665,0.528 3.938,-0.206 -1.096,-1.157 -3.672,0.082 -4.4,-1.368 0.629,0 1.259,0 1.889,0 0.886,0 1.146,-0.546 1.791,-0.576 0.318,0.11 0.626,0.242 0.925,0.397 0.882,0.16 1.798,0.051 2.672,-0.097 3.734,-0.63 7.559,0.074 11.233,-0.661 -0.574,1.164 -2.413,0.945 -3.47,1.501 -1.658,0.873 -3.611,-0.513 -5.17,0.803 0.502,-0.501 1.023,-0.434 1.22,0.287 -0.616,-0.051 -1.059,0.336 -1.15,0.937 1.365,-0.805 2.412,0.013 2.382,1.614 -0.024,1.268 -2.15,0.419 -2.812,0.402 0.477,1.779 3.405,0.527 3.1,-1.08 0.789,0.112 1.125,1.017 1.189,1.698 0.085,0.906 0.925,1.926 0.821,2.766 0.561,-0.598 0.843,-1.427 0.58,-2.231 0.724,0.708 0.833,2.076 0.21,2.88 0.765,-0.546 0.449,-1.617 0.36,-2.376 0.392,0.092 0.775,0.212 1.15,0.36 -0.074,-0.081 -2.451,-1.349 -1.052,-1.173 1.328,0.167 3.058,1.561 2.352,3.045 0.316,-0.574 0.77,-0.523 0.43,-1.08 0.535,-0.267 1.088,-0.314 1.66,-0.145 -1.219,-1.352 0.754,-0.133 1.199,0.587 0.817,1.322 2.258,0.78 3.316,1.601 2.825,2.191 -0.49,2.201 -1.205,4.221 0.228,-0.252 0.468,-0.492 0.72,-0.72 0.199,1.035 -0.924,2.83 -1.413,3.691 -0.302,0.532 -0.215,0.988 -0.902,0.988 -0.608,0 -2.469,-0.544 -2.865,0 0.883,0.5 2.309,0.648 2.81,1.656 0.571,-0.744 1.376,-1.272 1.51,-0.072 0.827,-0.91 1.447,-1.34 2.66,-1.584 1.133,-0.228 1.573,0.978 2.628,-0.039 1.823,-1.758 5.105,2.606 4.079,3.124 -1.021,0.516 -1.608,1.261 -2.439,2.052 -0.777,0.741 -2.123,1.097 -2.738,1.748 -0.441,0.467 -0.8,1.11 -1.197,1.622 -0.804,1.038 0.368,1.693 0.281,2.82 -0.055,0.701 0.207,1.48 1.02,1.035 0.972,-0.531 1.652,0.748 0.917,1.456 -0.809,0.779 -2.012,1.054 -2.795,1.836 -0.375,0.375 -1.027,-0.169 -1.413,-0.207 -0.344,-0.034 -0.54,0.638 -0.873,0.768 -3.03,1.184 0.051,3.062 -1.553,4.839 -0.408,0.452 -2.035,1.475 -1.458,2.264 0.981,1.341 1.988,2.698 3.043,3.98 1.251,1.521 3.802,3.929 1.411,5.673 -0.808,0.589 -1.3796,1.68139 -2.1916,2.26639 -0.45,0.325 -2.0024,-0.0504 -2.1024,0.11461 -0.438,0.719 -1.747,0.557 -1.771,1.303 -0.028,0.886 -1.594,0.896 -2.21,1.191 -1.177,0.564 -2.624,1.304 -3.926,0.653 -0.883,-0.441 -1.698,0.664 -2.617,0.844 -1.119,0.221 -1.138,1.395 -0.876,2.313 0.378,1.326 -0.729,2.347 -1.842,1.338 -0.753,-0.684 -1.125,-1.594 -1.815,-2.317 -0.916,-0.961 -1.504,0.332 -2.401,0.006 -1.232,-0.449 -1.692,-0.085 -2.933,-0.218 -0.966,-0.104 -0.75,0.271 -1.126,-0.917 -0.355,-1.122 -1.801,-1.219 -2.764,-1.027 -1.275,0.254 -1.238,-0.862 -2.23,-1.296 -0.829,0.833 0.703,2.71 1.208,3.326 1.453,1.772 2.652,2.09 2.694,4.616 0.014,0.82 0.041,1.633 0.254,2.431 0.27,1.008 1.33,2.045 1.188,3.106 -0.241,1.803 -0.247,2.596 1.945,2.651 0.635,0.016 2.98964,-0.47409 2.78701,0.6758 -0.375,2.128 -1.46937,1.9583 -2.5078,2.68679 -0.78221,0.54874 -2.16182,0.6722 -2.47682,1.4072 -0.357,0.834 -0.27539,1.43921 -0.84939,2.24721 -0.512,0.72 -1.191,1.289 -1.652,2.052 0.0248,-1.94188 -2.98037,1.03991 -3.542,1.15 -1.35109,0.26483 -2.221,1.04 -3.03,2.165 -0.542,0.754 -1.672,2.722 -2.578,3.018 -0.596,-0.721 0.172,-1.627 -0.02,-2.41 -0.324,-1.324 -2.269,-0.039 -2.781,0.33 -2.932,2.11 -5.16658,-0.18858 -7.07958,-2.70158 -0.894,-1.174 -0.80442,-2.54442 -1.21642,-3.91942 -0.472,-1.579 -1.627,-3.774 -1.555,-5.427 0.056,-1.301 -3.41381,-5.55373 -4.98181,-4.37473 -0.05,-1.46 2.30481,-3.01427 3.31981,-3.81327 1.771,-1.395 0.59,-2.879 -0.659,-4.308 -2.759,-3.153 -1.96054,-8.5291 -1.95154,-12.3151 0.003,-1.354 0.43855,-2.00159 1.26218,-2.92036 0.52622,-0.587 0.27271,-1.7946 0.69236,-2.56154 0.45698,-0.83516 1.19054,-1.43068 1.421,-2.165 0.41203,-1.31289 -1.38863,-2.6262 -2.12872,-2.28654 -1.77781,0.81591 -3.21917,1.00032 -4.76338,0.896 -0.70406,-0.0476 -2.21452,0.70276 -3.82663,0.26635 -1.1409,-0.30885 -1.07481,0.13796 -2.51591,0.3401 -0.26124,0.0367 -2.35045,-0.62981 -2.15145,-0.50181 -0.796,-0.509 -1.16191,-1.6391 -1.66391,-2.4041 -0.709,-1.082 -1.38,-2.148 -2.028,-3.265 -0.332,-0.573 -0.798,-1.27019 -1.619,-1.02219 -1.531,0.463 -2.50809,-1.01754 -3.95409,-1.16854 -0.931,-0.098 -1.34091,0.65573 -2.18991,0.87173 -1.253,0.32 -2.429,-0.555 -3.682,-0.325 -0.803,0.146 -1.28,-0.372 -2.118,0.051 -0.826,0.417 -1.929,-0.079 -2.393,-0.835 -0.358,-0.583 -0.53827,-1.00819 -0.69927,-1.65319 -0.223,-0.895 -1.47273,-0.80281 -1.92073,-1.44281 -0.86,-1.229 -0.18563,-3.837 0.54937,-4.85 1.394,-1.921 -0.99037,-3.809 -1.61637,-5.201 -0.66,-1.467 0.059,-4.874 -2.088,-4.319 0.039,-0.52 -0.033,-1.024 -0.216,-1.513 -0.841,0.735 -1.727,1.182 -2.874,1.149',t:'matrix(4.354387,0,0,3.681952,-2612.5207,-3089.1833)',cx:843,cy:-331},
  {id:'colombia',name:'Colombia',color:'#d9614f',d:'m 423.27134,-177.05064 c -1.1493,-0.26509 -2.2991,-0.53021 -3.4486,-0.79529 1.2237,-6.33297 9.2617,-8.33228 15.3626,-5.30201 3.3044,-5.40514 -4.9167,-10.50098 -1.6595,-16.01285 4.1715,-7.07304 13.5466,-6.71221 21.4105,-7.84257 1.4935,-0.21358 0.971,-3.27326 3.0047,-2.23862 1.4935,0.75847 4.8854,1.42491 4.9074,-0.80269 0.043,-4.44409 6.919,-9.97073 2.7479,-12.86473 7.4758,-0.16939 8.8564,-8.30648 11.0598,-12.62174 1.7418,-3.40952 5.1426,-5.76966 8.6915,-7.79105 -4.4154,-3.04866 0.823,-3.50891 2.1946,-6.62751 -3.0786,0.10308 -7.0107,2.24969 -8.1516,-1.59058 2.4125,-0.53021 4.1801,-2.02878 4.0757,-4.24162 -2.3731,-0.70325 -7.189,4.66502 -7.6811,0.53019 -0.5138,-4.33734 2.4123,-5.19891 6.4272,-6.89631 -6.3009,0.0516 -3.4223,-7.03991 -2.5605,-9.95602 1.6853,-5.72542 0.2047,-13.39864 -0.4486,-19.23085 -0.4963,-4.41468 -2.8128,-8.62682 -3.1743,-13.02677 -0.196,-2.40802 8.9134,-3.35424 7.3676,-8.97663 -0.9231,-3.36527 -10.0804,-11.09375 -4.0017,-13.04147 5.4648,-1.74892 0.7753,-11.55401 -1.5979,-13.79264 -4.7855,-4.51767 -5.3733,-11.27412 -10.5421,-15.08133 -3.4008,-2.50369 0,-5.65907 1.9725,-7.94925 2.3864,-2.75786 0.092,-6.35511 2.9478,-8.69684 1.5724,1.57225 2.7219,3.33953 3.4491,5.30209 6.6881,-3.95816 16.2022,-11.69024 13.1109,-19.37078 -3.1705,-7.86846 -9.0833,-9.53632 -3.3921,-16.95179 3.2355,3.53836 6.7536,8.36908 9.5447,12.30141 2.8784,4.05758 9.9457,5.29462 3.6227,10.23221 8.4911,8.24018 4.3243,-15.39055 3.1222,-17.92009 -1.7246,-3.64512 18.145,-12.04738 20.6833,-14.99291 3.1921,-3.7078 5.4735,-9.9303 10.8078,-11.88538 3.0221,-1.10457 10.1809,-0.47491 11.879,-3.34321 2.4165,-4.07594 -2.2646,-5.54876 -1.2802,-8.05981 1.7459,-4.46625 2.4732,-10.07747 5.5777,-14.04667 -4.6114,-0.39765 -3.3617,-1.69002 -0.2305,-3.04495 2.8605,-1.23715 1.7549,-4.56567 1.6764,-6.64233 -0.183,-4.87492 9.5271,-6.24088 9.5271,-7.94559 0,-2.55157 11.8268,-12.41185 14.5828,-12.34929 5.4604,0.11778 10.0718,4.21588 15.515,4.26742 -4.5989,-0.51554 -3.9454,3.70033 -8.1517,3.71136 3.1964,10.01858 10.1895,-3.31382 11.7921,-6.92576 3.9928,-9.0171 8.7046,-8.36908 19.934,-6.78581 15.3232,2.16126 20.1999,-6.26304 32.2835,-12.38614 6.6446,-3.36903 25.9742,-7.37863 20.0132,-17.11007 2.5383,-0.64057 9.7188,-2.57729 5.6432,1.85579 4.7025,-0.60763 1.7414,-4.55832 6.8974,-6.53913 6.2089,-2.38224 11.6653,-2.38591 16.9686,1.3623 18.0926,12.78731 -20.8572,17.96782 -26.6921,24.26404 -3.1179,3.36155 -4.2982,8.26966 -7.9905,11.1895 -2.5649,2.02866 -6.7362,1.63847 -9.0223,3.83659 -4.3061,4.13851 -8.8219,10.45675 -11.5912,15.41996 -4.1325,7.3971 -4.3066,14.98925 -6.6493,22.78401 -2.3077,7.65482 -8.8875,16.85594 -14.905,22.85756 4.9945,0.12145 8.8522,-1.52437 12.5406,-4.24157 0.7968,1.79679 1.1103,3.65611 0.9404,5.5708 9.4928,-2.07299 6.3096,12.16514 11.1256,17.34197 6.8755,7.39332 8.7654,11.73812 4.742,20.82147 -2.0206,4.56566 -5.2644,14.33386 2.0379,16.64976 8.2863,2.62526 3.897,10.96864 12.4228,12.66969 3.4492,0.68854 6.7495,-1.16725 10.1201,-1.47283 5.4992,-0.50076 10.511,2.61791 16.0327,2.19074 4.9162,-0.37916 9.0353,-3.33216 14.0516,-3.25112 4.4587,0.0736 7.7768,3.71515 11.9918,4.55452 3.0961,0.61497 5.9829,-1.58314 8.809,0.51189 3.7187,2.75406 6.2354,7.79096 8.9788,11.2042 2.5434,3.1664 4.8772,6.38081 7.1674,9.67246 2.9611,4.24899 4.1846,3.0597 8.6563,4.15325 6.5099,1.59426 12.4971,-3.02755 20.9842,-0.14829 2.5949,0.87999 8.3122,-1.26559 11.1162,-1.31714 6.1443,-0.1178 11.3699,0.29455 16.7604,-2.47059 6.105,-3.12967 16.1898,3.02658 12.985,8.45744 -1.8335,3.10392 -6.2968,5.48611 -7.098,8.95822 -0.9885,4.27476 1.0497,6.51705 -3.7536,9.28223 -6.3962,3.68559 -3.8622,18.50182 -4.4935,24.51077 -0.7532,7.1393 2.7432,14.73152 4.3281,22.26847 1.193,5.67758 14.0648,13.17772 11.979,18.96947 -2.5689,7.12456 -18.4494,9.90445 -18.1012,18.44657 5.7565,-3.65617 19.821,9.72406 21.6413,13.78525 -0.4007,1.10091 -0.2971,2.21287 -0.5755,3.33955 0.7444,2.06556 2.6307,4.10907 2.6351,6.32192 0.01,4.59873 3.1702,9.45891 4.5155,14.01352 0.5315,1.80234 3.3545,8.77825 3.9364,11.56969 0.5818,2.79134 -1.1814,0.98791 -3.806,1.67799 -4.3827,1.1527 -5.7318,-0.60045 -4.6543,-2.77276 1.7657,-3.56043 -0.7494,-26.86741 -11.7222,-26.51352 -4.2884,0.13829 -15.9241,18.88844 -19.1897,8.54951 -1.2191,-3.84766 -7.0718,-5.60027 -6.4271,-0.0147 0.727,6.27775 -8.7044,3.98018 -13.7556,3.98018 -7.568,0 -15.1403,0 -22.7079,0 -5.0076,0 -10.4157,-2.49265 -15.3406,-0.6554 -7.3593,2.7394 -1.5022,16.70876 -2.2559,21.8635 5.9613,-3.40583 19.9433,-0.45287 22.6258,5.11054 0.9925,2.05821 1.5543,8.98766 -3.0876,8.63051 -2.8694,-0.22092 -4.6068,-3.44631 -7.6984,-2.97871 -6.8233,1.03097 -18.7546,2.6179 -19.2552,9.35218 -0.6098,8.20342 -1.4631,19.68372 6.915,25.04835 4.2281,2.70622 9.1616,5.04427 8.9437,10.16221 -0.2087,4.91174 2.7478,6.793203 5.0165,10.939123 5.1513,9.40739 -1.5197,22.27581 -3.0917,31.89679 -3.7795,23.16318 -3.1659,48.35881 -11.6262,70.7193196 -2.0336,-4.26002 -6.0267,-7.33882 -9.6275,-10.71515 -4.1024,-3.84399 -9.2936,-0.007 -14.04,-2.2902 -4.4023,-2.11714 6.6871,-17.7915096 8.2199,-20.0006796 2.9917,-4.30055 11.962,-12.74964 7.4033,-16.87712 -1.9728,-1.78205 -3.9873,-6.47908 -7.1745,-5.53398 -5.6723,1.68199 -12.118,-5.97446 -13.5422,-6.96996 -5.4428,-3.80538 -10.0456,0.0215 -15.792,2.3916 -5.4768,2.2588 -9.0998,-3.82838 -14.1298,-4.54182 -3.0684,-0.43522 -11.7757,10.9867 -21.9857,8.37006 -3.5746,-0.91604 -6.0232,-0.89202 -10.4606,-0.40599 -6.1223,0.67744 -9.3545,0.14554 -14.17,-3.01724 -3.758,-2.47058 0.1926,-9.04117 -1.1572,-12.79677 -1.8422,-5.1253 -11.4474,-2.34542 -12.5232,-7.48915 -0.7665,-3.66352 -2.927,-7.84153 -4.6682,-11.25842 -1.8291,-3.5899 -7.347,-2.05151 -9.9636,-5.21427 -2.8351,-3.42791 -4.6539,-4.39661 -8.4467,-5.47542 -4.8248,-1.36969 -7.6596,-6.878603 -8.0255,-10.560563 -0.6925,-7.01782 -15.88,-18.25075 -23.6091,-20.16539 -1.4889,-0.37187 -3.048,-1.8306 -4.3675,-0.0559 -1.4283,1.91834 -1.3931,1.94479 -4.4369,0.77391 -4.533,-1.74524 -11.5042,-3.81079 -15.3234,-6.33663 -2.9652,-1.96245 -16.7071,-16.62204 -18.3359,-6.1837 -0.8444,5.42353 -25.0296,-1.48952 -30.05,-2.24795 -8.1425,-1.22981 -2.1507,-7.05464 -8.1513,-9.22332 -5.2643,-1.90357 -2.9344,-5.696 -9.7145,-5.76593 -5.33,-0.0516 -15.8624,-5.05132 -19.8029,-7.80545 -6.6319,-4.62454 -12.0106,-10.30244 -17.1137,-16.19726',t:null,cx:623,cy:-257},
@@ -77,6 +79,13 @@ var saFacts={
  argentina:['Argentina\'s capital city is Buenos Aires.','Argentina is the second-largest country in South America by size.','The tango, a famous style of dance and music, began in Buenos Aires.','Argentina is home to Aconcagua, the tallest mountain in the Americas.','Patagonia, a region famous for dramatic mountains and glaciers, is shared between Argentina and Chile.','Argentina is one of the world\'s largest producers of beef.'],
  uruguay:['Uruguay\'s capital city is Montevideo.','Uruguay is one of the smallest countries in South America.','Uruguay hosted and won the very first FIFA World Cup in 1930.','Uruguay was one of the first countries in the world to give women the right to vote.','Ranching is a huge part of Uruguay\'s culture, much like in neighboring Argentina.','Uruguay gets a very high share of its electricity from renewable energy sources.']
 };
+var peaks=[
+ {id:'fitzroy',name:'Cerro Fitz Roy',location:'Argentina / Chile border, Patagonia',height:'3,405 m (11,171 ft)',photo:'peaks/fitzroy.jpg',credit:'Photo: Jenny Mealing, CC BY 2.0',facts:['Fitz Roy was named after Robert FitzRoy, captain of the ship that carried Charles Darwin along this coast.','Its sheer granite spires are considered some of the hardest in the world to climb.','The local Tehuelche people called it "Chaltén," meaning "smoking mountain," because clouds often swirl around its peak.']},
+ {id:'cerrotorre',name:'Cerro Torre',location:'Patagonia, Argentina / Chile',height:'3,128 m (10,262 ft)',photo:'peaks/cerrotorre.jpg',credit:'Photo: Masa Sakano, CC BY-SA 2.0',facts:['Cerro Torre is famous for the thick cap of rime ice that often forms right at its summit.','Fierce winds and constant storms make it one of the hardest mountains in the world to climb.','It took decades of disputed attempts before climbers agreed a true summit had finally been reached.']},
+ {id:'aconcagua',name:'Aconcagua',location:'Mendoza Province, Argentina',height:'6,961 m (22,838 ft)',photo:'peaks/aconcagua.jpg',credit:'Photo: Bernard Gagnon, CC BY-SA 4.0',facts:['Aconcagua is the tallest mountain in both the Americas and the whole Southern Hemisphere.','It is one of the "Seven Summits" — the tallest peak on each continent.','Despite its height, its easiest route needs no technical climbing gear, so thousands attempt it every year.']},
+ {id:'torresdelpaine',name:'Torres del Paine',location:'Patagonia, Chile',height:'2,500 m (8,202 ft)',photo:'peaks/torresdelpaine.jpg',credit:'Photo: Snowmanstudios, CC BY-SA 4.0',facts:['The three granite Torres, or towers, formed from cooled magma later uncovered by grinding glaciers.','Torres del Paine National Park is home to guanacos, condors, and even pumas.','The park\'s name comes from a local word for "blue," for its glacier-fed lakes.']}
+];
+var climbWaypoints=[[15,92],[28,78],[22,62],[38,50],[32,36],[48,24],[50,10]];
 function countryFlag(id){
  var flags={
   venezuela:'<rect width="60" height="40" fill="#fcd116"/><rect y="13.3" width="60" height="13.3" fill="#003893"/><rect y="26.6" width="60" height="13.4" fill="#cf142b"/><g fill="#fff"><circle cx="20" cy="20" r="1.4"/><circle cx="24" cy="17" r="1.4"/><circle cx="29" cy="15" r="1.4"/><circle cx="34" cy="15" r="1.4"/><circle cx="39" cy="17" r="1.4"/><circle cx="43" cy="20" r="1.4"/><circle cx="31.5" cy="21" r="1.4"/></g>',
@@ -127,7 +136,7 @@ var gauchoFacts=[
  'The word gaucho is believed to come from an old word meaning wanderer.'
 ];
 var defaults={muted:false,music:true,effects:true,volume:65,musicVolume:25,effectsVolume:75,reduced:false};
-var state={version:1,active:null,profiles:[],settings:copy(defaults),parentPin:'1234'};
+var state={version:1,active:null,profiles:[],settings:copy(defaults),parentPin:'1234',knownGameIds:GAME_IDS.slice()};
 var screen='home', draft=null, game=null, lastFocus=null, homeTab='play', pinEntry='', pinTarget='gate', managing=null;
 function copy(x){return JSON.parse(JSON.stringify(x));}
 function esc(x){return String(x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -136,12 +145,20 @@ function id(){return 'p'+Date.now().toString(36)+Math.random().toString(36).slic
 function colors(c){var out=copy(palettes[0]);colorKeys.forEach(function(k){if(c&&/^#[0-9a-f]{6}$/i.test(c[k]))out[k]=c[k];});return out;}
 function sanitizeDifficulty(d){var out={};GAME_IDS.forEach(function(gid){out[gid]=DIFF_LEVELS.indexOf(d&&d[gid])>=0?d[gid]:'easy';});return out;}
 function sanitizeList(list,allowed){if(!Array.isArray(list))return null;var f=list.filter(function(v){return allowed.indexOf(v)>=0;});return f.length?f:null;}
+function sanitizeEnabledGames(list,newGameIds){
+ if(!Array.isArray(list))return GAME_IDS.slice();
+ var kept=list.filter(function(v){return GAME_IDS.indexOf(v)>=0;});
+ newGameIds.forEach(function(gid){if(kept.indexOf(gid)<0)kept.push(gid);});
+ return kept.length?kept:GAME_IDS.slice();
+}
 function sanitizeAssignments(list){
  if(!Array.isArray(list))return [];
  return list.slice(0,200).filter(function(a){return a&&typeof a.id==='string'&&GAME_IDS.indexOf(a.gameId)>=0;}).map(function(a){return {id:a.id,gameId:a.gameId,assignedAt:Number(a.assignedAt)||Date.now(),recurring:a.recurring!==false,completed:!!a.completed,completedAt:a.completedAt?Number(a.completedAt):null,score:clamp(a.score,0,999999),timesPlayed:clamp(a.timesPlayed,0,999999)};});
 }
 function sanitize(raw){
  if(!raw||raw.version!==1||!Array.isArray(raw.profiles))return;
+ var known=Array.isArray(raw.knownGameIds)?raw.knownGameIds:PRE_KNOWN_GAME_IDS;
+ var newGameIds=GAME_IDS.filter(function(gid){return known.indexOf(gid)<0;});
  state.profiles=raw.profiles.slice(0,24).filter(function(p){return p&&typeof p.name==='string'&&p.name.trim();}).map(function(p){return {
   id:typeof p.id==='string'?p.id:id(),
   name:p.name.trim().slice(0,24),
@@ -150,15 +167,16 @@ function sanitize(raw){
   style:styles.indexOf(p.style)>=0?p.style:'pop',
   pattern:patterns.indexOf(p.pattern)>=0?p.pattern:'dots',
   difficulty:sanitizeDifficulty(p.difficulty),
-  enabledGames:sanitizeList(p.enabledGames,GAME_IDS)||GAME_IDS.slice(),
+  enabledGames:sanitizeEnabledGames(p.enabledGames,newGameIds),
   enabledDifficulties:sanitizeList(p.enabledDifficulties,DIFF_LEVELS)||DIFF_LEVELS.slice(),
   assignments:sanitizeAssignments(p.assignments),
   points:clamp(p.points,0,9999999),
-  best:{bop:clamp(p.best&&p.best.bop,0,999999),bloom:clamp(p.best&&p.best.bloom,0,999999),scurry:clamp(p.best&&p.best.scurry,0,999999),bouquet:clamp(p.best&&p.best.bouquet,0,999999),countries:clamp(p.best&&p.best.countries,0,999999),gauchos:clamp(p.best&&p.best.gauchos,0,999999)}
+  best:{bop:clamp(p.best&&p.best.bop,0,999999),bloom:clamp(p.best&&p.best.bloom,0,999999),scurry:clamp(p.best&&p.best.scurry,0,999999),bouquet:clamp(p.best&&p.best.bouquet,0,999999),countries:clamp(p.best&&p.best.countries,0,999999),gauchos:clamp(p.best&&p.best.gauchos,0,999999),peaks:clamp(p.best&&p.best.peaks,0,999999)}
  };});
  state.active=state.profiles.some(function(p){return p.id===raw.active;})?raw.active:(state.profiles[0]||{}).id||null;
  var s=raw.settings||{};Object.keys(defaults).forEach(function(k){state.settings[k]=typeof defaults[k]==='boolean'?(typeof s[k]==='boolean'?s[k]:defaults[k]):(typeof s[k]==='number'?clamp(s[k],0,100):defaults[k]);});
  state.parentPin=/^\d{4}$/.test(raw.parentPin)?raw.parentPin:'1234';
+ state.knownGameIds=GAME_IDS.slice();
 }
 try{sanitize(window.__BOP_DATA__||JSON.parse(localStorage.getItem(storageKey)||'null'));}catch(e){}
 function save(){
@@ -240,6 +258,7 @@ function scene(type){var b='<svg viewBox="0 0 520 210" preserveAspectRatio="xMid
  else if(type==='scurry')b+='<g transform="translate(50 100) scale(.6)">'+mouseArt()+'</g><path d="M95 154H180V100H280V150H370" stroke="#fff7d0" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".85" stroke-dasharray="14 10"/><g transform="translate(200 88) scale(1.6)">'+mazeCheeseIcon()+'</g><g transform="translate(355 132) scale(1.6)">'+mazeHoleIcon()+'</g>';
  else if(type==='countries')b+='<rect x="210" y="35" width="120" height="150" rx="10" fill="#eee3c8" stroke="#b7a473" stroke-width="3"/><rect x="60" y="55" width="55" height="42" rx="6" fill="#6fae5c" transform="rotate(-8 88 76)"/><rect x="370" y="80" width="60" height="46" rx="6" fill="#c96b8f" transform="rotate(10 400 103)"/><rect x="240" y="60" width="30" height="26" rx="4" fill="#e8a33d"/><rect x="280" y="100" width="30" height="26" rx="4" fill="#4a90a4"/>';
  else if(type==='gauchos')b+='<g transform="translate(60 110) scale(1.1)">'+cowIcon()+'</g><g transform="translate(180 135) scale(.9)">'+cowIcon()+'</g><g transform="translate(340 90) scale(1.3)">'+corralIcon()+'</g>';
+ else if(type==='peaks')b+='<path d="M180,190 L260,60 L320,150 L380,90 L460,190 Z" fill="#9fa8b0"/><path d="M260,60 L275,90 L260,84 L248,95 Z" fill="#fff"/><path d="M380,90 L390,105 L380,100 L372,110 Z" fill="#fff"/><g transform="translate(250 130) scale(1.2)">'+climberIcon()+'</g><g transform="translate(255 55) scale(1.1)">'+flagIcon()+'</g>';
  else for(var i=0;i<4;i++)b+='<g transform="translate('+(22+i*113)+' '+(i%2?79:48)+') scale(.85)">'+flowerArt(flowerSpecies[i%flowerSpecies.length],flowerHues[(i*2)%flowerHues.length],1)+'</g>';
  return b+'<path d="M28 201l4-14 7 13m421 2 7-19 5 18m-256 4 4-12 7 11" fill="#708f5a"/></svg>';}
 function topbar(){var p=current();return '<header class="topbar">'+brand()+'<div class="top-actions"><button class="pill" data-action="profiles" aria-label="Switch player"><span class="profile-dot">'+esc(p.name.charAt(0).toUpperCase())+'</span>'+'<span class="player-name">'+esc(p.name)+'</span> '+icon('people')+'</button><button class="icon-button" data-action="mute" aria-label="'+(state.settings.muted?'Turn sound on':'Mute all sound')+'" aria-pressed="'+state.settings.muted+'">'+icon(state.settings.muted?'mute':'sound')+'</button><button class="icon-button" data-action="parent-gate" aria-label="Parent area">'+icon('lock')+'</button><button class="icon-button" data-action="settings" aria-label="Settings">'+icon('gear')+'</button></div></header>';}
@@ -269,7 +288,7 @@ function schoolSection(p){
 }
 function home(){var p=current();var pendingCount=(p.assignments||[]).filter(function(a){return !a.completed;}).length;shell('<main><section class="hero"><span class="little-spark" aria-hidden="true">✳</span><p class="eyebrow">A little world, all yours</p><div class="name-lockup">'+mascot(p.mascot,p.colors)+'<h1 class="name-title '+p.style+'">'+esc(p.name)+'’s playroom</h1></div><p class="hero-sub">Big discoveries. Little adventures. Let’s play.</p><span class="little-spark right" aria-hidden="true">✦</span></section><div class="home-tabs"><button class="tab-btn'+(homeTab==='play'?' active':'')+'" data-action="home-tab" data-value="play">Play</button><button class="tab-btn'+(homeTab==='school'?' active':'')+'" data-action="home-tab" data-value="school">School'+(pendingCount?' <span class="tab-badge">'+pendingCount+'</span>':'')+'</button></div>'+(homeTab==='school'?schoolSection(p):playSection(p))+'</main>'+footer());}
 function welcome(){root.innerHTML='<main class="onboarding"><div class="welcome">'+brand()+'<div class="welcome-art">'+scene('bloom')+'</div><p class="eyebrow">Small people. Big adventures.</p><h1>Who’s ready to play?</h1><p>Your name. Your colors. Your own little world.<br>Let’s make a playroom just for you.</p><form id="welcome-form"><label class="sr-only" for="welcome-name">Your name</label><input id="welcome-name" name="name" type="text" maxlength="24" placeholder="Type your name" autocomplete="off" required><button class="big-button wide" type="submit">Make my playroom '+icon('spark')+'</button><div class="error" id="name-error" role="alert"></div></form><p class="hint">Grown-ups can help with this bit.<br>Names and settings stay on this computer.</p></div></main>';$('#welcome-form').onsubmit=function(e){e.preventDefault();createProfile($('#welcome-name').value);};}
-function createProfile(name){name=name.trim().slice(0,24);if(!name){$('#name-error').textContent='Please enter a name.';return;}if(state.profiles.length>=24){toast('This computer already has 24 players.');return;}var p={id:id(),name:name,colors:copy(palettes[state.profiles.length%palettes.length]),mascot:'flower',style:'pop',pattern:'dots',difficulty:sanitizeDifficulty({}),enabledGames:GAME_IDS.slice(),enabledDifficulties:DIFF_LEVELS.slice(),assignments:[],points:0,best:{bop:0,bloom:0,scurry:0,bouquet:0,countries:0,gauchos:0}};state.profiles.push(p);state.active=p.id;save();closeModal();screen='home';render();tone('hello');}
+function createProfile(name){name=name.trim().slice(0,24);if(!name){$('#name-error').textContent='Please enter a name.';return;}if(state.profiles.length>=24){toast('This computer already has 24 players.');return;}var p={id:id(),name:name,colors:copy(palettes[state.profiles.length%palettes.length]),mascot:'flower',style:'pop',pattern:'dots',difficulty:sanitizeDifficulty({}),enabledGames:GAME_IDS.slice(),enabledDifficulties:DIFF_LEVELS.slice(),assignments:[],points:0,best:{bop:0,bloom:0,scurry:0,bouquet:0,countries:0,gauchos:0,peaks:0}};state.profiles.push(p);state.active=p.id;save();closeModal();screen='home';render();tone('hello');}
 function pageHead(title,sub){return '<div class="page-head"><div><h1>'+title+'</h1><p>'+sub+'</p></div><button class="pill" data-action="'+(screen==='settings'&&game?'back-game':'home')+'">'+icon('back')+(screen==='settings'&&game?'Back to game':'Playroom')+'</button></div>';}
 function workshop(){if(!draft)draft=copy(current());theme(draft);shell(pageHead('Make it yours','A name, a little character, and your favorite colors.')+'<main class="workshop"><section class="panel preview-panel" aria-label="Your name logo preview"><p class="eyebrow">Welcome to the world of</p><div id="preview-mascot">'+mascot(draft.mascot,draft.colors)+'</div><h2 id="preview-name" class="name-title '+draft.style+'">'+esc(draft.name)+'</h2><p class="quiet">A very you kind of playroom.</p>'+brand()+'</section><section class="panel"><label class="field"><span class="field-label">Your name</span><input type="text" id="edit-name" value="'+esc(draft.name)+'" maxlength="24" autocomplete="off"></label><span class="field-label">Your little sidekick</span><div class="choice-row sidekick-row">'+mascots.map(function(m){return '<button class="choice '+(draft.mascot===m?'selected':'')+'" data-action="mascot" data-value="'+m+'" aria-label="'+m+' logo" aria-pressed="'+(draft.mascot===m)+'">'+mascot(m,draft.colors)+'</button>';}).join('')+'</div><span class="field-label">Your lettering</span><div class="choice-row">'+styles.map(function(s,i){return '<button class="choice '+(draft.style===s?'selected':'')+'" data-action="lettering" data-value="'+s+'" aria-pressed="'+(draft.style===s)+'">'+styleLabels[i]+'</button>';}).join('')+'</div><span class="field-label">Playroom pattern</span><div class="choice-row">'+patterns.map(function(s,i){return '<button class="choice pattern-choice '+(draft.pattern===s?'selected':'')+'" data-action="pattern" data-value="'+s+'" aria-pressed="'+(draft.pattern===s)+'"><span class="pattern-swatch '+s+'"></span>'+patternLabels[i]+'</button>';}).join('')+'</div><span class="field-label">Quick palettes</span><div class="choice-row palette-row">'+palettes.map(function(pal,i){return '<button class="choice palette-choice" data-action="apply-palette" data-index="'+i+'" aria-label="'+esc(pal.name)+' palette" title="'+esc(pal.name)+'"><span class="palette-swatch" style="background:linear-gradient(135deg,'+pal.primary+' 50%,'+pal.secondary+' 50%)"></span></button>';}).join('')+'</div><span class="field-label">Your colors</span><div class="color-grid">'+colorKeys.map(function(k,i){return '<label class="color-control">'+['Main','Accent','Background','Cards','Text','Leaves'][i]+'<input type="color" data-color="'+k+'" value="'+draft.colors[k]+'"></label>';}).join('')+'</div><div class="button-row"><button class="pill" data-action="shuffle">'+icon('spark')+'Surprise me!</button><button class="big-button" data-action="save-style">'+icon('check')+'Save my style</button></div><p class="hint">Surprise me makes a fresh palette, sidekick, name logo, and playroom pattern. Everything is generated here, even offline.</p></section></main>');$('#edit-name').oninput=function(){draft.name=this.value;$('#preview-name').textContent=this.value||'Your name';};document.querySelectorAll('[data-color]').forEach(function(el){el.oninput=function(){draft.colors[this.getAttribute('data-color')]=this.value;theme(draft);$('#preview-mascot').innerHTML=mascot(draft.mascot,draft.colors);};});}
 function settings(){var s=state.settings,p=current();shell(pageHead('A few little settings','Sound and comfort for '+esc(p.name)+'.')+'<main class="settings-grid"><section class="panel"><h2>Sounds of the playroom</h2>'+switchRow('muted','Mute all sound','A quiet moment, whenever you need it.')+range('volume','Master volume',s.volume)+'<div class="divider"></div>'+switchRow('music','Background music','A soft, original music-box melody.')+range('musicVolume','Music volume',s.musicVolume)+'<div class="divider"></div>'+switchRow('effects','Game sounds','Little pops, snips, and happy notes.')+range('effectsVolume','Effects volume',s.effectsVolume)+'<button class="pill" data-action="test-sound">'+icon('sound')+'Try a sound</button></section><section class="panel"><h2>Play your way</h2><p class="hint">Choose Easy, Medium, or Hard right on each game\'s screen — every game remembers its own level. Easy is made for ages 3–5: big targets, patient pacing, and no hurry. Misses never take points away.</p><div class="divider"></div>'+switchRow('reduced','Less animation','Keeps the playroom a little calmer.')+'<div class="divider"></div><h2>Everyone gets a turn</h2><p class="hint">Each player has their own name logo, colors, difficulty choices, and best scores. Sound settings are shared on this computer.</p><div class="empty-space"><button class="pill" data-action="profiles">'+icon('people')+'Choose a player</button></div><p class="hint">Settings save automatically.</p></section></main>');document.querySelectorAll('input[type=range]').forEach(function(el){el.oninput=function(){state.settings[this.id]=Number(this.value);$('#value-'+this.id).textContent=this.value+'%';save();audioSync();};});}
@@ -596,6 +615,65 @@ function herdClickCow(cowId){
  }
  renderGame();
 }
+function climberIcon(){return '<svg viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="6" r="4" fill="#8a5a2b"/><path d="M15 10v9m0-6l-8 3m8-3l8 3m-8 6l-6 8m6-8l6 8" stroke="#293b36" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M15 10v6" stroke="#d9614f" stroke-width="4" stroke-linecap="round"/></svg>';}
+function flagIcon(){return '<svg viewBox="0 0 30 30" aria-hidden="true"><path d="M8 2v26" stroke="#5a4632" stroke-width="2.5" stroke-linecap="round"/><path d="M8 3l16 6-16 6z" fill="#e8a33d"/></svg>';}
+function mountainScene(g){
+ var route=climbWaypoints.map(function(p){return p[0]+','+p[1];}).join(' L ');
+ var head=climbWaypoints[g.climb.progress];
+ var summit=climbWaypoints[climbWaypoints.length-1];
+ return '<svg class="climb-mountain" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-label="Mountain route">'
+  +'<rect width="100" height="100" fill="#cfe8f2"/>'
+  +'<path d="M0,100 L18,55 L38,80 L50,40 L65,75 L82,45 L100,100 Z" fill="#9fa8b0"/>'
+  +'<path d="M50,40 L58,55 L50,52 L44,58 Z" fill="#fff"/>'
+  +'<path d="M82,45 L88,58 L82,55 L77,60 Z" fill="#fff"/>'
+  +'<path d="M18,55 L23,64 L18,62 L14,66 Z" fill="#fff"/>'
+  +'<path d="M '+route+'" stroke="#7a5a35" stroke-width="1.2" stroke-dasharray="2 2" fill="none"/>'
+  +climbWaypoints.map(function(p,i){
+   var isLast=i===climbWaypoints.length-1;
+   var isNext=i===g.climb.progress+1;
+   var isPast=i<=g.climb.progress;
+   var showHint=isNext&&g.diff!=='hard'&&!g.climb.celebrating;
+   var clickable=isNext&&!g.climb.celebrating;
+   var r=isLast?(clickable?5:0):(isPast?3.2:2.4);
+   if(isLast&&!clickable)return '';
+   return '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="'+r+'" fill="'+(isLast?'transparent':(isPast?'#78a063':'#fff'))+'" stroke="'+(isLast?'none':'#5a4632')+'" stroke-width="0.8" class="'+(showHint?'climb-hint':'')+'" '+(clickable?'data-action="climb-step" data-idx="'+i+'"':'')+'/>';
+  }).join('')
+  +'<g transform="translate('+(summit[0]-4)+' '+(summit[1]-13)+') scale(0.9)">'+flagIcon()+'</g>'
+  +'<g transform="translate('+(head[0]-5)+' '+(head[1]-11)+') scale(0.9)">'+climberIcon()+'</g>'
+  +'</svg>';
+}
+function newClimbRound(g){
+ var pool=peaks.filter(function(p){return !g.climb||p.id!==g.climb.peak.id;});
+ var peak=pool[Math.floor(Math.random()*pool.length)]||peaks[0];
+ g.climb={peak:peak,progress:0,celebrating:false};
+}
+function climbView(g){
+ var c=g.climb;
+ if(c.celebrating){
+  var p=c.peak,fact=p.facts[Math.floor(Math.random()*p.facts.length)];
+  return '<div class="summit-card">'+confettiHtml()+'<img src="'+p.photo+'" alt="'+esc(p.name)+'" class="summit-photo"><h2>'+esc(p.name)+'</h2><p class="quiet">'+esc(p.location)+' · '+esc(p.height)+'</p><div class="fact-banner"><button class="icon-button" data-action="speak-fact" aria-label="Read fact aloud">'+icon('sound')+'</button><p>'+esc(fact)+'</p></div><p class="hint">'+esc(p.credit)+'</p><button class="big-button" data-action="next-peak">'+icon('play')+'Climb the next peak!</button></div>';
+ }
+ return '<div class="climb-wrap"><div class="climb-info"><strong>'+esc(c.peak.name)+'</strong><span class="quiet">'+esc(c.peak.location)+' · '+esc(c.peak.height)+'</span></div>'+mountainScene(g)+'</div>';
+}
+function climbStep(idx){
+ if(!game||game.paused||game.ended||game.type!=='peaks'||game.climb.celebrating)return;
+ var g=game,c=game.climb;
+ if(idx!==c.progress+1)return;
+ c.progress=idx;
+ tone('snip');
+ if(c.progress>=climbWaypoints.length-1){
+  g.score++;
+  c.celebrating=true;
+  c.fact=null;
+  fanfare();
+  var scoreEl=$('#score');if(scoreEl)scoreEl.textContent=g.score;
+  renderGame();
+  var factEl=document.querySelector('.fact-banner p');
+  if(factEl)speakText(factEl.textContent);
+  return;
+ }
+ renderGame();
+}
 function diffToMode(type,d){if(type==='scurry')return d==='hard'?'speedy':'relaxed';return d==='hard'?'speedy':d==='medium'?'gentle':'relaxed';}
 function startGame(type,assignmentId){
  stopGame();screen='game';var p=current();
@@ -607,6 +685,7 @@ function startGame(type,assignmentId){
  else if(type==='scurry'){game.mazeSize=mazeSizeFor(diff);newMazeRound(game);}
  else if(type==='countries'){game.puzzle={placed:{},selected:null};}
  else if(type==='gauchos'){newHerdRound(game);}
+ else if(type==='peaks'){newClimbRound(game);}
  render();game.frame=requestAnimationFrame(tick);
 }
 function difficultyRow(g){
@@ -617,10 +696,10 @@ function difficultyRow(g){
 function renderGame(){
  if(!game)return;
  var g=game,timed=g.mode!=='relaxed';
- var prompt={bop:'Bop a mouse when it peeks out!',bloom:'Snip the flowers. Watch them grow again!',scurry:'Drop cheese to guide the mouse home!',bouquet:'Snip the matching flowers for the bouquet!',countries:'Match each country to its place on the map!',gauchos:'Round up the wandering herd and bring them home!'}[g.type];
- var bodies={scurry:mazeView,countries:puzzleView,gauchos:herdView};
+ var prompt={bop:'Bop a mouse when it peeks out!',bloom:'Snip the flowers. Watch them grow again!',scurry:'Drop cheese to guide the mouse home!',bouquet:'Snip the matching flowers for the bouquet!',countries:'Match each country to its place on the map!',gauchos:'Round up the wandering herd and bring them home!',peaks:'Guide the climber up the route to the summit!'}[g.type];
+ var bodies={scurry:mazeView,countries:puzzleView,gauchos:herdView,peaks:climbView};
  var body=(bodies[g.type]||classicField)(g);
- var tips={scurry:'Click, tap, or use arrow keys / W A S D to drop cheese.',countries:'Tap a country from the list, then tap its spot on the map.',gauchos:'Tap a cow to send it home to the corral.'};
+ var tips={scurry:'Click, tap, or use arrow keys / W A S D to drop cheese.',countries:'Tap a country from the list, then tap its spot on the map.',gauchos:'Tap a cow to send it home to the corral.',peaks:'Tap the next dot up the route.'};
  var tip=tips[g.type]||'Click or tap to play. Keyboard: Q W E / A S D / Z X C, or 1–9.';
  shell('<main><div class="game-header"><div class="game-heading"><button class="icon-button" data-action="home" aria-label="Back to playroom">'+icon('home')+'</button><h1>'+esc(current().name)+'’s '+gameNames[g.type]+'</h1></div><div class="scoreboard"><div class="score"><small>'+gameScores[g.type]+'</small><span id="score">'+g.score+'</span></div><div class="score"><small>'+(timed?'SECONDS':'YOUR PACE')+'</small><span id="time">'+(timed?Math.ceil(60-g.elapsed):'∞')+'</span></div><button class="icon-button" data-action="pause" aria-label="Pause game">'+icon('pause')+'</button></div></div>'+difficultyRow(g)+'<div class="progress-track"><div id="progress" class="progress-bar"></div></div><div class="playfield '+g.type+'-field"><div class="field-top"><span>'+prompt+'</span><strong>'+(timed?'Let’s explore':'No hurry. Just play.')+'</strong></div>'+body+'<div id="pause-layer"></div></div><div class="field-footer"><span class="game-tip">'+tip+'</span><button class="pill" data-action="finish">'+icon('check')+'All done</button></div></main>');
  if(g.paused)showPause();
@@ -770,6 +849,8 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-acti
  }
  else if(a==='sa-cell'){saClickCell(b.getAttribute('data-country'));}
  else if(a==='herd-cow'){herdClickCow(Number(b.getAttribute('data-id')));}
+ else if(a==='climb-step'){climbStep(Number(b.getAttribute('data-idx')));}
+ else if(a==='next-peak'){newClimbRound(game);renderGame();}
  else if(a==='maze-new'){newMazeRound(game);renderGame();}
  else if(a==='maze-retry'){game.trail=[{x:0,y:0}];game.celebrating=false;renderGame();}
  else if(a==='speak-fact'){if(game&&game.fact)speakText(game.fact);}
@@ -782,7 +863,7 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape'||e.key===' '){e.preventDefault();game.paused?resumeGame():pauseGame();return;}
   var k=e.key.toLowerCase();
   if(game.type==='scurry'){if(!e.repeat&&mazeKeyDirs.hasOwnProperty(k)){e.preventDefault();unlockAudio();mazeDirectionMove(k);}return;}
-  if(game.type==='countries'||game.type==='gauchos')return;
+  if(game.type==='countries'||game.type==='gauchos'||game.type==='peaks')return;
   var idx='qweasdzxc'.indexOf(k);
   if(/^[1-9]$/.test(k))idx=Number(k)-1;
   if(idx>=0&&!e.repeat){e.preventDefault();unlockAudio();hit(idx);}
