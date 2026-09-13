@@ -20,16 +20,16 @@ Ubuntu 18.04 should have its normal system updates installed. The package requir
 
 - **Bop!** Click or tap a friendly field mouse. It ducks back into its hole. No harm, no penalties.
 - **Bloom!** Click or tap a growing flower to snip it. The flower grows back. Each snip adds one to the flower count; a very new shoot needs a moment to grow before it can be snipped again.
-- **Scurry!** A brand-new maze is generated every round. Click, tap, or use the arrow keys/WASD to drop a trail of cheese and guide the field mouse home one step at a time. Tap an earlier crumb (or "Start this maze over") to back up — there is never a wrong-answer penalty.
-- **Bouquet!** A target bouquet of three flowers appears at the top of the garden. Snip the matching flower types and colors to fill the vase; a non-matching flower just gives a gentle "not this one" wiggle. Complete the bouquet to score a point and get a fresh bouquet to match. There are now four flower species (daisy, tulip, sunflower, rose) across six colors.
+- **Scurry!** A brand-new maze is generated every round. Click, tap, or use the arrow keys/WASD to drop a trail of cheese and guide the field mouse home. Clicking further down an open corridor drops every cheese crumb in between in one go, so long stretches take one click instead of many; a bright marker shows the far end of the corridor. Tap an earlier crumb (or "Start this maze over") to back up — there is never a wrong-answer penalty. A trumpet fanfare and confetti celebrate each mouse getting home. "Bigger maze" switches to a larger, screen-filling layout at any time.
+- **Bouquet!** A target bouquet appears in a vase graphic at the top of the garden; snip the matching flower types and colors to fill a second vase to match. A non-matching flower just gives a gentle "not this one" wiggle — no penalty. Four flower species (daisy, tulip, sunflower, rose) across six colors, with a subtle outline on every petal so pale/white blooms stay visible.
 - **Little explorer** is the default: no timer, no losing, and mice patiently wait for you.
 - **Growing explorer** and **Speedy explorer** offer optional 60-second rounds. Personal bests are saved for timed rounds, across both timed paces.
-- Choose **All done** to finish whenever you like. Pause holds the round; switching away from the window also pauses it.
-- Keyboard: `Q W E / A S D / Z X C` or `1–9` map to the nine targets. Space or Escape pauses/resumes. F11 toggles fullscreen in the desktop app. Tab and Enter work on menu controls.
+- Choose **All done**, or the home button mid-round, to head straight back to the playroom — no extra confirmation step.
+- Keyboard: `Q W E / A S D / Z X C` or `1–9` map to the nine targets in Bop!/Bloom!/Bouquet!; arrow keys or WASD move the mouse in Scurry!. Space or Escape pauses/resumes. F11 toggles fullscreen in the desktop app. Tab and Enter work on menu controls.
 
 ## Make it theirs
 
-Choose **Make it yours** in the playroom. Edit the name, choose one of twelve sidekicks, eight lettering styles, and five playroom patterns (including a plain, solid option for a clean branded look), then apply one of thirteen quick palettes or fine-tune all six colors individually. **Surprise me!** generates another combination of palette, sidekick, lettering, and pattern. These are local procedural combinations, not cloud AI image generation. **Save my style** applies the preview.
+Choose **Make it yours** in the playroom. Edit the name, choose one of sixteen sidekicks, eight lettering styles, and five playroom patterns (including a plain, solid option for a clean branded look), then apply one of thirteen quick palettes or fine-tune all six colors individually. **Surprise me!** generates another combination of palette, sidekick, lettering, and pattern. These are local procedural combinations, not cloud AI image generation. **Save my style** applies the preview.
 
 The child's name becomes the main identity. The fixed Bop & Bloom icon and small wordmark remain consistent.
 

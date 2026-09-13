@@ -19,7 +19,7 @@ var palettes = [
  {name:'Golden pond',primary:'#c69a1f',secondary:'#3e7ea6',background:'#fbf8e8',surface:'#fffefa',ink:'#4a4326',garden:'#93b98d'}
 ];
 var colorKeys=['primary','secondary','background','surface','ink','garden'];
-var mascots=['flower','mouse','star','rocket','butterfly','dino','sprout','sun','cat','bird','fish','robot'];
+var mascots=['flower','mouse','star','rocket','butterfly','dino','sprout','sun','cat','bird','fish','robot','dog','owl','turtle','bee'];
 var styles=['pop','soft','block','sparkle','stamp','outline','mono','bubble'];
 var styleLabels=['Bouncy','Storybook','Super bold','Sparkly','Stamp','Outline','Typewriter','Bubble'];
 var patterns=['dots','stripes','sprinkles','grid','plain'];
@@ -48,7 +48,7 @@ function id(){return 'p'+Date.now().toString(36)+Math.random().toString(36).slic
 function colors(c){var out=copy(palettes[0]);colorKeys.forEach(function(k){if(c&&/^#[0-9a-f]{6}$/i.test(c[k]))out[k]=c[k];});return out;}
 function sanitize(raw){
  if(!raw||raw.version!==1||!Array.isArray(raw.profiles))return;
- state.profiles=raw.profiles.slice(0,24).filter(function(p){return p&&typeof p.name==='string'&&p.name.trim();}).map(function(p){return {id:typeof p.id==='string'?p.id:id(),name:p.name.trim().slice(0,24),colors:colors(p.colors),mascot:mascots.indexOf(p.mascot)>=0?p.mascot:'flower',style:styles.indexOf(p.style)>=0?p.style:'pop',pattern:patterns.indexOf(p.pattern)>=0?p.pattern:'dots',mode:['relaxed','gentle','speedy'].indexOf(p.mode)>=0?p.mode:'relaxed',best:{bop:clamp(p.best&&p.best.bop,0,999999),bloom:clamp(p.best&&p.best.bloom,0,999999),scurry:clamp(p.best&&p.best.scurry,0,999999),bouquet:clamp(p.best&&p.best.bouquet,0,999999)}};});
+ state.profiles=raw.profiles.slice(0,24).filter(function(p){return p&&typeof p.name==='string'&&p.name.trim();}).map(function(p){return {id:typeof p.id==='string'?p.id:id(),name:p.name.trim().slice(0,24),colors:colors(p.colors),mascot:mascots.indexOf(p.mascot)>=0?p.mascot:'flower',style:styles.indexOf(p.style)>=0?p.style:'pop',pattern:patterns.indexOf(p.pattern)>=0?p.pattern:'dots',mode:['relaxed','gentle','speedy'].indexOf(p.mode)>=0?p.mode:'relaxed',mazeSize:p.mazeSize==='big'?'big':'cozy',best:{bop:clamp(p.best&&p.best.bop,0,999999),bloom:clamp(p.best&&p.best.bloom,0,999999),scurry:clamp(p.best&&p.best.scurry,0,999999),bouquet:clamp(p.best&&p.best.bouquet,0,999999)}};});
  state.active=state.profiles.some(function(p){return p.id===raw.active;})?raw.active:(state.profiles[0]||{}).id||null;
  var s=raw.settings||{};Object.keys(defaults).forEach(function(k){state.settings[k]=typeof defaults[k]==='boolean'?(typeof s[k]==='boolean'?s[k]:defaults[k]):(typeof s[k]==='number'?clamp(s[k],0,100):defaults[k]);});
 }
@@ -79,6 +79,10 @@ function mascot(type,c){c=colors(c);var body='';
  if(type==='bird')body='<ellipse cx="55" cy="70" rx="36" ry="40" fill="'+c.primary+'"/><path d="M88 68l20-8-6 20z" fill="'+c.secondary+'"/><circle cx="66" cy="56" r="5" fill="'+c.ink+'"/><path d="M30 70q-18 4-8 22 18 4 22-14" fill="'+c.garden+'"/><path d="M40 108l-6 12m20-10l-2 14m20-14l4 12" stroke="'+c.secondary+'" stroke-width="4" stroke-linecap="round"/>';
  if(type==='fish')body='<path d="M20 62q40-38 78-8-6 10 0 18-38 30-78-8 8-10 0-2z" fill="'+c.primary+'"/><path d="M98 54l20-14-4 22 4 22-20-14z" fill="'+c.secondary+'"/><circle cx="42" cy="55" r="5" fill="'+c.ink+'"/><path d="M30 70q10 6 20 0" stroke="'+c.ink+'" stroke-width="2" fill="none"/><path d="M55 50q10-8 20 0m-10 30q10 8 20 0" stroke="'+c.garden+'" stroke-width="4" fill="none"/>';
  if(type==='robot')body='<rect x="30" y="40" width="60" height="55" rx="14" fill="'+c.primary+'"/><rect x="46" y="14" width="28" height="24" rx="8" fill="'+c.secondary+'"/><circle cx="60" cy="8" r="5" fill="'+c.secondary+'"/><circle cx="47" cy="63" r="6" fill="'+contrast(c.primary)+'"/><circle cx="73" cy="63" r="6" fill="'+contrast(c.primary)+'"/><rect x="46" y="78" width="28" height="6" rx="3" fill="'+contrast(c.primary)+'"/><rect x="14" y="55" width="14" height="28" rx="6" fill="'+c.garden+'"/><rect x="92" y="55" width="14" height="28" rx="6" fill="'+c.garden+'"/>';
+ if(type==='dog')body='<ellipse cx="28" cy="46" rx="16" ry="27" fill="'+c.secondary+'" transform="rotate(-16 28 46)"/><ellipse cx="92" cy="46" rx="16" ry="27" fill="'+c.secondary+'" transform="rotate(16 92 46)"/><circle cx="60" cy="62" r="40" fill="'+c.primary+'"/><ellipse cx="60" cy="80" rx="19" ry="14" fill="'+contrast(c.primary)+'" opacity=".22"/><circle cx="48" cy="57" r="5" fill="'+c.ink+'"/><circle cx="72" cy="57" r="5" fill="'+c.ink+'"/><ellipse cx="60" cy="72" rx="7" ry="5" fill="'+c.ink+'"/><path d="M53 78q7 6 14 0" stroke="'+c.ink+'" stroke-width="2.5" fill="none"/>';
+ if(type==='owl')body='<ellipse cx="60" cy="72" rx="40" ry="46" fill="'+c.primary+'"/><path d="M32 32l10 18-16 4z" fill="'+c.primary+'"/><path d="M88 32l-10 18 16 4z" fill="'+c.primary+'"/><circle cx="44" cy="62" r="17" fill="'+contrast(c.primary)+'"/><circle cx="76" cy="62" r="17" fill="'+contrast(c.primary)+'"/><circle cx="44" cy="62" r="8" fill="'+c.ink+'"/><circle cx="76" cy="62" r="8" fill="'+c.ink+'"/><path d="M60 70l-7 11h14z" fill="'+c.secondary+'"/><path d="M30 92q10 14 30 14t30-14" fill="'+c.secondary+'" opacity=".45"/>';
+ if(type==='turtle')body='<ellipse cx="60" cy="107" rx="34" ry="9" fill="'+c.garden+'" opacity=".35"/><circle cx="96" cy="55" r="14" fill="'+c.garden+'"/><circle cx="101" cy="52" r="2.2" fill="'+c.ink+'"/><ellipse cx="28" cy="82" rx="10" ry="8" fill="'+c.garden+'"/><ellipse cx="92" cy="90" rx="10" ry="8" fill="'+c.garden+'"/><ellipse cx="60" cy="75" rx="40" ry="32" fill="'+c.primary+'"/><circle cx="60" cy="75" r="12" fill="'+shade(c.primary,-12)+'"/><circle cx="38" cy="62" r="8" fill="'+shade(c.primary,-12)+'"/><circle cx="82" cy="62" r="8" fill="'+shade(c.primary,-12)+'"/><circle cx="38" cy="90" r="8" fill="'+shade(c.primary,-12)+'"/><circle cx="82" cy="90" r="8" fill="'+shade(c.primary,-12)+'"/>';
+ if(type==='bee')body='<ellipse cx="66" cy="58" rx="18" ry="14" fill="'+c.secondary+'" opacity=".55" transform="rotate(-20 66 58)"/><ellipse cx="86" cy="53" rx="18" ry="14" fill="'+c.secondary+'" opacity=".55" transform="rotate(15 86 53)"/><ellipse cx="60" cy="74" rx="34" ry="28" fill="'+c.secondary+'"/><path d="M30 62h60M34 80h56M40 96h48" stroke="'+c.ink+'" stroke-width="8" stroke-linecap="round" opacity=".85"/><circle cx="60" cy="42" r="16" fill="'+c.ink+'"/><circle cx="54" cy="40" r="2" fill="white"/><circle cx="66" cy="40" r="2" fill="white"/><path d="M50 28l-8-10m26 10l8-10" stroke="'+c.ink+'" stroke-width="3" stroke-linecap="round"/>';
  return '<svg class="mascot" viewBox="0 0 120 125" aria-hidden="true">'+body+'</svg>';
 }
 function mouseArt(){return '<ellipse cx="100" cy="106" rx="67" ry="12" fill="#759b62" opacity=".3"/><ellipse cx="100" cy="97" rx="56" ry="16" fill="#655341"/><ellipse cx="100" cy="94" rx="49" ry="11" fill="#413e32"/><g class="mouse-art"><path d="M139 80q40 5 24-21" fill="none" stroke="#ca9b87" stroke-width="4"/><circle cx="71" cy="37" r="20" fill="#ad8b70"/><circle cx="129" cy="37" r="20" fill="#ad8b70"/><circle cx="71" cy="37" r="12" fill="#e6b5a5"/><circle cx="129" cy="37" r="12" fill="#e6b5a5"/><ellipse cx="100" cy="72" rx="38" ry="32" fill="#ad8b70"/><ellipse cx="100" cy="84" rx="25" ry="19" fill="#ecddc3"/><circle cx="86" cy="63" r="4" fill="#303b31"/><circle cx="114" cy="63" r="4" fill="#303b31"/><circle cx="87" cy="62" r="1.1" fill="white"/><circle cx="115" cy="62" r="1.1" fill="white"/><path d="M95 77q5-6 10 0l-5 6z" fill="#b66a68"/><path d="M100 82v5m0 0q-5 4-8 0m8 0q5 4 8 0M80 79l-20-4m20 11-19 3m59-10 20-4m-20 11 19 3" stroke="#655341" stroke-width="1.5" fill="none"/><ellipse cx="78" cy="98" rx="11" ry="6" fill="#c7a389"/><ellipse cx="122" cy="98" rx="11" ry="6" fill="#c7a389"/></g><path d="M43 104l-3-16 11 11 3-13 6 16m83 2 7-19 3 13 11-8-4 16" fill="#80a267"/>';}
@@ -86,20 +90,31 @@ function mazeHoleIcon(){return '<svg viewBox="0 0 40 40" aria-hidden="true"><ell
 function mazeMouseIcon(){return '<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="12" cy="14" r="7" fill="#ad8b70"/><circle cx="28" cy="14" r="7" fill="#ad8b70"/><ellipse cx="20" cy="24" rx="13" ry="11" fill="#ad8b70"/><circle cx="16" cy="22" r="1.6" fill="#303b31"/><circle cx="24" cy="22" r="1.6" fill="#303b31"/><path d="M17 27q3 3 6 0" stroke="#303b31" stroke-width="1.2" fill="none"/></svg>';}
 function mazeCheeseIcon(){return '<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 28L20 10l14 18z" fill="#f2c14e"/><circle cx="18" cy="24" r="1.6" fill="#c99a2e"/><circle cx="23" cy="21" r="1.3" fill="#c99a2e"/></svg>';}
 function flowerHead(species,hue,cy){
- var cx=100,out='';
+ var cx=100,out='',outline='stroke="rgba(41,59,54,.35)" stroke-width="1.6"';
  if(species==='tulip'){
   var top=cy-30;
-  out+='<path d="M'+(cx-15)+' '+cy+'Q'+(cx-15)+' '+(top-4)+' '+cx+' '+top+'Q'+(cx+15)+' '+(top-4)+' '+(cx+15)+' '+cy+'Q'+cx+' '+(cy+10)+' '+(cx-15)+' '+cy+'Z" fill="'+hue.petal+'"/><path d="M'+cx+' '+cy+'V'+top+'" stroke="'+shade(hue.petal,-15)+'" stroke-width="2" opacity=".6"/>';
+  out+='<path d="M'+(cx-15)+' '+cy+'Q'+(cx-15)+' '+(top-4)+' '+cx+' '+top+'Q'+(cx+15)+' '+(top-4)+' '+(cx+15)+' '+cy+'Q'+cx+' '+(cy+10)+' '+(cx-15)+' '+cy+'Z" fill="'+hue.petal+'" '+outline+'/><path d="M'+cx+' '+cy+'V'+top+'" stroke="'+shade(hue.petal,-15)+'" stroke-width="2" opacity=".6"/>';
  } else if(species==='sunflower'){
-  for(var a=0;a<10;a++)out+='<ellipse cx="'+cx+'" cy="'+(cy-20)+'" rx="6" ry="21" transform="rotate('+(a*36)+' '+cx+' '+cy+')" fill="'+hue.petal+'"/>';
-  out+='<circle cx="'+cx+'" cy="'+cy+'" r="14" fill="'+hue.center+'"/>';
+  for(var a=0;a<10;a++)out+='<ellipse cx="'+cx+'" cy="'+(cy-20)+'" rx="6" ry="21" transform="rotate('+(a*36)+' '+cx+' '+cy+')" fill="'+hue.petal+'" '+outline+'/>';
+  out+='<circle cx="'+cx+'" cy="'+cy+'" r="14" fill="'+hue.center+'" '+outline+'/>';
  } else if(species==='rose'){
-  out+='<circle cx="'+cx+'" cy="'+cy+'" r="18" fill="'+shade(hue.petal,10)+'"/><circle cx="'+cx+'" cy="'+(cy-2)+'" r="13" fill="'+hue.petal+'"/><circle cx="'+cx+'" cy="'+(cy-4)+'" r="7" fill="'+hue.center+'"/>';
+  out+='<circle cx="'+cx+'" cy="'+cy+'" r="18" fill="'+shade(hue.petal,10)+'" '+outline+'/><circle cx="'+cx+'" cy="'+(cy-2)+'" r="13" fill="'+hue.petal+'"/><circle cx="'+cx+'" cy="'+(cy-4)+'" r="7" fill="'+hue.center+'"/>';
  } else {
-  for(var b=0;b<6;b++)out+='<ellipse cx="'+cx+'" cy="'+(cy-14)+'" rx="11" ry="17" transform="rotate('+(b*60)+' '+cx+' '+cy+')" fill="'+hue.petal+'"/>';
-  out+='<circle cx="'+cx+'" cy="'+cy+'" r="12" fill="'+hue.center+'"/><circle cx="'+(cx-4)+'" cy="'+(cy-1)+'" r="1.7" fill="#464731"/><circle cx="'+(cx+4)+'" cy="'+(cy-1)+'" r="1.7" fill="#464731"/><path d="M'+(cx-4)+' '+(cy+4)+'q4 4 8 0" stroke="#464731" fill="none" stroke-width="1.3"/>';
+  for(var b=0;b<6;b++)out+='<ellipse cx="'+cx+'" cy="'+(cy-14)+'" rx="11" ry="17" transform="rotate('+(b*60)+' '+cx+' '+cy+')" fill="'+hue.petal+'" '+outline+'/>';
+  out+='<circle cx="'+cx+'" cy="'+cy+'" r="12" fill="'+hue.center+'" '+outline+'/><circle cx="'+(cx-4)+'" cy="'+(cy-1)+'" r="1.7" fill="#464731"/><circle cx="'+(cx+4)+'" cy="'+(cy-1)+'" r="1.7" fill="#464731"/><path d="M'+(cx-4)+' '+(cy+4)+'q4 4 8 0" stroke="#464731" fill="none" stroke-width="1.3"/>';
  }
  return out;
+}
+function flowerBloom(species,hue){return '<svg viewBox="59 29 82 82" class="bloom-icon" aria-hidden="true">'+flowerHead(species,hue,70)+'</svg>';}
+function vaseShape(fillColor){return '<svg viewBox="0 0 140 110" class="vase-shape" aria-hidden="true"><ellipse cx="70" cy="8" rx="30" ry="6" fill="'+shade(fillColor,-12)+'"/><path d="M40 8h60l-9 32q11 8 11 27c0 23-19 33-43 33s-43-10-43-33c0-19 10-23 11-27z" fill="'+fillColor+'"/></svg>';}
+function bouquetVase(items,kind){
+ var color=kind==='target-vase'?'#e7d2a6':'#cfe0d6';
+ var rotate=[-12,0,12],lift=[8,-8,6];
+ var flowers=items.map(function(item,i){
+  if(!item)return '<span class="vase-flower-slot empty"></span>';
+  return '<span class="vase-flower-slot filled" style="transform:translateY('+lift[i%3]+'px) rotate('+rotate[i%3]+'deg)" aria-label="'+item.hue.key+' '+item.species+'">'+flowerBloom(item.species,item.hue)+'</span>';
+ }).join('');
+ return '<div class="vase-graphic '+kind+'">'+vaseShape(color)+'<span class="vase-flowers">'+flowers+'</span></div>';
 }
 function flowerArt(species,hue,growth){
  var height=25+growth*55,cy=105-height,size=.28+growth*.72;
@@ -122,9 +137,9 @@ function render(){theme(current());audioSync();if(!current()){welcome();return;}
 function home(){var p=current();shell('<main><section class="hero"><span class="little-spark" aria-hidden="true">✳</span><p class="eyebrow">A little world, all yours</p><div class="name-lockup">'+mascot(p.mascot,p.colors)+'<h1 class="name-title '+p.style+'">'+esc(p.name)+'’s playroom</h1></div><p class="hero-sub">Big discoveries. Little adventures. Let’s play.</p><span class="little-spark right" aria-hidden="true">✦</span></section><div class="section-heading"><h2>Pick your adventure</h2><span class="quiet">4 games · endless smiles</span></div><section class="games" aria-label="Games">'+card('bop','Bop!','Peekaboo, little mice. Can you catch them?','01')+card('bloom','Bloom!','Grow a little garden. Snip a bunch of flowers.','02')+card('scurry','Scurry!','A new maze appears every time. Drop cheese to guide a field mouse home.','03')+card('bouquet','Bouquet!','A bouquet appears — snip the matching flowers and fill the vase to match it.','04')+'</section></main>'+footer());}
 function card(type,title,description,num){var labels={bop:'PEEK · BOP · GIGGLE',bloom:'GROW · SNIP · SMILE',scurry:'CHEESE · MAZE · HOME',bouquet:'MATCH · SNIP · BUNCH'};return '<article class="game-card"><div class="scene">'+scene(type)+'<span class="scene-label">'+labels[type]+'</span></div><div class="card-body"><div class="card-title-row"><h2>'+title+'</h2><span class="game-number">'+num+'</span></div><p>'+description+'</p><button class="big-button wide '+(type==='bloom'||type==='bouquet'?'secondary-button':'')+'" data-action="start" data-game="'+type+'">'+icon('play')+'Let’s '+type.replace('bouquet','bunch')+'!</button></div></article>';}
 function welcome(){root.innerHTML='<main class="onboarding"><div class="welcome">'+brand()+'<div class="welcome-art">'+scene('bloom')+'</div><p class="eyebrow">Small people. Big adventures.</p><h1>Who’s ready to play?</h1><p>Your name. Your colors. Your own little world.<br>Let’s make a playroom just for you.</p><form id="welcome-form"><label class="sr-only" for="welcome-name">Your name</label><input id="welcome-name" name="name" type="text" maxlength="24" placeholder="Type your name" autocomplete="off" required><button class="big-button wide" type="submit">Make my playroom '+icon('spark')+'</button><div class="error" id="name-error" role="alert"></div></form><p class="hint">Grown-ups can help with this bit.<br>Names and settings stay on this computer.</p></div></main>';$('#welcome-form').onsubmit=function(e){e.preventDefault();createProfile($('#welcome-name').value);};}
-function createProfile(name){name=name.trim().slice(0,24);if(!name){$('#name-error').textContent='Please enter a name.';return;}if(state.profiles.length>=24){toast('This computer already has 24 players.');return;}var p={id:id(),name:name,colors:copy(palettes[state.profiles.length%palettes.length]),mascot:'flower',style:'pop',pattern:'dots',mode:'relaxed',best:{bop:0,bloom:0,scurry:0,bouquet:0}};state.profiles.push(p);state.active=p.id;save();closeModal();screen='home';render();tone('hello');}
+function createProfile(name){name=name.trim().slice(0,24);if(!name){$('#name-error').textContent='Please enter a name.';return;}if(state.profiles.length>=24){toast('This computer already has 24 players.');return;}var p={id:id(),name:name,colors:copy(palettes[state.profiles.length%palettes.length]),mascot:'flower',style:'pop',pattern:'dots',mode:'relaxed',mazeSize:'cozy',best:{bop:0,bloom:0,scurry:0,bouquet:0}};state.profiles.push(p);state.active=p.id;save();closeModal();screen='home';render();tone('hello');}
 function pageHead(title,sub){return '<div class="page-head"><div><h1>'+title+'</h1><p>'+sub+'</p></div><button class="pill" data-action="'+(screen==='settings'&&game?'back-game':'home')+'">'+icon('back')+(screen==='settings'&&game?'Back to game':'Playroom')+'</button></div>';}
-function workshop(){if(!draft)draft=copy(current());theme(draft);shell(pageHead('Make it yours','A name, a little character, and your favorite colors.')+'<main class="workshop"><section class="panel preview-panel" aria-label="Your name logo preview"><p class="eyebrow">Welcome to the world of</p><div id="preview-mascot">'+mascot(draft.mascot,draft.colors)+'</div><h2 id="preview-name" class="name-title '+draft.style+'">'+esc(draft.name)+'</h2><p class="quiet">A very you kind of playroom.</p>'+brand()+'</section><section class="panel"><label class="field"><span class="field-label">Your name</span><input type="text" id="edit-name" value="'+esc(draft.name)+'" maxlength="24" autocomplete="off"></label><span class="field-label">Your little sidekick</span><div class="choice-row">'+mascots.map(function(m){return '<button class="choice '+(draft.mascot===m?'selected':'')+'" data-action="mascot" data-value="'+m+'" aria-label="'+m+' logo" aria-pressed="'+(draft.mascot===m)+'">'+mascot(m,draft.colors)+'</button>';}).join('')+'</div><span class="field-label">Your lettering</span><div class="choice-row">'+styles.map(function(s,i){return '<button class="choice '+(draft.style===s?'selected':'')+'" data-action="lettering" data-value="'+s+'" aria-pressed="'+(draft.style===s)+'">'+styleLabels[i]+'</button>';}).join('')+'</div><span class="field-label">Playroom pattern</span><div class="choice-row">'+patterns.map(function(s,i){return '<button class="choice pattern-choice '+(draft.pattern===s?'selected':'')+'" data-action="pattern" data-value="'+s+'" aria-pressed="'+(draft.pattern===s)+'"><span class="pattern-swatch '+s+'"></span>'+patternLabels[i]+'</button>';}).join('')+'</div><span class="field-label">Quick palettes</span><div class="choice-row palette-row">'+palettes.map(function(pal,i){return '<button class="choice palette-choice" data-action="apply-palette" data-index="'+i+'" aria-label="'+esc(pal.name)+' palette" title="'+esc(pal.name)+'"><span class="palette-swatch" style="background:linear-gradient(135deg,'+pal.primary+' 50%,'+pal.secondary+' 50%)"></span></button>';}).join('')+'</div><span class="field-label">Your colors</span><div class="color-grid">'+colorKeys.map(function(k,i){return '<label class="color-control">'+['Main','Accent','Background','Cards','Text','Leaves'][i]+'<input type="color" data-color="'+k+'" value="'+draft.colors[k]+'"></label>';}).join('')+'</div><div class="button-row"><button class="pill" data-action="shuffle">'+icon('spark')+'Surprise me!</button><button class="big-button" data-action="save-style">'+icon('check')+'Save my style</button></div><p class="hint">Surprise me makes a fresh palette, sidekick, name logo, and playroom pattern. Everything is generated here, even offline.</p></section></main>');$('#edit-name').oninput=function(){draft.name=this.value;$('#preview-name').textContent=this.value||'Your name';};document.querySelectorAll('[data-color]').forEach(function(el){el.oninput=function(){draft.colors[this.getAttribute('data-color')]=this.value;theme(draft);$('#preview-mascot').innerHTML=mascot(draft.mascot,draft.colors);};});}
+function workshop(){if(!draft)draft=copy(current());theme(draft);shell(pageHead('Make it yours','A name, a little character, and your favorite colors.')+'<main class="workshop"><section class="panel preview-panel" aria-label="Your name logo preview"><p class="eyebrow">Welcome to the world of</p><div id="preview-mascot">'+mascot(draft.mascot,draft.colors)+'</div><h2 id="preview-name" class="name-title '+draft.style+'">'+esc(draft.name)+'</h2><p class="quiet">A very you kind of playroom.</p>'+brand()+'</section><section class="panel"><label class="field"><span class="field-label">Your name</span><input type="text" id="edit-name" value="'+esc(draft.name)+'" maxlength="24" autocomplete="off"></label><span class="field-label">Your little sidekick</span><div class="choice-row sidekick-row">'+mascots.map(function(m){return '<button class="choice '+(draft.mascot===m?'selected':'')+'" data-action="mascot" data-value="'+m+'" aria-label="'+m+' logo" aria-pressed="'+(draft.mascot===m)+'">'+mascot(m,draft.colors)+'</button>';}).join('')+'</div><span class="field-label">Your lettering</span><div class="choice-row">'+styles.map(function(s,i){return '<button class="choice '+(draft.style===s?'selected':'')+'" data-action="lettering" data-value="'+s+'" aria-pressed="'+(draft.style===s)+'">'+styleLabels[i]+'</button>';}).join('')+'</div><span class="field-label">Playroom pattern</span><div class="choice-row">'+patterns.map(function(s,i){return '<button class="choice pattern-choice '+(draft.pattern===s?'selected':'')+'" data-action="pattern" data-value="'+s+'" aria-pressed="'+(draft.pattern===s)+'"><span class="pattern-swatch '+s+'"></span>'+patternLabels[i]+'</button>';}).join('')+'</div><span class="field-label">Quick palettes</span><div class="choice-row palette-row">'+palettes.map(function(pal,i){return '<button class="choice palette-choice" data-action="apply-palette" data-index="'+i+'" aria-label="'+esc(pal.name)+' palette" title="'+esc(pal.name)+'"><span class="palette-swatch" style="background:linear-gradient(135deg,'+pal.primary+' 50%,'+pal.secondary+' 50%)"></span></button>';}).join('')+'</div><span class="field-label">Your colors</span><div class="color-grid">'+colorKeys.map(function(k,i){return '<label class="color-control">'+['Main','Accent','Background','Cards','Text','Leaves'][i]+'<input type="color" data-color="'+k+'" value="'+draft.colors[k]+'"></label>';}).join('')+'</div><div class="button-row"><button class="pill" data-action="shuffle">'+icon('spark')+'Surprise me!</button><button class="big-button" data-action="save-style">'+icon('check')+'Save my style</button></div><p class="hint">Surprise me makes a fresh palette, sidekick, name logo, and playroom pattern. Everything is generated here, even offline.</p></section></main>');$('#edit-name').oninput=function(){draft.name=this.value;$('#preview-name').textContent=this.value||'Your name';};document.querySelectorAll('[data-color]').forEach(function(el){el.oninput=function(){draft.colors[this.getAttribute('data-color')]=this.value;theme(draft);$('#preview-mascot').innerHTML=mascot(draft.mascot,draft.colors);};});}
 function settings(){var s=state.settings,p=current();shell(pageHead('A few little settings','Sound, play pace, and comfort for '+esc(p.name)+'.')+'<main class="settings-grid"><section class="panel"><h2>Sounds of the playroom</h2>'+switchRow('muted','Mute all sound','A quiet moment, whenever you need it.')+range('volume','Master volume',s.volume)+'<div class="divider"></div>'+switchRow('music','Background music','A soft, original music-box melody.')+range('musicVolume','Music volume',s.musicVolume)+'<div class="divider"></div>'+switchRow('effects','Game sounds','Little pops, snips, and happy notes.')+range('effectsVolume','Effects volume',s.effectsVolume)+'<button class="pill" data-action="test-sound">'+icon('sound')+'Try a sound</button></section><section class="panel"><h2>Play your way</h2><label class="field"><span class="field-label">Play pace for '+esc(p.name)+'</span><select id="pace"><option value="relaxed" '+(p.mode==='relaxed'?'selected':'')+'>Little explorer · no timer</option><option value="gentle" '+(p.mode==='gentle'?'selected':'')+'>Growing explorer · gentle 60-second round</option><option value="speedy" '+(p.mode==='speedy'?'selected':'')+'>Speedy explorer · faster 60-second round</option></select></label><p class="hint">Little explorer is made for ages 3–5: big targets, patient mice, and no hurry. Every mode is kind. Misses never take points away.</p><div class="divider"></div>'+switchRow('reduced','Less animation','Keeps the playroom a little calmer.')+'<div class="divider"></div><h2>Everyone gets a turn</h2><p class="hint">Each player has their own name logo, colors, pace, and best scores. Sound settings are shared on this computer.</p><div class="empty-space"><button class="pill" data-action="profiles">'+icon('people')+'Choose a player</button></div><p class="hint">Settings save automatically.</p></section></main>');$('#pace').onchange=function(){p.mode=this.value;save();};document.querySelectorAll('input[type=range]').forEach(function(el){el.oninput=function(){state.settings[this.id]=Number(this.value);$('#value-'+this.id).textContent=this.value+'%';save();audioSync();};});}
 function switchRow(key,label,sub){return '<div class="setting-row"><label id="label-'+key+'">'+label+'<small>'+sub+'</small></label><button class="switch" role="switch" aria-labelledby="label-'+key+'" aria-checked="'+state.settings[key]+'" data-action="toggle" data-value="'+key+'"></button></div>';}
 function range(key,label,value){return '<label class="field"><span class="range-label"><span>'+label+'</span><span id="value-'+key+'">'+value+'%</span></span><input id="'+key+'" type="range" min="0" max="100" value="'+value+'"></label>';}
@@ -176,11 +191,41 @@ function buildMaze(size){
 function openBetween(maze,ax,ay,bx,by){var a=maze.at(ax,ay);if(!a)return false;if(bx===ax&&by===ay-1)return !a.n;if(bx===ax&&by===ay+1)return !a.s;if(bx===ax+1&&by===ay)return !a.e;if(bx===ax-1&&by===ay)return !a.w;return false;}
 function mazeNeighbors(maze,x,y){var out=[];[[0,-1],[0,1],[1,0],[-1,0]].forEach(function(d){var nx=x+d[0],ny=y+d[1];if(maze.at(nx,ny)&&openBetween(maze,x,y,nx,ny))out.push({x:nx,y:ny});});return out;}
 function trailHas(trail,x,y){for(var i=0;i<trail.length;i++)if(trail[i].x===x&&trail[i].y===y)return i;return -1;}
-function newMazeRound(g){g.maze=buildMaze(MAZE_SIZE);g.trail=[{x:0,y:0}];}
+function mazeSizeFor(p){return (p&&p.mazeSize==='big')?7:5;}
+function newMazeRound(g){g.maze=buildMaze(g.mazeSize||MAZE_SIZE);g.trail=[{x:0,y:0}];g.celebrating=false;}
+function mazeCorridors(maze,trail){
+ var head=trail[trail.length-1];
+ var immediate=mazeNeighbors(maze,head.x,head.y).filter(function(n){return trailHas(trail,n.x,n.y)<0;});
+ var corridors=[];
+ immediate.forEach(function(start){
+  var path=[start],occupied=trail.concat(path),cur=start;
+  while(!(cur.x===maze.home.x&&cur.y===maze.home.y)){
+   var nbrs=mazeNeighbors(maze,cur.x,cur.y).filter(function(n){return trailHas(occupied,n.x,n.y)<0;});
+   if(nbrs.length!==1)break;
+   cur=nbrs[0];path.push(cur);occupied.push(cur);
+  }
+  corridors.push(path);
+ });
+ return corridors;
+}
+function confettiHtml(){
+ var glyphs=['★','✦','✿','●'],cols=['#f2c14e','#e78aa0','#6fa8d6','#78a063'],out='';
+ for(var i=0;i<8;i++){
+  var angle=(i/8)*2*Math.PI,dx=Math.round(Math.cos(angle)*90),dy=Math.round(Math.sin(angle)*90);
+  out+='<span class="confetti" style="--dx:'+dx+'px;--dy:'+dy+'px;color:'+cols[i%4]+'">'+glyphs[i%4]+'</span>';
+ }
+ return out;
+}
+function fanfare(){
+ if(!state.settings.effects)return;
+ var v=.18*state.settings.effectsVolume/100;
+ [523,659,784,1046].forEach(function(f,i){setTimeout(function(){if(state.settings.effects)note(f,.22,v,'sawtooth');},i*110);});
+}
 function mazeView(g){
  var maze=g.maze,size=maze.size,trail=g.trail,head=trail[trail.length-1];
- var neighbors=mazeNeighbors(maze,head.x,head.y);
- var forward=neighbors.filter(function(n){return trailHas(trail,n.x,n.y)<0;});
+ var corridors=g.celebrating?[]:mazeCorridors(maze,trail);
+ var cellMeta={};
+ corridors.forEach(function(path){path.forEach(function(cell,idx){cellMeta[cell.x+','+cell.y]={end:idx===path.length-1&&path.length>1};});});
  var cellsHtml='';
  for(var y=0;y<size;y++){
   for(var x=0;x<size;x++){
@@ -189,36 +234,54 @@ function mazeView(g){
    var isHome=(x===maze.home.x&&y===maze.home.y);
    var isHead=(x===head.x&&y===head.y);
    var trailIdx=trailHas(trail,x,y);
-   var isForward=forward.some(function(f){return f.x===x&&f.y===y;});
+   var meta=cellMeta[x+','+y];
    if(isHome)classes.push('home');
    if(isHead)classes.push('head');
    if(trailIdx>=0&&!isHead)classes.push('crumb');
-   if(isForward)classes.push('next');
-   var clickable=isForward||(trailIdx>=0&&trailIdx<trail.length-1);
+   if(meta)classes.push('next');
+   if(meta&&meta.end)classes.push('next-end');
+   var clickable=!g.celebrating&&(!!meta||(trailIdx>=0&&trailIdx<trail.length-1));
    var style='border-top:'+(c.n?'3px solid var(--ink)':'3px solid transparent')+';border-left:'+(c.w?'3px solid var(--ink)':'3px solid transparent')+';border-right:'+(c.e?'3px solid var(--ink)':'3px solid transparent')+';border-bottom:'+(c.s?'3px solid var(--ink)':'3px solid transparent')+';';
    var content='';
-   if(isHome)content=mazeHoleIcon();else if(isHead)content=mazeMouseIcon();else if(trailIdx>=0)content=mazeCheeseIcon();else if(isForward)content='<span class="maze-hint" aria-hidden="true"></span>';
+   if(isHome)content=mazeHoleIcon();else if(isHead)content=mazeMouseIcon();else if(trailIdx>=0)content=mazeCheeseIcon();else if(meta)content='<span class="maze-hint" aria-hidden="true"></span>';
    cellsHtml+='<button class="'+classes.join(' ')+'" style="'+style+'" '+(clickable?'data-action="maze-cell" ':'tabindex="-1" ')+'data-x="'+x+'" data-y="'+y+'" aria-label="'+(isHome?'Mouse home':clickable?'Drop cheese here':'maze wall')+'" '+(clickable?'':'aria-hidden="true"')+'>'+content+'</button>';
   }
  }
- return '<div class="maze-wrap"><div class="maze-grid" style="grid-template-columns:repeat('+size+',1fr)">'+cellsHtml+'</div><div class="maze-actions"><button class="pill" data-action="maze-reset">'+icon('back')+'Start this maze over</button></div></div>';
+ var maxWidth=size>5?640:430;
+ var grid='<div class="maze-grid" style="grid-template-columns:repeat('+size+',1fr);max-width:'+maxWidth+'px">'+cellsHtml+'</div>';
+ var actions='<div class="maze-actions"><button class="pill" data-action="maze-reset"'+(g.celebrating?' disabled':'')+'>'+icon('back')+'Start this maze over</button><button class="pill" data-action="maze-size"'+(g.celebrating?' disabled':'')+'>'+icon('spark')+((g.mazeSize||MAZE_SIZE)>5?'Cozy maze':'Bigger maze')+'</button></div>';
+ var overlay=g.celebrating?'<div class="maze-celebrate">'+confettiHtml()+'<div class="banner"><h3>Home safe!</h3><p>A new maze is on its way.</p></div></div>':'';
+ return '<div class="maze-wrap">'+overlay+grid+actions+'</div>';
 }
 function mazeClick(x,y){
- if(!game||game.paused||game.ended||game.type!=='scurry')return;
+ if(!game||game.paused||game.ended||game.type!=='scurry'||game.celebrating)return;
  var g=game,trail=g.trail,idx=trailHas(trail,x,y);
  if(idx>=0){
   if(idx<trail.length-1){g.trail=trail.slice(0,idx+1);tone('bop');renderGame();}
   return;
  }
- var head=trail[trail.length-1];
- if(!openBetween(g.maze,head.x,head.y,x,y))return;
- g.trail.push({x:x,y:y});
- tone('snip');
- if(x===g.maze.home.x&&y===g.maze.home.y){
-  g.score++;
-  tone('finish');toast('Home safe! A new maze is waiting.');
-  newMazeRound(g);
+ var corridors=mazeCorridors(g.maze,trail),chain=null;
+ for(var i=0;i<corridors.length&&!chain;i++){
+  var path=corridors[i];
+  for(var j=0;j<path.length;j++){if(path[j].x===x&&path[j].y===y){chain=path.slice(0,j+1);break;}}
  }
+ if(!chain)return;
+ g.trail=trail.concat(chain);
+ var last=chain[chain.length-1];
+ if(last.x===g.maze.home.x&&last.y===g.maze.home.y){
+  g.score++;
+  g.celebrating=true;
+  fanfare();
+  toast('Home safe! A new maze is coming up.');
+  renderGame();
+  setTimeout(function(){
+   if(!game||game!==g||game.ended)return;
+   newMazeRound(g);
+   renderGame();
+  },1150);
+  return;
+ }
+ tone('snip');
  renderGame();
 }
 function mazeDirectionMove(key){
@@ -232,7 +295,8 @@ function classicField(g){
  var isMouse=g.type==='bop';
  var extra='';
  if(g.type==='bouquet'){
-  extra='<div class="bouquet-ask"><span>Match this bouquet</span><div class="target-row">'+g.target.map(function(t,i){return '<span class="target-chip'+(g.vase[i]?' got':'')+'" data-i="'+i+'" aria-label="'+t.hue.key+' '+t.species+(g.vase[i]?' collected':' still needed')+'"><svg viewBox="0 0 200 125" aria-hidden="true">'+flowerArt(t.species,t.hue,1)+'</svg>'+(g.vase[i]?'<span class="check-badge">'+icon('check')+'</span>':'')+'</span>';}).join('')+'</div></div>';
+  var collectItems=g.target.map(function(t,i){return g.vase[i]?t:null;});
+  extra='<div class="bouquet-vases"><div class="vase-block"><div class="vase-label">Match this bouquet</div>'+bouquetVase(g.target,'target-vase')+'</div><div class="vase-block"><div class="vase-label">Your bouquet</div>'+bouquetVase(collectItems,'collect-vase')+'</div></div>';
  }
  return extra+'<div class="target-grid">'+g.slots.map(function(s,i){return '<button class="target'+((g.type==='bouquet'&&s.growth>=.95&&matchTargetIndex(g,s)>=0)?' wanted':'')+'" id="target-'+i+'" data-action="hit" data-index="'+i+'" aria-label="'+(isMouse?'Mouse path':'Flower')+' '+(i+1)+'"><svg viewBox="0 0 200 125" aria-hidden="true">'+(isMouse?mouseArt():flowerArt(s.species,s.hue,s.growth))+'</svg><span class="keycap" aria-hidden="true">'+['Q · 1','W · 2','E · 3','A · 4','S · 5','D · 6','Z · 7','X · 8','C · 9'][i]+'</span></button>';}).join('')+'</div>';
 }
@@ -242,7 +306,7 @@ function startGame(type){
  if(type==='bop'){game.slots=[];for(var i=0;i<9;i++)game.slots.push({active:false,until:0,cut:0});}
  else if(type==='bloom'){game.slots=[];for(var j=0;j<9;j++)game.slots.push(newFlowerSlot());}
  else if(type==='bouquet'){game.slots=[];for(var k=0;k<9;k++)game.slots.push(newFlowerSlot());newBouquetRound(game);}
- else if(type==='scurry'){newMazeRound(game);}
+ else if(type==='scurry'){game.mazeSize=mazeSizeFor(p);newMazeRound(game);}
  render();game.frame=requestAnimationFrame(tick);
 }
 function renderGame(){
@@ -251,7 +315,7 @@ function renderGame(){
  var prompt={bop:'Bop a mouse when it peeks out!',bloom:'Snip the flowers. Watch them grow again!',scurry:'Drop cheese to guide the mouse home!',bouquet:'Snip the matching flowers for the bouquet!'}[g.type];
  var body=g.type==='scurry'?mazeView(g):classicField(g);
  var tip=g.type==='scurry'?'Click, tap, or use arrow keys / W A S D to drop cheese.':'Click or tap to play. Keyboard: Q W E / A S D / Z X C, or 1–9.';
- shell('<main><div class="game-header"><div class="game-heading"><button class="icon-button" data-action="leave-game" aria-label="Back to playroom">'+icon('home')+'</button><h1>'+esc(current().name)+'’s '+gameNames[g.type]+'</h1></div><div class="scoreboard"><div class="score"><small>'+gameScores[g.type]+'</small><span id="score">'+g.score+'</span></div><div class="score"><small>'+(timed?'SECONDS':'YOUR PACE')+'</small><span id="time">'+(timed?Math.ceil(60-g.elapsed):'∞')+'</span></div><button class="icon-button" data-action="pause" aria-label="Pause game">'+icon('pause')+'</button></div></div><div class="progress-track"><div id="progress" class="progress-bar"></div></div><div class="playfield '+g.type+'-field"><div class="field-top"><span>'+prompt+'</span><strong>'+(timed?'Let’s explore':'No hurry. Just play.')+'</strong></div>'+body+'<div id="pause-layer"></div></div><div class="field-footer"><span class="game-tip">'+tip+'</span><button class="pill" data-action="finish">'+icon('check')+'All done</button></div></main>');
+ shell('<main><div class="game-header"><div class="game-heading"><button class="icon-button" data-action="home" aria-label="Back to playroom">'+icon('home')+'</button><h1>'+esc(current().name)+'’s '+gameNames[g.type]+'</h1></div><div class="scoreboard"><div class="score"><small>'+gameScores[g.type]+'</small><span id="score">'+g.score+'</span></div><div class="score"><small>'+(timed?'SECONDS':'YOUR PACE')+'</small><span id="time">'+(timed?Math.ceil(60-g.elapsed):'∞')+'</span></div><button class="icon-button" data-action="pause" aria-label="Pause game">'+icon('pause')+'</button></div></div><div class="progress-track"><div id="progress" class="progress-bar"></div></div><div class="playfield '+g.type+'-field"><div class="field-top"><span>'+prompt+'</span><strong>'+(timed?'Let’s explore':'No hurry. Just play.')+'</strong></div>'+body+'<div id="pause-layer"></div></div><div class="field-footer"><span class="game-tip">'+tip+'</span><button class="pill" data-action="finish">'+icon('check')+'All done</button></div></main>');
  if(g.paused)showPause();
 }
 function tick(now){
@@ -300,28 +364,34 @@ function hit(index){
   var ti=matchTargetIndex(g,s);
   if(ti<0){el.classList.add('nope');tone('nope');setTimeout(function(){el.classList.remove('nope');},420);return;}
   g.vase[ti]=true;
-  var chip=document.querySelector('.target-chip[data-i="'+ti+'"]');
-  if(chip&&!chip.classList.contains('got')){chip.classList.add('got');chip.setAttribute('aria-label',g.target[ti].hue.key+' '+g.target[ti].species+' collected');var badge=document.createElement('span');badge.className='check-badge';badge.innerHTML=icon('check');chip.appendChild(badge);}
   var fresh2=newFlowerSlot();s.growth=0;s.cut=g.elapsed+.35;s.species=fresh2.species;s.hue=fresh2.hue;
-  el.querySelector('svg').innerHTML=flowerArt(s.species,s.hue,0);el.classList.remove('wanted');
   tone('snip');
+  if(g.vase.every(function(v){return v;})){
+   g.score++;
+   tone('finish');toast('Bouquet complete! A new one is waiting.');
+   newBouquetRound(g);
+  }
+  renderGame();
+  return;
  } else return;
  var pop=document.createElement('span');pop.className='pop-score';pop.textContent=g.type==='bop'?'★':'✂';el.appendChild(pop);
  setTimeout(function(){if(pop.parentNode)pop.parentNode.removeChild(pop);},650);
- var scored=g.type!=='bouquet';
- if(g.type==='bouquet'&&g.vase.length&&g.vase.every(function(v){return v;})){
-  scored=true;
-  tone('finish');toast('Bouquet complete! A new one is waiting.');
-  newBouquetRound(g);renderGame();
- }
- if(scored){g.score++;var scoreEl=$('#score');if(scoreEl)scoreEl.textContent=g.score;}
+ g.score++;var scoreEl=$('#score');if(scoreEl)scoreEl.textContent=g.score;
 }
 function pauseGame(){if(!game||game.paused)return;game.paused=true;showPause();audioSync();}
 function showPause(){var layer=$('#pause-layer');if(layer)layer.innerHTML='<div class="pause-cover"><div><h2>A little breather.</h2><p>Your garden will wait for you.</p><button class="big-button" data-action="resume">'+icon('play')+'Keep playing</button></div></div>';}
 function resumeGame(){if(!game)return;game.paused=false;game.last=performance.now();$('#pause-layer').innerHTML='';audioSync();}
 function stopGame(){if(game&&game.frame)cancelAnimationFrame(game.frame);game=null;}
-function finishGame(){if(!game||game.ended)return;game.ended=true;game.paused=true;cancelAnimationFrame(game.frame);var g=game,p=current(),best=false;if(g.mode!=='relaxed'&&g.score>p.best[g.type]){p.best[g.type]=g.score;best=true;save();}audioSync();tone('finish');dialog('<div class="center"><div class="result-medal">'+mascot((g.type==='bop'||g.type==='scurry')?'mouse':'flower',p.colors)+'</div><p class="eyebrow">'+(best?'A new personal best!':'A lovely little adventure')+'</p><h2>Lovely playing, '+esc(p.name)+'!</h2><div class="result-score">'+g.score+'</div><p class="result-label">'+gameLabels[g.type]+'</p><div class="button-row"><button class="big-button wide" data-action="again">'+icon('play')+'Play again</button><button class="pill wide" data-action="home">'+icon('home')+'Back to my playroom</button></div></div>','Well played');}
-function leaveGame(){pauseGame();dialog('<h2>Back to your playroom?</h2><p>You can choose another adventure, or keep playing this one.</p><div class="button-row"><button class="big-button" data-action="home">'+icon('home')+'Playroom</button><button class="pill" data-action="keep-playing">Keep playing</button></div>','Leave game');}
+function finishGame(){
+ if(!game||game.ended)return;
+ game.ended=true;
+ cancelAnimationFrame(game.frame);
+ var g=game,p=current(),best=false;
+ if(g.mode!=='relaxed'&&g.score>p.best[g.type]){p.best[g.type]=g.score;best=true;save();}
+ tone('finish');
+ toast((best?'New personal best! ':'')+g.score+' '+gameLabels[g.type]+'. Lovely playing, '+p.name+'!');
+ stopGame();draft=null;closeModal();screen='home';render();
+}
 function pressTarget(e){var t=e.target.closest('[data-action="hit"]');if(t){e.preventDefault();unlockAudio();hit(Number(t.getAttribute('data-index')));}}
 if(window.PointerEvent){root.addEventListener('pointerdown',pressTarget);}else{root.addEventListener('mousedown',pressTarget);root.addEventListener('touchstart',pressTarget,{passive:false});}
 document.addEventListener('click',function(e){var b=e.target.closest('[data-action]');if(!b)return;unlockAudio();var a=b.getAttribute('data-action'),v=b.getAttribute('data-value');
@@ -346,12 +416,10 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-acti
  else if(a==='test-sound'){tone('hello');}
  else if(a==='pause')pauseGame();
  else if(a==='resume')resumeGame();
- else if(a==='keep-playing'){closeModal();resumeGame();}
  else if(a==='finish')finishGame();
- else if(a==='again'){var type=game.type;closeModal();startGame(type);}
- else if(a==='leave-game')leaveGame();
  else if(a==='maze-cell'){mazeClick(Number(b.getAttribute('data-x')),Number(b.getAttribute('data-y')));}
  else if(a==='maze-reset'){newMazeRound(game);renderGame();}
+ else if(a==='maze-size'){var p=current();p.mazeSize=p.mazeSize==='big'?'cozy':'big';save();game.mazeSize=mazeSizeFor(p);newMazeRound(game);renderGame();}
 });
 document.addEventListener('keydown',function(e){
  if(modalRoot.firstChild){if(e.key==='Tab'){var els=modalRoot.querySelectorAll('button:not([disabled]),input,select');var first=els[0],last=els[els.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}if(e.key==='Escape'&&!(game&&game.ended)){closeModal();}return;}
