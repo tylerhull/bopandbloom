@@ -66,7 +66,29 @@ const server=http.createServer((req,res)=>{
  await page.waitForSelector('.games',{timeout:4000});
  const pts=await page.evaluate(()=>JSON.parse(localStorage.getItem('bop-and-bloom-v1')).profiles[0].points);assert.equal(pts,22);
  console.log('PASS parent PIN gate, per-child game visibility, schoolwork assignment, and points');
- await page.locator('[data-action=home]').last().click();await page.setViewportSize({width:640,height:720});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await page.locator('[data-action=home]').last().click();
+ await page.locator('[data-action=start][data-game=biomes]').click();await page.waitForSelector('.biome-spot');
+ for(const b of ['amazon','andes','atacama','pampas','patagonia','chaco']){await page.locator(`[data-action=biome-select][data-biome=${b}]`).click();await page.locator(`[data-action=biome-spot][data-biome=${b}]`).click();}
+ assert.equal(await page.locator('#score').innerText(),'6');await page.waitForSelector('.games',{timeout:4000});
+ console.log('PASS biome placement on the real map');
+ await page.locator('[data-action=start][data-game=animals]').click();await page.waitForSelector('.habitat-bin');
+ const bins=['rainforest','mountains','grasslands'];
+ for(let n=0;n<3;n++){const before=Number(await page.locator('#score').innerText());for(const h of bins){await page.locator(`[data-action=sort-bin][data-habitat=${h}]`).click();if(Number(await page.locator('#score').innerText())>before)break;}}
+ assert.equal(await page.locator('#score').innerText(),'3');await page.locator('[data-action=home]').first().click();await page.waitForSelector('.games');
+ console.log('PASS animal sorting with no penalty for a wrong bin');
+ await page.locator('[data-action=start][data-game=market]').click();await page.waitForSelector('.coin-btn');
+ const price=Number((await page.locator('.market-price').innerText()).split(' ')[0]);
+ for(let n=0;n<price;n++)await page.locator('[data-action=market-coin][data-value="1"]').click();
+ assert.equal(await page.locator('#score').innerText(),'1');await page.locator('[data-action=home]').first().click();await page.waitForSelector('.games');
+ console.log('PASS exact-change coin counting');
+ await page.locator('[data-action=start][data-game=timeline]').click();await page.waitForSelector('.tl-card.choice');
+ for(let n=0;n<3;n++){
+  const cards=await page.locator('.tl-card.choice').evaluateAll(els=>els.map(e=>({y:Number(e.querySelector('.tl-year').textContent),i:e.getAttribute('data-idx')})));
+  if(!cards.length)break;cards.sort((a,b)=>a.y-b.y);await page.locator(`[data-action=timeline-pick][data-idx="${cards[0].i}"]`).click();
+ }
+ assert.equal(await page.locator('#score').innerText(),'1');await page.locator('[data-action=home]').first().click();await page.waitForSelector('.games');
+ console.log('PASS ordering historical events oldest first');
+ await page.setViewportSize({width:640,height:720});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  assert.deepEqual(errors,[]);console.log('PASS compact layout and zero JavaScript errors');
  const touch=await browser.newContext({hasTouch:true,viewport:{width:700,height:800}});const tp=await touch.newPage();await tp.goto(url);await tp.locator('#welcome-name').fill('Touch');await tp.locator('button[type=submit]').tap();await tp.locator('[data-action=start][data-game=bop]').tap();await tp.waitForSelector('.target.ready');await tp.locator('.target.ready').first().tap();assert.equal(await tp.locator('#score').innerText(),'1');
  console.log('PASS touch input');
