@@ -50,29 +50,50 @@ var gameNames={bop:'Bop!',bloom:'Bloom!',scurry:'Scurry!',bouquet:'Bouquet!',cou
 var gameScores={bop:'BOPS',bloom:'FLOWERS',scurry:'MICE',bouquet:'BOUQUETS',countries:'COUNTRIES',gauchos:'COWS'};
 var gameLabels={bop:'happy little bops',bloom:'flowers snipped',scurry:'mice guided home',bouquet:'bouquets made',countries:'countries placed',gauchos:'cows herded home'};
 var saCountries=[
- {id:'venezuela',name:'Venezuela',color:'#e8a33d'},
- {id:'colombia',name:'Colombia',color:'#d9614f'},
- {id:'guyana',name:'Guyana',color:'#7fb99b'},
- {id:'suriname',name:'Suriname',color:'#6fa8d6'},
- {id:'ecuador',name:'Ecuador',color:'#f2c14e'},
- {id:'peru',name:'Peru',color:'#c96b8f'},
- {id:'brazil',name:'Brazil',color:'#6fae5c'},
- {id:'bolivia',name:'Bolivia',color:'#a680c9'},
- {id:'paraguay',name:'Paraguay',color:'#e78aa0'},
- {id:'chile',name:'Chile',color:'#4a90a4'},
- {id:'argentina',name:'Argentina',color:'#8fb6d9'},
- {id:'uruguay',name:'Uruguay',color:'#d69a5c'}
+ {id:'venezuela',name:'Venezuela',color:'#e8a33d',pts:[[170,10],[225,10],[285,28],[225,95],[150,80]]},
+ {id:'guyana',name:'Guyana',color:'#7fb99b',pts:[[285,28],[320,45],[295,105],[225,95]]},
+ {id:'suriname',name:'Suriname',color:'#6fa8d6',pts:[[320,45],[355,65],[330,100],[295,105]]},
+ {id:'colombia',name:'Colombia',color:'#d9614f',pts:[[70,20],[170,10],[150,80],[110,120],[50,100],[52,45]]},
+ {id:'ecuador',name:'Ecuador',color:'#f2c14e',pts:[[50,100],[110,120],[90,160],[56,155]]},
+ {id:'peru',name:'Peru',color:'#c96b8f',pts:[[56,155],[110,120],[165,225],[150,320],[52,360],[44,300],[44,220]]},
+ {id:'brazil',name:'Brazil',color:'#6fae5c',pts:[[150,80],[225,95],[295,105],[355,65],[395,155],[385,270],[360,370],[335,450],[255,445],[225,345],[165,225],[110,120]]},
+ {id:'bolivia',name:'Bolivia',color:'#a680c9',pts:[[165,225],[225,345],[190,425],[110,400],[150,320]]},
+ {id:'paraguay',name:'Paraguay',color:'#e78aa0',pts:[[225,345],[255,445],[190,425]]},
+ {id:'chile',name:'Chile',color:'#4a90a4',pts:[[52,360],[150,320],[110,400],[100,480],[90,570],[80,645],[95,675],[65,615],[48,530],[44,440]]},
+ {id:'argentina',name:'Argentina',color:'#8fb6d9',pts:[[190,425],[255,445],[310,485],[285,535],[250,555],[230,600],[200,650],[150,685],[95,675],[80,645],[90,570],[100,480],[110,400]]},
+ {id:'uruguay',name:'Uruguay',color:'#d69a5c',pts:[[335,450],[310,485],[285,535],[250,555]]}
 ];
-var saGrid=[
- [null,'venezuela','venezuela','guyana','suriname'],
- ['colombia','colombia','venezuela','brazil','brazil'],
- ['colombia','ecuador','brazil','brazil','brazil'],
- ['peru','peru','brazil','brazil','brazil'],
- ['peru','bolivia','bolivia','brazil','brazil'],
- ['chile','bolivia','paraguay','brazil','brazil'],
- ['chile','argentina','paraguay','uruguay','brazil'],
- ['chile','argentina','argentina','argentina',null]
-];
+var saFacts={
+ venezuela:['Venezuela\'s capital city is Caracas.','Angel Falls in Venezuela is the tallest waterfall in the world.','Venezuela is named after the Italian city of Venice — early explorers thought stilt houses on Lake Maracaibo looked similar.','Venezuela has some of the largest oil reserves in the world.','The official language of Venezuela is Spanish.','Venezuela\'s flag has seven stars, one for each province that signed its declaration of independence.'],
+ colombia:['Colombia\'s capital city is Bogotá, high in the Andes mountains.','Colombia is the only South American country with coastlines on both the Pacific Ocean and the Caribbean Sea.','Colombia produces more emeralds than any other country in the world.','Coffee grown in Colombia is famous worldwide for its smooth flavor.','Colombia is one of the most biodiverse countries on Earth, home to thousands of bird species.','The official language of Colombia is Spanish.'],
+ guyana:['Guyana\'s capital city is Georgetown.','Guyana is the only country in South America where English is the official language.','Kaieteur Falls in Guyana is one of the world\'s most powerful waterfalls.','Much of Guyana is covered in dense rainforest.','Guyana was a Dutch and then British colony before becoming independent in 1966.','Guyana\'s name comes from an Indigenous word meaning "land of many waters."'],
+ suriname:['Suriname\'s capital city is Paramaribo.','Suriname is the smallest country in South America.','Suriname was a Dutch colony, so Dutch is still its official language today.','More than 90 percent of Suriname is covered by rainforest.','Suriname is home to people of many backgrounds, including Indigenous, African, Indian, and Indonesian heritage.','The Suriname River runs right through the capital city.'],
+ ecuador:['Ecuador\'s capital city is Quito, one of the highest capital cities in the world.','Ecuador is named after the equator, which runs right through the country.','The Galápagos Islands, famous for unique wildlife, belong to Ecuador.','Ecuador uses the United States dollar as its official currency.','Quito\'s historic center was one of the first UNESCO World Heritage Sites.','Ecuador is home to many volcanoes, including the active Cotopaxi.'],
+ peru:['Peru\'s capital city is Lima.','The ancient Inca city of Machu Picchu sits high in the Peruvian Andes.','Peru was once the center of the powerful Inca Empire.','Lake Titicaca, shared by Peru and Bolivia, is one of the highest navigable lakes in the world.','Peru is home to part of the Amazon rainforest, the Andes mountains, and a desert coast.','Potatoes were first grown by farmers in ancient Peru thousands of years ago.'],
+ brazil:['Brazil\'s capital city is Brasília, built specially to be the capital in the 1960s.','Brazil is the largest country in South America by both size and population.','Portuguese is the official language of Brazil — the only South American country where Spanish isn\'t the main language.','Most of the Amazon Rainforest lies within Brazil\'s borders.','Brazil has won the FIFA World Cup more times than any other country.','Rio de Janeiro\'s Carnival is one of the biggest festivals in the world.'],
+ bolivia:['Bolivia has two capital cities: Sucre is the constitutional capital, and La Paz is the seat of government.','La Paz is one of the highest capital cities in the world.','Bolivia is one of only two landlocked countries in South America.','The Salar de Uyuni in Bolivia is the largest salt flat on Earth.','Bolivia is named after Simón Bolívar, a leader in South America\'s independence movements.','Bolivia shares Lake Titicaca with Peru.'],
+ paraguay:['Paraguay\'s capital city is Asunción.','Paraguay is one of only two landlocked countries in South America, along with Bolivia.','Most Paraguayans speak both Spanish and an Indigenous language called Guaraní.','The Itaipu Dam, shared with Brazil, is one of the largest hydroelectric dams in the world.','Paraguay is covered mostly by grassy plains and fertile farmland called the Gran Chaco.','Paraguay\'s flag is unusual because it has a different design on each side.'],
+ chile:['Chile\'s capital city is Santiago.','Chile is one of the longest, thinnest countries in the world, stretching over 2,600 miles north to south.','The Atacama Desert in northern Chile is one of the driest places on Earth.','Easter Island, famous for its giant stone statues, belongs to Chile.','Because Chile is so long, it has deserts, mountains, forests, and glaciers all in one country.','Chile is one of the world\'s top producers of copper.'],
+ argentina:['Argentina\'s capital city is Buenos Aires.','Argentina is the second-largest country in South America by size.','The tango, a famous style of dance and music, began in Buenos Aires.','Argentina is home to Aconcagua, the tallest mountain in the Americas.','Patagonia, a region famous for dramatic mountains and glaciers, is shared between Argentina and Chile.','Argentina is one of the world\'s largest producers of beef.'],
+ uruguay:['Uruguay\'s capital city is Montevideo.','Uruguay is one of the smallest countries in South America.','Uruguay hosted and won the very first FIFA World Cup in 1930.','Uruguay was one of the first countries in the world to give women the right to vote.','Ranching is a huge part of Uruguay\'s culture, much like in neighboring Argentina.','Uruguay gets a very high share of its electricity from renewable energy sources.']
+};
+function countryFlag(id){
+ var flags={
+  venezuela:'<rect width="60" height="40" fill="#fcd116"/><rect y="13.3" width="60" height="13.3" fill="#003893"/><rect y="26.6" width="60" height="13.4" fill="#cf142b"/><g fill="#fff"><circle cx="20" cy="20" r="1.4"/><circle cx="24" cy="17" r="1.4"/><circle cx="29" cy="15" r="1.4"/><circle cx="34" cy="15" r="1.4"/><circle cx="39" cy="17" r="1.4"/><circle cx="43" cy="20" r="1.4"/><circle cx="31.5" cy="21" r="1.4"/></g>',
+  colombia:'<rect width="60" height="20" fill="#fcd116"/><rect y="20" width="60" height="10" fill="#003893"/><rect y="30" width="60" height="10" fill="#ce1126"/>',
+  guyana:'<rect width="60" height="40" fill="#009e49"/><polygon points="0,0 30,20 0,40" fill="#fcd116"/><polygon points="0,6 24,20 0,34" fill="#fff"/><polygon points="0,10 18,20 0,30" fill="#ce1126"/>',
+  suriname:'<rect width="60" height="40" fill="#377e3f"/><rect y="6" width="60" height="6" fill="#fff"/><rect y="12" width="60" height="16" fill="#b40a2d"/><rect y="28" width="60" height="6" fill="#fff"/><polygon points="30,14 32,20 38,20 33,23 35,29 30,25 25,29 27,23 22,20 28,20" fill="#ecc81d"/>',
+  ecuador:'<rect width="60" height="20" fill="#fcd116"/><rect y="20" width="60" height="10" fill="#003893"/><rect y="30" width="60" height="10" fill="#ed2939"/><circle cx="30" cy="20" r="5" fill="#fff" stroke="#8a5a2b" stroke-width="1"/>',
+  peru:'<rect width="20" height="40" fill="#d91023"/><rect x="20" width="20" height="40" fill="#fff"/><rect x="40" width="20" height="40" fill="#d91023"/><circle cx="30" cy="20" r="4" fill="#fff" stroke="#2a6b3a" stroke-width="1"/>',
+  brazil:'<rect width="60" height="40" fill="#009c3b"/><polygon points="30,5 55,20 30,35 5,20" fill="#ffdf00"/><circle cx="30" cy="20" r="8" fill="#002776"/>',
+  bolivia:'<rect width="60" height="13.3" fill="#d52b1e"/><rect y="13.3" width="60" height="13.3" fill="#f9e300"/><rect y="26.6" width="60" height="13.4" fill="#007934"/>',
+  paraguay:'<rect width="60" height="13.3" fill="#d52b1e"/><rect y="13.3" width="60" height="13.3" fill="#fff"/><rect y="26.6" width="60" height="13.4" fill="#0038a8"/>',
+  chile:'<rect width="60" height="20" fill="#fff"/><rect y="20" width="60" height="20" fill="#d52b1e"/><rect width="20" height="20" fill="#0039a6"/><polygon points="10,5 11.7,9.5 16.5,9.5 12.7,12.3 14.1,17 10,14.1 5.9,17 7.3,12.3 3.5,9.5 8.3,9.5" fill="#fff"/>',
+  argentina:'<rect width="60" height="13.3" fill="#74acdf"/><rect y="13.3" width="60" height="13.3" fill="#fff"/><rect y="26.6" width="60" height="13.4" fill="#74acdf"/><circle cx="30" cy="20" r="5" fill="#f6b40e" stroke="#85340a" stroke-width=".6"/>',
+  uruguay:'<rect width="60" height="40" fill="#fff"/><rect y="4.4" width="60" height="4.4" fill="#0038a8"/><rect y="13.2" width="60" height="4.4" fill="#0038a8"/><rect y="22" width="60" height="4.4" fill="#0038a8"/><rect y="30.8" width="60" height="4.4" fill="#0038a8"/><rect width="22" height="22" fill="#fff"/><circle cx="11" cy="11" r="6" fill="#fcd116"/>'
+ };
+ return '<svg viewBox="0 0 60 40" class="country-flag" aria-hidden="true">'+(flags[id]||'')+'</svg>';
+}
 var gauchoFacts=[
  'Gauchos are skilled horsemen and cattle herders from the grasslands of Argentina, Uruguay, and southern Brazil.',
  'The wide, flat grasslands where gauchos work are called the pampas.',
@@ -493,33 +514,27 @@ function classicField(g){
  return extra+'<div class="target-grid">'+g.slots.map(function(s,i){return '<button class="target'+((g.type==='bouquet'&&s.growth>=.95&&matchTargetIndex(g,s)>=0)?' wanted':'')+'" id="target-'+i+'" data-action="hit" data-index="'+i+'" aria-label="'+(isMouse?'Mouse path':'Flower')+' '+(i+1)+'"><svg viewBox="0 0 200 125" aria-hidden="true">'+(isMouse?mouseArt():flowerArt(s.species,s.hue,s.growth))+'</svg><span class="keycap" aria-hidden="true">'+['Q · 1','W · 2','E · 3','A · 4','S · 5','D · 6','Z · 7','X · 8','C · 9'][i]+'</span></button>';}).join('')+'</div>';
 }
 function countryById(cid){return saCountries.filter(function(c){return c.id===cid;})[0];}
+function countryPathD(pts){return 'M'+pts.map(function(p){return p[0]+','+p[1];}).join('L')+'Z';}
 function saCentroid(cid){
- var xs=[],ys=[];
- saGrid.forEach(function(row,ry){row.forEach(function(c,cx){if(c===cid){xs.push(cx);ys.push(ry);}});});
+ var c=countryById(cid),xs=c.pts.map(function(p){return p[0];}),ys=c.pts.map(function(p){return p[1];});
  return {x:xs.reduce(function(a,b){return a+b;},0)/xs.length,y:ys.reduce(function(a,b){return a+b;},0)/ys.length};
 }
 function puzzleView(g){
- var pz=g.puzzle,cols=saGrid[0].length,rows=saGrid.length,showHints=g.diff!=='hard';
- var cellsHtml='';
- for(var ry=0;ry<rows;ry++){
-  for(var cx=0;cx<cols;cx++){
-   var cid=saGrid[ry][cx];
-   var classes=['sa-cell'],style='',clickable=false;
-   if(!cid){classes.push('ocean');}
-   else if(pz.placed[cid]){classes.push('placed');style='background:'+countryById(cid).color+';';}
-   else{classes.push('land');clickable=true;if(showHints&&pz.selected===cid)classes.push('hint');}
-   cellsHtml+='<button class="'+classes.join(' ')+'" style="'+style+'" '+(clickable?'data-action="sa-cell" ':'tabindex="-1" ')+'data-country="'+(cid||'')+'" aria-label="'+(cid?(pz.placed[cid]?countryById(cid).name:'unplaced land'):'ocean')+'" '+(clickable?'':'aria-hidden="true"')+'></button>';
-  }
- }
- var labelsHtml=saCountries.filter(function(c){return pz.placed[c.id];}).map(function(c){
-  var ctr=saCentroid(c.id);
-  return '<span class="sa-label" style="left:'+((ctr.x+.5)/cols*100)+'%;top:'+((ctr.y+.5)/rows*100)+'%">'+c.name+'</span>';
+ var pz=g.puzzle,showHints=g.diff!=='hard';
+ var pathsHtml=saCountries.map(function(c){
+  var placed=!!pz.placed[c.id];
+  var classes=[placed?'placed':'land'];
+  if(!placed&&showHints&&pz.selected===c.id)classes.push('hint');
+  return '<path class="sa-country '+classes.join(' ')+'" d="'+countryPathD(c.pts)+'" fill="'+(placed?c.color:'#e8dfc4')+'" '+(placed?'':'data-action="sa-cell" ')+'data-country="'+c.id+'" aria-label="'+(placed?c.name+' placed':'unplaced land, tap to place the selected country')+'"></path>';
  }).join('');
+ var labelsHtml=saCountries.filter(function(c){return pz.placed[c.id];}).map(function(c){var ctr=saCentroid(c.id);return '<text class="sa-label" x="'+ctr.x+'" y="'+ctr.y+'" text-anchor="middle">'+esc(c.name)+'</text>';}).join('');
  var trayList=saCountries.filter(function(c){return !pz.placed[c.id];});
  var tray=trayList.map(function(c){return '<button class="pill sa-tile'+(pz.selected===c.id?' selected':'')+'" data-action="sa-select" data-country="'+c.id+'" style="border-color:'+c.color+'">'+c.name+'</button>';}).join('');
  var allPlaced=!trayList.length;
  var overlay=allPlaced?'<div class="maze-celebrate">'+confettiHtml()+'<div class="banner"><h3>All done!</h3><p>Every country is in its place.</p></div></div>':'';
- return '<div class="sa-wrap">'+overlay+'<div class="sa-board" style="grid-template-columns:repeat('+cols+',1fr)">'+cellsHtml+labelsHtml+'</div><div class="sa-tray"><p class="hint">'+(allPlaced?'Great work, geographer!':'Pick a country, then tap its home on the map.')+'</p><div class="sa-tray-list">'+tray+'</div></div></div>';
+ var selected=pz.selected?countryById(pz.selected):null;
+ var infoHtml=selected?'<div class="sa-info">'+countryFlag(selected.id)+'<div><strong>'+esc(selected.name)+'</strong><p>'+esc(pz.fact||'')+'</p></div></div>':'';
+ return '<div class="sa-wrap">'+overlay+'<svg class="sa-map" viewBox="0 0 400 700" preserveAspectRatio="xMidYMid meet" aria-label="Map of South America">'+pathsHtml+labelsHtml+'</svg><div class="sa-tray">'+infoHtml+'<p class="hint">'+(allPlaced?'Great work, geographer!':'Pick a country, then tap its home on the map.')+'</p><div class="sa-tray-list">'+tray+'</div></div></div>';
 }
 function saClickCell(cid){
  if(!game||game.paused||game.ended||game.type!=='countries')return;
@@ -527,10 +542,10 @@ function saClickCell(cid){
  if(!pz.selected){toast('Pick a country from the list first!');return;}
  if(pz.selected!==cid){
   tone('nope');
-  var boardEl=document.querySelector('.sa-board');if(boardEl){boardEl.classList.add('nope');setTimeout(function(){boardEl.classList.remove('nope');},380);}
+  var mapEl=document.querySelector('.sa-map');if(mapEl){mapEl.classList.add('nope');setTimeout(function(){mapEl.classList.remove('nope');},380);}
   return;
  }
- pz.placed[cid]=true;pz.selected=null;
+ pz.placed[cid]=true;pz.selected=null;pz.fact='';
  g.score++;tone('snip');
  var scoreEl=$('#score');if(scoreEl)scoreEl.textContent=g.score;
  if(Object.keys(pz.placed).length>=saCountries.length){
@@ -752,7 +767,12 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-acti
  else if(a==='resume')resumeGame();
  else if(a==='finish')finishGame();
  else if(a==='maze-cell'){mazeClick(Number(b.getAttribute('data-x')),Number(b.getAttribute('data-y')));}
- else if(a==='sa-select'){var cid=b.getAttribute('data-country');game.puzzle.selected=(game.puzzle.selected===cid)?null:cid;renderGame();}
+ else if(a==='sa-select'){
+  var cid=b.getAttribute('data-country');
+  if(game.puzzle.selected===cid){game.puzzle.selected=null;game.puzzle.fact='';}
+  else{game.puzzle.selected=cid;var facts=saFacts[cid]||[];game.puzzle.fact=facts.length?facts[Math.floor(Math.random()*facts.length)]:'';}
+  renderGame();
+ }
  else if(a==='sa-cell'){saClickCell(b.getAttribute('data-country'));}
  else if(a==='herd-cow'){herdClickCow(Number(b.getAttribute('data-id')));}
  else if(a==='maze-new'){newMazeRound(game);renderGame();}
