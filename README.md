@@ -20,10 +20,11 @@ Ubuntu 18.04 should have its normal system updates installed. The package requir
 
 - **Bop!** Click or tap a friendly field mouse. It ducks back into its hole. No harm, no penalties.
 - **Bloom!** Click or tap a growing flower to snip it. The flower grows back. Each snip adds one to the flower count; a very new shoot needs a moment to grow before it can be snipped again.
-- **Scurry!** A brand-new maze is generated every round. Click, tap, or use the arrow keys/WASD to drop a trail of cheese and guide the field mouse home. Clicking further down an open corridor drops every cheese crumb in between in one go, so long stretches take one click instead of many; a bright marker shows the far end of the corridor. Tap an earlier crumb (or "Start this maze over") to back up — there is never a wrong-answer penalty. A trumpet fanfare and confetti celebrate each mouse getting home. "Bigger maze" switches to a larger, screen-filling layout at any time.
-- **Bouquet!** A target bouquet appears in a vase graphic at the top of the garden; snip the matching flower types and colors to fill a second vase to match. A non-matching flower just gives a gentle "not this one" wiggle — no penalty. Four flower species (daisy, tulip, sunflower, rose) across six colors, with a subtle outline on every petal so pale/white blooms stay visible.
-- **Little explorer** is the default: no timer, no losing, and mice patiently wait for you.
-- **Growing explorer** and **Speedy explorer** offer optional 60-second rounds. Personal bests are saved for timed rounds, across both timed paces.
+- **Scurry!** A brand-new maze is generated every round. On Easy, tap the one lit-up box next to the mouse, one step at a time — the original way this game played. Medium and Hard let you tap further down an open corridor to drop every cheese crumb in between in one click, and Hard adds a bigger maze and a 60-second timer. Tap an earlier crumb (or "Start this maze over") to back up — there is never a wrong-answer penalty. A trumpet fanfare and confetti celebrate each mouse getting home.
+- **Bouquet!** A target bouquet appears in a vase graphic at the top of the garden, with each flower drawn with its stem and leaves just like the ones in the garden; snip the matching flower types and colors to fill a second vase to match, one flower blooming into place at a time. A non-matching flower just gives a gentle "not this one" wiggle — no penalty. Four flower species (daisy, tulip, sunflower, rose) across six colors, with a dark outline on every vase and petal so pale/white blooms and the vases themselves stay visible on any background.
+- **Country Match!** Learn South America: pick a country from the list, then tap its place on a simplified map to fill it in. Medium and Hard add a 60-second timer, and Hard hides the "you're getting warm" highlight so it relies on memory alone.
+- **Gaucho Herd!** Tap the cows wandering the Patagonian pampas to send them home to the corral. Medium and Hard add more cows and a timer.
+- **Easy, Medium, and Hard** are chosen separately for each game, right on that game's own screen, and each game remembers its own choice. Easy has no timer and is the original, gentlest version of each game. Medium and Hard add a 60-second timer (except Scurry's corridor shortcuts, which don't need one) and a bit more challenge — never a point penalty for missing.
 - Choose **All done**, or the home button mid-round, to head straight back to the playroom — no extra confirmation step.
 - Keyboard: `Q W E / A S D / Z X C` or `1–9` map to the nine targets in Bop!/Bloom!/Bouquet!; arrow keys or WASD move the mouse in Scurry!. Space or Escape pauses/resumes. F11 toggles fullscreen in the desktop app. Tab and Enter work on menu controls.
 
@@ -33,9 +34,20 @@ Choose **Make it yours** in the playroom. Edit the name, choose one of sixteen s
 
 The child's name becomes the main identity. The fixed Bop & Bloom icon and small wordmark remain consistent.
 
-Use the player button at the top to add or switch between up to 24 local profiles. Each remembers its name, colors, sidekick, lettering, pattern, play pace, and timed best scores. The most recently selected player opens next time. Players can share the same Linux login; separate Linux logins have separate profile sets. Profile deletion is not included in this first build.
+Use the player button at the top to add or switch between up to 24 local profiles. Each remembers its name, colors, sidekick, lettering, pattern, per-game difficulty choices, schoolwork, points, and timed best scores. The most recently selected player opens next time. Players can share the same Linux login; separate Linux logins have separate profile sets. Profile deletion is not included in this first build.
 
-Settings include master mute and volume, separate music and effects toggles and volumes, and less animation. Sound settings are shared between profiles on the same Linux login. Settings save automatically; opening settings during a game pauses the round and offers a return button. Pace changes take effect in the next round.
+Settings include master mute and volume, separate music and effects toggles and volumes, and less animation. Sound settings are shared between profiles on the same Linux login. Settings save automatically; opening settings during a game pauses the round and offers a return button.
+
+## Parent area
+
+Tap the lock icon in the top bar and enter the 4-digit parent PIN (**1234** by default — change it from inside the Parent area) to reach grown-up controls:
+
+- **Games shown** — turn any game on or off per child, so the playroom menu only shows what's appropriate for them right now.
+- **Difficulty levels shown** — turn Easy/Medium/Hard on or off per child; whatever stays on is what that child can choose from on each game's own screen. At least one game and one difficulty level always stay on.
+- **Assign schoolwork** — pick a game and assign it to a child. It shows up under the **School** tab on their playroom menu (next to **Play**), with a badge for how many assignments are waiting.
+- **Review completed work** — every finished assignment records the date, the score, and the points earned (10 points plus the score achieved) for the parent to look back on.
+
+Children see their running point total and a list of finished assignments right on their own **School** tab, so they get the satisfaction of seeing progress without needing the PIN.
 
 ## Data and privacy
 
@@ -97,9 +109,11 @@ Optional environment variables: `PLAYWRIGHT_MODULE` points to a Playwright modul
 - Profile creation, reload, switching, and independently saved personalization.
 - Palette/name-logo generation and manual color/name edits.
 - Mouse, keyboard, touch, and legacy mouse-event input.
-- Mouse scoring, no miss penalties, flower regrowth, procedurally generated mazes with cheese-trail scurry scoring, bouquet-vase matching across four flower species and six colors, and rapid-click protection.
+- Mouse scoring, no miss penalties, flower regrowth, procedurally generated mazes with cheese-trail scurry scoring, bouquet-vase matching across four flower species and six colors, a South America country-placement puzzle, a Patagonian cow-herding round, and rapid-click protection.
+- Per-game Easy/Medium/Hard difficulty selection and persistence, independent per profile and per game.
+- Parent PIN gate, per-child game/difficulty visibility controls, schoolwork assignment, and points/review tracking.
 - Pause, resume, timed completion, and best-score persistence.
-- Saved sound toggles, volume, pace, and reduced animation.
+- Saved sound toggles, volume, and reduced animation.
 - Atomic native file replacement, file permissions, invalid-save rejection, and corrupt-file preservation.
 - Native GTK launch, native profile save/reload, and mouse scoring on the available Linux host.
 - Debian archive metadata, compression, dependencies, installed file paths, and executable permissions.

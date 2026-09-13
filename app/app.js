@@ -35,22 +35,77 @@ var flowerHues=[
 ];
 var MAZE_SIZE=5;
 var mazeKeyDirs={arrowup:'n',w:'n',arrowdown:'s',s:'s',arrowleft:'w',a:'w',arrowright:'e',d:'e'};
-var gameNames={bop:'Bop!',bloom:'Bloom!',scurry:'Scurry!',bouquet:'Bouquet!'};
-var gameScores={bop:'BOPS',bloom:'FLOWERS',scurry:'MICE',bouquet:'BOUQUETS'};
-var gameLabels={bop:'happy little bops',bloom:'flowers snipped',scurry:'mice guided home',bouquet:'bouquets made'};
+var DIFF_LEVELS=['easy','medium','hard'];
+var diffLabels={easy:'Easy',medium:'Medium',hard:'Hard'};
+var GAME_IDS=['bop','bloom','scurry','bouquet','countries','gauchos'];
+var GAME_CATALOG=[
+ {id:'bop',title:'Bop!',desc:'Peekaboo, little mice. Can you catch them?',label:'PEEK · BOP · GIGGLE',secondary:false,verb:'bop'},
+ {id:'bloom',title:'Bloom!',desc:'Grow a little garden. Snip a bunch of flowers.',label:'GROW · SNIP · SMILE',secondary:true,verb:'bloom'},
+ {id:'scurry',title:'Scurry!',desc:'A new maze appears every time. Drop cheese to guide a field mouse home.',label:'CHEESE · MAZE · HOME',secondary:false,verb:'scurry'},
+ {id:'bouquet',title:'Bouquet!',desc:'A bouquet appears — snip the matching flowers and fill the vase to match it.',label:'MATCH · SNIP · BUNCH',secondary:true,verb:'bunch'},
+ {id:'countries',title:'Country Match!',desc:'Learn South America — match every country to its place on the map.',label:'LEARN · MATCH · MAP',secondary:false,verb:'match'},
+ {id:'gauchos',title:'Gaucho Herd!',desc:'Round up a wandering herd of cows on the Patagonian pampas.',label:'ROUND UP · HERD · HOME',secondary:true,verb:'herd'}
+];
+var gameNames={bop:'Bop!',bloom:'Bloom!',scurry:'Scurry!',bouquet:'Bouquet!',countries:'Country Match!',gauchos:'Gaucho Herd!'};
+var gameScores={bop:'BOPS',bloom:'FLOWERS',scurry:'MICE',bouquet:'BOUQUETS',countries:'COUNTRIES',gauchos:'COWS'};
+var gameLabels={bop:'happy little bops',bloom:'flowers snipped',scurry:'mice guided home',bouquet:'bouquets made',countries:'countries placed',gauchos:'cows herded home'};
+var saCountries=[
+ {id:'venezuela',name:'Venezuela',color:'#e8a33d'},
+ {id:'colombia',name:'Colombia',color:'#d9614f'},
+ {id:'guyana',name:'Guyana',color:'#7fb99b'},
+ {id:'suriname',name:'Suriname',color:'#6fa8d6'},
+ {id:'ecuador',name:'Ecuador',color:'#f2c14e'},
+ {id:'peru',name:'Peru',color:'#c96b8f'},
+ {id:'brazil',name:'Brazil',color:'#6fae5c'},
+ {id:'bolivia',name:'Bolivia',color:'#a680c9'},
+ {id:'paraguay',name:'Paraguay',color:'#e78aa0'},
+ {id:'chile',name:'Chile',color:'#4a90a4'},
+ {id:'argentina',name:'Argentina',color:'#8fb6d9'},
+ {id:'uruguay',name:'Uruguay',color:'#d69a5c'}
+];
+var saGrid=[
+ [null,'venezuela','venezuela','guyana','suriname'],
+ ['colombia','colombia','venezuela','brazil','brazil'],
+ ['colombia','ecuador','brazil','brazil','brazil'],
+ ['peru','peru','brazil','brazil','brazil'],
+ ['peru','bolivia','bolivia','brazil','brazil'],
+ ['chile','bolivia','paraguay','brazil','brazil'],
+ ['chile','argentina','paraguay','uruguay','brazil'],
+ ['chile','argentina','argentina','argentina',null]
+];
 var defaults={muted:false,music:true,effects:true,volume:65,musicVolume:25,effectsVolume:75,reduced:false};
-var state={version:1,active:null,profiles:[],settings:copy(defaults)};
-var screen='home', draft=null, game=null, lastFocus=null;
+var state={version:1,active:null,profiles:[],settings:copy(defaults),parentPin:'1234'};
+var screen='home', draft=null, game=null, lastFocus=null, homeTab='play', pinEntry='', pinTarget='gate', managing=null;
 function copy(x){return JSON.parse(JSON.stringify(x));}
 function esc(x){return String(x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function clamp(n,min,max){return Math.max(min,Math.min(max,Number(n)||0));}
 function id(){return 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,9);}
 function colors(c){var out=copy(palettes[0]);colorKeys.forEach(function(k){if(c&&/^#[0-9a-f]{6}$/i.test(c[k]))out[k]=c[k];});return out;}
+function sanitizeDifficulty(d){var out={};GAME_IDS.forEach(function(gid){out[gid]=DIFF_LEVELS.indexOf(d&&d[gid])>=0?d[gid]:'easy';});return out;}
+function sanitizeList(list,allowed){if(!Array.isArray(list))return null;var f=list.filter(function(v){return allowed.indexOf(v)>=0;});return f.length?f:null;}
+function sanitizeAssignments(list){
+ if(!Array.isArray(list))return [];
+ return list.slice(0,200).filter(function(a){return a&&typeof a.id==='string'&&GAME_IDS.indexOf(a.gameId)>=0;}).map(function(a){return {id:a.id,gameId:a.gameId,assignedAt:Number(a.assignedAt)||Date.now(),completed:!!a.completed,completedAt:a.completedAt?Number(a.completedAt):null,score:clamp(a.score,0,999999)};});
+}
 function sanitize(raw){
  if(!raw||raw.version!==1||!Array.isArray(raw.profiles))return;
- state.profiles=raw.profiles.slice(0,24).filter(function(p){return p&&typeof p.name==='string'&&p.name.trim();}).map(function(p){return {id:typeof p.id==='string'?p.id:id(),name:p.name.trim().slice(0,24),colors:colors(p.colors),mascot:mascots.indexOf(p.mascot)>=0?p.mascot:'flower',style:styles.indexOf(p.style)>=0?p.style:'pop',pattern:patterns.indexOf(p.pattern)>=0?p.pattern:'dots',mode:['relaxed','gentle','speedy'].indexOf(p.mode)>=0?p.mode:'relaxed',mazeSize:p.mazeSize==='big'?'big':'cozy',best:{bop:clamp(p.best&&p.best.bop,0,999999),bloom:clamp(p.best&&p.best.bloom,0,999999),scurry:clamp(p.best&&p.best.scurry,0,999999),bouquet:clamp(p.best&&p.best.bouquet,0,999999)}};});
+ state.profiles=raw.profiles.slice(0,24).filter(function(p){return p&&typeof p.name==='string'&&p.name.trim();}).map(function(p){return {
+  id:typeof p.id==='string'?p.id:id(),
+  name:p.name.trim().slice(0,24),
+  colors:colors(p.colors),
+  mascot:mascots.indexOf(p.mascot)>=0?p.mascot:'flower',
+  style:styles.indexOf(p.style)>=0?p.style:'pop',
+  pattern:patterns.indexOf(p.pattern)>=0?p.pattern:'dots',
+  difficulty:sanitizeDifficulty(p.difficulty),
+  enabledGames:sanitizeList(p.enabledGames,GAME_IDS)||GAME_IDS.slice(),
+  enabledDifficulties:sanitizeList(p.enabledDifficulties,DIFF_LEVELS)||DIFF_LEVELS.slice(),
+  assignments:sanitizeAssignments(p.assignments),
+  points:clamp(p.points,0,9999999),
+  best:{bop:clamp(p.best&&p.best.bop,0,999999),bloom:clamp(p.best&&p.best.bloom,0,999999),scurry:clamp(p.best&&p.best.scurry,0,999999),bouquet:clamp(p.best&&p.best.bouquet,0,999999),countries:clamp(p.best&&p.best.countries,0,999999),gauchos:clamp(p.best&&p.best.gauchos,0,999999)}
+ };});
  state.active=state.profiles.some(function(p){return p.id===raw.active;})?raw.active:(state.profiles[0]||{}).id||null;
  var s=raw.settings||{};Object.keys(defaults).forEach(function(k){state.settings[k]=typeof defaults[k]==='boolean'?(typeof s[k]==='boolean'?s[k]:defaults[k]):(typeof s[k]==='number'?clamp(s[k],0,100):defaults[k]);});
+ state.parentPin=/^\d{4}$/.test(raw.parentPin)?raw.parentPin:'1234';
 }
 try{sanitize(window.__BOP_DATA__||JSON.parse(localStorage.getItem(storageKey)||'null'));}catch(e){}
 function save(){
@@ -64,7 +119,7 @@ function current(){return state.profiles.filter(function(p){return p.id===state.
 function contrast(hex){var a=hex.slice(1).match(/../g).map(function(v){v=parseInt(v,16)/255;return v<=.04045?v/12.92:Math.pow((v+.055)/1.055,2.4);});return a[0]*.2126+a[1]*.7152+a[2]*.0722>.39?'#24382e':'#ffffff';}
 function shade(hex,percent){var num=parseInt(hex.slice(1),16),r=(num>>16)+Math.round(2.55*percent),g=((num>>8)&255)+Math.round(2.55*percent),b=(num&255)+Math.round(2.55*percent);r=Math.max(0,Math.min(255,r));g=Math.max(0,Math.min(255,g));b=Math.max(0,Math.min(255,b));return '#'+(r<16?'0':'')+r.toString(16)+(g<16?'0':'')+g.toString(16)+(b<16?'0':'')+b.toString(16);}
 function theme(p){var c=colors(p&&p.colors);colorKeys.forEach(function(k){document.documentElement.style.setProperty('--'+k,c[k]);});['primary','secondary','garden','surface'].forEach(function(k){document.documentElement.style.setProperty('--on-'+k,contrast(c[k]));});document.body.classList.toggle('reduced',state.settings.reduced);document.body.setAttribute('data-pattern',(p&&p.pattern)||'dots');}
-function icon(name){var paths={play:'<path d="M8 5l12 7-12 7z" fill="currentColor" stroke="none"/>',back:'<path d="M15 5l-7 7 7 7M8 12h13"/>',gear:'<path d="M9 3h6l1 4 4 1v7l-4 1-1 5H9l-1-5-4-1V8l4-1z"/><circle cx="12" cy="12" r="3"/>',sound:'<path d="M4 9h4l5-4v14l-5-4H4zM17 8q6 4 0 8"/>',mute:'<path d="M4 9h4l5-4v14l-5-4H4zM17 9l5 6m0-6l-5 6"/>',spark:'<path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3zM20 2v4m-2-2h4"/>',check:'<path d="M4 12l5 5L20 6"/>',pause:'<path d="M8 5v14M16 5v14" stroke-width="5"/>',home:'<path d="M3 11l9-8 9 8M6 9v12h12V9M10 21v-7h4v7"/>',close:'<path d="M5 5l14 14M19 5L5 19"/>',leaf:'<path d="M5 19C-2 4 14 2 21 3c0 15-10 20-16 16zm0 0L16 8"/>',people:'<circle cx="9" cy="7" r="3"/><path d="M2 21v-3a7 7 0 0114 0v3M17 4a3 3 0 010 6m1 4q5 0 5 7"/>'};return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(paths[name]||paths.spark)+'</svg>';}
+function icon(name){var paths={play:'<path d="M8 5l12 7-12 7z" fill="currentColor" stroke="none"/>',back:'<path d="M15 5l-7 7 7 7M8 12h13"/>',gear:'<path d="M9 3h6l1 4 4 1v7l-4 1-1 5H9l-1-5-4-1V8l4-1z"/><circle cx="12" cy="12" r="3"/>',sound:'<path d="M4 9h4l5-4v14l-5-4H4zM17 8q6 4 0 8"/>',mute:'<path d="M4 9h4l5-4v14l-5-4H4zM17 9l5 6m0-6l-5 6"/>',spark:'<path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3zM20 2v4m-2-2h4"/>',check:'<path d="M4 12l5 5L20 6"/>',pause:'<path d="M8 5v14M16 5v14" stroke-width="5"/>',home:'<path d="M3 11l9-8 9 8M6 9v12h12V9M10 21v-7h4v7"/>',close:'<path d="M5 5l14 14M19 5L5 19"/>',leaf:'<path d="M5 19C-2 4 14 2 21 3c0 15-10 20-16 16zm0 0L16 8"/>',people:'<circle cx="9" cy="7" r="3"/><path d="M2 21v-3a7 7 0 0114 0v3M17 4a3 3 0 010 6m1 4q5 0 5 7"/>',lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/>'};return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(paths[name]||paths.spark)+'</svg>';}
 function brand(){return '<div class="brand"><svg viewBox="0 0 44 44" aria-hidden="true"><rect width="44" height="44" rx="14" fill="#f0eacb"/><path d="M15 32V20" stroke="#457359" stroke-width="3"/><circle cx="14" cy="16" r="7" fill="#7773b1"/><circle cx="14" cy="16" r="3" fill="#f6ce70"/><circle cx="28" cy="26" r="8" fill="#a47958"/><circle cx="24" cy="19" r="4" fill="#a47958"/><circle cx="33" cy="20" r="4" fill="#a47958"/><circle cx="26" cy="26" r="1" fill="#293b36"/><circle cx="31" cy="26" r="1" fill="#293b36"/><path d="M28 29h2" stroke="#efd1bb" stroke-width="2"/></svg><span>bop & bloom</span></div>';}
 function mascot(type,c){c=colors(c);var body='';
  if(type==='flower')body='<path d="M60 112V62m0 32Q20 65 27 94q10 16 33 10m0-13q39-28 36-1-9 19-36 14" fill="'+c.garden+'" stroke="'+c.garden+'" stroke-width="6"/><g fill="'+c.primary+'"><ellipse cx="60" cy="32" rx="16" ry="24"/><ellipse cx="60" cy="70" rx="16" ry="24"/><ellipse cx="40" cy="51" rx="24" ry="16"/><ellipse cx="80" cy="51" rx="24" ry="16"/></g><circle cx="60" cy="51" r="19" fill="'+c.secondary+'"/><circle cx="54" cy="49" r="2" fill="#293b36"/><circle cx="66" cy="49" r="2" fill="#293b36"/><path d="M55 57q5 5 10 0" fill="none" stroke="#293b36" stroke-width="2"/>';
@@ -105,8 +160,10 @@ function flowerHead(species,hue,cy){
  }
  return out;
 }
-function flowerBloom(species,hue){return '<svg viewBox="59 29 82 82" class="bloom-icon" aria-hidden="true">'+flowerHead(species,hue,70)+'</svg>';}
-function vaseShape(fillColor){return '<svg viewBox="0 0 140 110" class="vase-shape" aria-hidden="true"><ellipse cx="70" cy="8" rx="30" ry="6" fill="'+shade(fillColor,-12)+'"/><path d="M40 8h60l-9 32q11 8 11 27c0 23-19 33-43 33s-43-10-43-33c0-19 10-23 11-27z" fill="'+fillColor+'"/></svg>';}
+function flowerBloom(species,hue){
+ return '<svg viewBox="55 15 90 175" class="bloom-icon" aria-hidden="true"><path d="M100 185V85" stroke="#567a48" stroke-width="5" stroke-linecap="round"/><path d="M100 150q-17-13-16-3 3 9 16 8m0-20q17-13 16-3-3 9-16 9" fill="#78a063"/>'+flowerHead(species,hue,60)+'</svg>';
+}
+function vaseShape(fillColor){return '<svg viewBox="0 0 140 110" class="vase-shape" aria-hidden="true"><ellipse cx="70" cy="8" rx="30" ry="6" fill="'+shade(fillColor,-12)+'" stroke="rgba(41,59,54,.4)" stroke-width="2.5"/><path d="M40 8h60l-9 32q11 8 11 27c0 23-19 33-43 33s-43-10-43-33c0-19 10-23 11-27z" fill="'+fillColor+'" stroke="rgba(41,59,54,.4)" stroke-width="3"/></svg>';}
 function bouquetVase(items,kind){
  var color=kind==='target-vase'?'#e7d2a6':'#cfe0d6';
  var rotate=[-12,0,12],lift=[8,-8,6];
@@ -128,19 +185,41 @@ function randomHue(){return flowerHues[Math.floor(Math.random()*flowerHues.lengt
 function scene(type){var b='<svg viewBox="0 0 520 210" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="520" height="210" fill="'+(type==='bop'?'#e8ecdb':'#f4e7cd')+'"/><circle cx="430" cy="41" r="23" fill="#f8d981"/><path d="M-20 144Q105 54 275 140T570 100V220H-20" fill="'+(type==='bop'?'#b9c9a1':'#c4cba0')+'"/><path d="M-20 196Q130 119 290 178T560 151V230H-20" fill="'+(type==='bop'?'#9bb789':'#a3bb86')+'"/><path d="M56 40h42m-17-9h36M300 40h36" stroke="#fffdf4" stroke-width="11" stroke-linecap="round"/>';
  if(type==='bop')b+='<g class="ready"><g transform="translate(60 47) scale(1.05)">'+mouseArt()+'</g><g transform="translate(262 91) scale(.7)">'+mouseArt()+'</g></g>';
  else if(type==='scurry')b+='<g transform="translate(50 100) scale(.6)">'+mouseArt()+'</g><path d="M95 154H180V100H280V150H370" stroke="#fff7d0" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".85" stroke-dasharray="14 10"/><g transform="translate(200 88) scale(1.6)">'+mazeCheeseIcon()+'</g><g transform="translate(355 132) scale(1.6)">'+mazeHoleIcon()+'</g>';
+ else if(type==='countries')b+='<rect x="210" y="35" width="120" height="150" rx="10" fill="#eee3c8" stroke="#b7a473" stroke-width="3"/><rect x="60" y="55" width="55" height="42" rx="6" fill="#6fae5c" transform="rotate(-8 88 76)"/><rect x="370" y="80" width="60" height="46" rx="6" fill="#c96b8f" transform="rotate(10 400 103)"/><rect x="240" y="60" width="30" height="26" rx="4" fill="#e8a33d"/><rect x="280" y="100" width="30" height="26" rx="4" fill="#4a90a4"/>';
+ else if(type==='gauchos')b+='<g transform="translate(60 110) scale(1.1)">'+cowIcon()+'</g><g transform="translate(180 135) scale(.9)">'+cowIcon()+'</g><g transform="translate(340 90) scale(1.3)">'+corralIcon()+'</g>';
  else for(var i=0;i<4;i++)b+='<g transform="translate('+(22+i*113)+' '+(i%2?79:48)+') scale(.85)">'+flowerArt(flowerSpecies[i%flowerSpecies.length],flowerHues[(i*2)%flowerHues.length],1)+'</g>';
  return b+'<path d="M28 201l4-14 7 13m421 2 7-19 5 18m-256 4 4-12 7 11" fill="#708f5a"/></svg>';}
-function topbar(){var p=current();return '<header class="topbar">'+brand()+'<div class="top-actions"><button class="pill" data-action="profiles" aria-label="Switch player"><span class="profile-dot">'+esc(p.name.charAt(0).toUpperCase())+'</span>'+'<span class="player-name">'+esc(p.name)+'</span> '+icon('people')+'</button><button class="icon-button" data-action="mute" aria-label="'+(state.settings.muted?'Turn sound on':'Mute all sound')+'" aria-pressed="'+state.settings.muted+'">'+icon(state.settings.muted?'mute':'sound')+'</button><button class="icon-button" data-action="settings" aria-label="Settings">'+icon('gear')+'</button></div></header>';}
+function topbar(){var p=current();return '<header class="topbar">'+brand()+'<div class="top-actions"><button class="pill" data-action="profiles" aria-label="Switch player"><span class="profile-dot">'+esc(p.name.charAt(0).toUpperCase())+'</span>'+'<span class="player-name">'+esc(p.name)+'</span> '+icon('people')+'</button><button class="icon-button" data-action="mute" aria-label="'+(state.settings.muted?'Turn sound on':'Mute all sound')+'" aria-pressed="'+state.settings.muted+'">'+icon(state.settings.muted?'mute':'sound')+'</button><button class="icon-button" data-action="parent-gate" aria-label="Parent area">'+icon('lock')+'</button><button class="icon-button" data-action="settings" aria-label="Settings">'+icon('gear')+'</button></div></header>';}
 function footer(){return '<footer class="footer"><span>'+icon('leaf')+'Made for little moments of wonder.</span><button class="text-button" data-action="workshop">Make it yours '+String.fromCharCode(8599)+'</button></footer>';}
 function shell(content){root.innerHTML='<div class="shell">'+topbar()+content+'</div>';}
-function render(){theme(current());audioSync();if(!current()){welcome();return;}if(screen==='home')home();else if(screen==='workshop')workshop();else if(screen==='settings')settings();else if(screen==='game')renderGame();}
-function home(){var p=current();shell('<main><section class="hero"><span class="little-spark" aria-hidden="true">✳</span><p class="eyebrow">A little world, all yours</p><div class="name-lockup">'+mascot(p.mascot,p.colors)+'<h1 class="name-title '+p.style+'">'+esc(p.name)+'’s playroom</h1></div><p class="hero-sub">Big discoveries. Little adventures. Let’s play.</p><span class="little-spark right" aria-hidden="true">✦</span></section><div class="section-heading"><h2>Pick your adventure</h2><span class="quiet">4 games · endless smiles</span></div><section class="games" aria-label="Games">'+card('bop','Bop!','Peekaboo, little mice. Can you catch them?','01')+card('bloom','Bloom!','Grow a little garden. Snip a bunch of flowers.','02')+card('scurry','Scurry!','A new maze appears every time. Drop cheese to guide a field mouse home.','03')+card('bouquet','Bouquet!','A bouquet appears — snip the matching flowers and fill the vase to match it.','04')+'</section></main>'+footer());}
-function card(type,title,description,num){var labels={bop:'PEEK · BOP · GIGGLE',bloom:'GROW · SNIP · SMILE',scurry:'CHEESE · MAZE · HOME',bouquet:'MATCH · SNIP · BUNCH'};return '<article class="game-card"><div class="scene">'+scene(type)+'<span class="scene-label">'+labels[type]+'</span></div><div class="card-body"><div class="card-title-row"><h2>'+title+'</h2><span class="game-number">'+num+'</span></div><p>'+description+'</p><button class="big-button wide '+(type==='bloom'||type==='bouquet'?'secondary-button':'')+'" data-action="start" data-game="'+type+'">'+icon('play')+'Let’s '+type.replace('bouquet','bunch')+'!</button></div></article>';}
+function render(){theme(current());audioSync();if(!current()){welcome();return;}if(screen==='home')home();else if(screen==='workshop')workshop();else if(screen==='settings')settings();else if(screen==='parent')parentArea();else if(screen==='game')renderGame();}
+function catalogEntry(id){return GAME_CATALOG.filter(function(g){return g.id===id;})[0];}
+function visibleGames(p){var en=p.enabledGames&&p.enabledGames.length?p.enabledGames:GAME_IDS;return GAME_CATALOG.filter(function(g){return en.indexOf(g.id)>=0;});}
+function card(g,num,assignmentId){return '<article class="game-card"><div class="scene">'+scene(g.id)+'<span class="scene-label">'+g.label+'</span></div><div class="card-body"><div class="card-title-row"><h2>'+g.title+'</h2>'+(num?'<span class="game-number">'+num+'</span>':'')+'</div><p>'+g.desc+'</p><button class="big-button wide '+(g.secondary?'secondary-button':'')+'" data-action="start" data-game="'+g.id+'"'+(assignmentId?' data-assignment="'+assignmentId+'"':'')+'>'+icon('play')+'Let’s '+g.verb+'!</button></div></article>';}
+function playSection(p){
+ var games=visibleGames(p);
+ if(!games.length)return '<p class="hint">No games are turned on yet. Ask a grown-up to choose some in the Parent Area.</p>';
+ return '<div class="section-heading"><h2>Pick your adventure</h2><span class="quiet">'+games.length+' game'+(games.length===1?'':'s')+' · endless smiles</span></div><section class="games" aria-label="Games">'+games.map(function(g,i){return card(g,String(i+1).length<2?'0'+(i+1):(i+1));}).join('')+'</section>';
+}
+function schoolSection(p){
+ var assignments=p.assignments||[];
+ var pending=assignments.filter(function(a){return !a.completed;});
+ var done=assignments.filter(function(a){return a.completed;}).slice(-8).reverse();
+ var body='';
+ if(!pending.length&&!done.length){
+  body='<p class="hint">No schoolwork yet. Ask a grown-up to assign something in the Parent Area.</p>';
+ } else {
+  if(pending.length)body+='<div class="section-heading"><h2>Ready for you</h2></div><section class="games" aria-label="Assigned games">'+pending.map(function(a){var g=catalogEntry(a.gameId);return g?card(g,null,a.id):'';}).join('')+'</section>';
+  if(done.length)body+='<div class="section-heading"><h2>Great work!</h2></div><div class="done-list">'+done.map(function(a){var g=catalogEntry(a.gameId);return '<div class="done-row"><span>'+(g?g.title:a.gameId)+'</span><span class="quiet">'+new Date(a.completedAt).toLocaleDateString()+'</span><span class="points-chip">+'+(10+a.score)+'</span></div>';}).join('')+'</div>';
+ }
+ return '<div class="section-heading"><h2>My school work</h2><span class="quiet">'+(p.points||0)+' points earned</span></div>'+body;
+}
+function home(){var p=current();var pendingCount=(p.assignments||[]).filter(function(a){return !a.completed;}).length;shell('<main><section class="hero"><span class="little-spark" aria-hidden="true">✳</span><p class="eyebrow">A little world, all yours</p><div class="name-lockup">'+mascot(p.mascot,p.colors)+'<h1 class="name-title '+p.style+'">'+esc(p.name)+'’s playroom</h1></div><p class="hero-sub">Big discoveries. Little adventures. Let’s play.</p><span class="little-spark right" aria-hidden="true">✦</span></section><div class="home-tabs"><button class="tab-btn'+(homeTab==='play'?' active':'')+'" data-action="home-tab" data-value="play">Play</button><button class="tab-btn'+(homeTab==='school'?' active':'')+'" data-action="home-tab" data-value="school">School'+(pendingCount?' <span class="tab-badge">'+pendingCount+'</span>':'')+'</button></div>'+(homeTab==='school'?schoolSection(p):playSection(p))+'</main>'+footer());}
 function welcome(){root.innerHTML='<main class="onboarding"><div class="welcome">'+brand()+'<div class="welcome-art">'+scene('bloom')+'</div><p class="eyebrow">Small people. Big adventures.</p><h1>Who’s ready to play?</h1><p>Your name. Your colors. Your own little world.<br>Let’s make a playroom just for you.</p><form id="welcome-form"><label class="sr-only" for="welcome-name">Your name</label><input id="welcome-name" name="name" type="text" maxlength="24" placeholder="Type your name" autocomplete="off" required><button class="big-button wide" type="submit">Make my playroom '+icon('spark')+'</button><div class="error" id="name-error" role="alert"></div></form><p class="hint">Grown-ups can help with this bit.<br>Names and settings stay on this computer.</p></div></main>';$('#welcome-form').onsubmit=function(e){e.preventDefault();createProfile($('#welcome-name').value);};}
-function createProfile(name){name=name.trim().slice(0,24);if(!name){$('#name-error').textContent='Please enter a name.';return;}if(state.profiles.length>=24){toast('This computer already has 24 players.');return;}var p={id:id(),name:name,colors:copy(palettes[state.profiles.length%palettes.length]),mascot:'flower',style:'pop',pattern:'dots',mode:'relaxed',mazeSize:'cozy',best:{bop:0,bloom:0,scurry:0,bouquet:0}};state.profiles.push(p);state.active=p.id;save();closeModal();screen='home';render();tone('hello');}
+function createProfile(name){name=name.trim().slice(0,24);if(!name){$('#name-error').textContent='Please enter a name.';return;}if(state.profiles.length>=24){toast('This computer already has 24 players.');return;}var p={id:id(),name:name,colors:copy(palettes[state.profiles.length%palettes.length]),mascot:'flower',style:'pop',pattern:'dots',difficulty:sanitizeDifficulty({}),enabledGames:GAME_IDS.slice(),enabledDifficulties:DIFF_LEVELS.slice(),assignments:[],points:0,best:{bop:0,bloom:0,scurry:0,bouquet:0,countries:0,gauchos:0}};state.profiles.push(p);state.active=p.id;save();closeModal();screen='home';render();tone('hello');}
 function pageHead(title,sub){return '<div class="page-head"><div><h1>'+title+'</h1><p>'+sub+'</p></div><button class="pill" data-action="'+(screen==='settings'&&game?'back-game':'home')+'">'+icon('back')+(screen==='settings'&&game?'Back to game':'Playroom')+'</button></div>';}
 function workshop(){if(!draft)draft=copy(current());theme(draft);shell(pageHead('Make it yours','A name, a little character, and your favorite colors.')+'<main class="workshop"><section class="panel preview-panel" aria-label="Your name logo preview"><p class="eyebrow">Welcome to the world of</p><div id="preview-mascot">'+mascot(draft.mascot,draft.colors)+'</div><h2 id="preview-name" class="name-title '+draft.style+'">'+esc(draft.name)+'</h2><p class="quiet">A very you kind of playroom.</p>'+brand()+'</section><section class="panel"><label class="field"><span class="field-label">Your name</span><input type="text" id="edit-name" value="'+esc(draft.name)+'" maxlength="24" autocomplete="off"></label><span class="field-label">Your little sidekick</span><div class="choice-row sidekick-row">'+mascots.map(function(m){return '<button class="choice '+(draft.mascot===m?'selected':'')+'" data-action="mascot" data-value="'+m+'" aria-label="'+m+' logo" aria-pressed="'+(draft.mascot===m)+'">'+mascot(m,draft.colors)+'</button>';}).join('')+'</div><span class="field-label">Your lettering</span><div class="choice-row">'+styles.map(function(s,i){return '<button class="choice '+(draft.style===s?'selected':'')+'" data-action="lettering" data-value="'+s+'" aria-pressed="'+(draft.style===s)+'">'+styleLabels[i]+'</button>';}).join('')+'</div><span class="field-label">Playroom pattern</span><div class="choice-row">'+patterns.map(function(s,i){return '<button class="choice pattern-choice '+(draft.pattern===s?'selected':'')+'" data-action="pattern" data-value="'+s+'" aria-pressed="'+(draft.pattern===s)+'"><span class="pattern-swatch '+s+'"></span>'+patternLabels[i]+'</button>';}).join('')+'</div><span class="field-label">Quick palettes</span><div class="choice-row palette-row">'+palettes.map(function(pal,i){return '<button class="choice palette-choice" data-action="apply-palette" data-index="'+i+'" aria-label="'+esc(pal.name)+' palette" title="'+esc(pal.name)+'"><span class="palette-swatch" style="background:linear-gradient(135deg,'+pal.primary+' 50%,'+pal.secondary+' 50%)"></span></button>';}).join('')+'</div><span class="field-label">Your colors</span><div class="color-grid">'+colorKeys.map(function(k,i){return '<label class="color-control">'+['Main','Accent','Background','Cards','Text','Leaves'][i]+'<input type="color" data-color="'+k+'" value="'+draft.colors[k]+'"></label>';}).join('')+'</div><div class="button-row"><button class="pill" data-action="shuffle">'+icon('spark')+'Surprise me!</button><button class="big-button" data-action="save-style">'+icon('check')+'Save my style</button></div><p class="hint">Surprise me makes a fresh palette, sidekick, name logo, and playroom pattern. Everything is generated here, even offline.</p></section></main>');$('#edit-name').oninput=function(){draft.name=this.value;$('#preview-name').textContent=this.value||'Your name';};document.querySelectorAll('[data-color]').forEach(function(el){el.oninput=function(){draft.colors[this.getAttribute('data-color')]=this.value;theme(draft);$('#preview-mascot').innerHTML=mascot(draft.mascot,draft.colors);};});}
-function settings(){var s=state.settings,p=current();shell(pageHead('A few little settings','Sound, play pace, and comfort for '+esc(p.name)+'.')+'<main class="settings-grid"><section class="panel"><h2>Sounds of the playroom</h2>'+switchRow('muted','Mute all sound','A quiet moment, whenever you need it.')+range('volume','Master volume',s.volume)+'<div class="divider"></div>'+switchRow('music','Background music','A soft, original music-box melody.')+range('musicVolume','Music volume',s.musicVolume)+'<div class="divider"></div>'+switchRow('effects','Game sounds','Little pops, snips, and happy notes.')+range('effectsVolume','Effects volume',s.effectsVolume)+'<button class="pill" data-action="test-sound">'+icon('sound')+'Try a sound</button></section><section class="panel"><h2>Play your way</h2><label class="field"><span class="field-label">Play pace for '+esc(p.name)+'</span><select id="pace"><option value="relaxed" '+(p.mode==='relaxed'?'selected':'')+'>Little explorer · no timer</option><option value="gentle" '+(p.mode==='gentle'?'selected':'')+'>Growing explorer · gentle 60-second round</option><option value="speedy" '+(p.mode==='speedy'?'selected':'')+'>Speedy explorer · faster 60-second round</option></select></label><p class="hint">Little explorer is made for ages 3–5: big targets, patient mice, and no hurry. Every mode is kind. Misses never take points away.</p><div class="divider"></div>'+switchRow('reduced','Less animation','Keeps the playroom a little calmer.')+'<div class="divider"></div><h2>Everyone gets a turn</h2><p class="hint">Each player has their own name logo, colors, pace, and best scores. Sound settings are shared on this computer.</p><div class="empty-space"><button class="pill" data-action="profiles">'+icon('people')+'Choose a player</button></div><p class="hint">Settings save automatically.</p></section></main>');$('#pace').onchange=function(){p.mode=this.value;save();};document.querySelectorAll('input[type=range]').forEach(function(el){el.oninput=function(){state.settings[this.id]=Number(this.value);$('#value-'+this.id).textContent=this.value+'%';save();audioSync();};});}
+function settings(){var s=state.settings,p=current();shell(pageHead('A few little settings','Sound and comfort for '+esc(p.name)+'.')+'<main class="settings-grid"><section class="panel"><h2>Sounds of the playroom</h2>'+switchRow('muted','Mute all sound','A quiet moment, whenever you need it.')+range('volume','Master volume',s.volume)+'<div class="divider"></div>'+switchRow('music','Background music','A soft, original music-box melody.')+range('musicVolume','Music volume',s.musicVolume)+'<div class="divider"></div>'+switchRow('effects','Game sounds','Little pops, snips, and happy notes.')+range('effectsVolume','Effects volume',s.effectsVolume)+'<button class="pill" data-action="test-sound">'+icon('sound')+'Try a sound</button></section><section class="panel"><h2>Play your way</h2><p class="hint">Choose Easy, Medium, or Hard right on each game\'s screen — every game remembers its own level. Easy is made for ages 3–5: big targets, patient pacing, and no hurry. Misses never take points away.</p><div class="divider"></div>'+switchRow('reduced','Less animation','Keeps the playroom a little calmer.')+'<div class="divider"></div><h2>Everyone gets a turn</h2><p class="hint">Each player has their own name logo, colors, difficulty choices, and best scores. Sound settings are shared on this computer.</p><div class="empty-space"><button class="pill" data-action="profiles">'+icon('people')+'Choose a player</button></div><p class="hint">Settings save automatically.</p></section></main>');document.querySelectorAll('input[type=range]').forEach(function(el){el.oninput=function(){state.settings[this.id]=Number(this.value);$('#value-'+this.id).textContent=this.value+'%';save();audioSync();};});}
 function switchRow(key,label,sub){return '<div class="setting-row"><label id="label-'+key+'">'+label+'<small>'+sub+'</small></label><button class="switch" role="switch" aria-labelledby="label-'+key+'" aria-checked="'+state.settings[key]+'" data-action="toggle" data-value="'+key+'"></button></div>';}
 function range(key,label,value){return '<label class="field"><span class="range-label"><span>'+label+'</span><span id="value-'+key+'">'+value+'%</span></span><input id="'+key+'" type="range" min="0" max="100" value="'+value+'"></label>';}
 function toast(message){var t=$('#toast');t.className='toast';t.textContent=message;clearTimeout(toast.timer);toast.timer=setTimeout(function(){t.textContent='';},4500);}
@@ -148,6 +227,47 @@ function dialog(content,label){lastFocus=document.activeElement;modalRoot.innerH
 function closeModal(){modalRoot.innerHTML='';if(lastFocus&&document.contains(lastFocus))lastFocus.focus();lastFocus=null;}
 function profiles(){if(game)pauseGame();dialog('<button class="icon-button dialog-close" data-action="close-modal" aria-label="Close">'+icon('close')+'</button><h2>Who’s playing?</h2><p>A little world for everyone.</p><div class="profile-list">'+state.profiles.map(function(p){return '<button class="profile-select '+(p.id===state.active?'active':'')+'" data-action="select-profile" data-id="'+esc(p.id)+'">'+mascot(p.mascot,p.colors)+esc(p.name)+'</button>';}).join('')+'</div><button class="big-button wide" data-action="add-profile" '+(state.profiles.length>=24?'disabled':'')+'>+ Add a player</button>','Choose a player');}
 function addProfile(){dialog('<button class="icon-button dialog-close" data-action="profiles" aria-label="Back">'+icon('back')+'</button><h2>A new little explorer</h2><p>What should we call your playroom?</p><form id="add-form"><label class="field"><span class="field-label">Your name</span><input id="new-name" type="text" maxlength="24" required autocomplete="off"></label><button class="big-button wide" type="submit">Make my playroom '+icon('spark')+'</button><div class="error" id="name-error" role="alert"></div></form>','Add a player');$('#add-form').onsubmit=function(e){e.preventDefault();stopGame();createProfile($('#new-name').value);};}
+function pinDotsHtml(){var h='';for(var i=0;i<4;i++)h+='<span class="pin-dot'+(i<pinEntry.length?' filled':'')+'"></span>';return h;}
+function pinPadHtml(){var keys=['1','2','3','4','5','6','7','8','9','','0','back'];return keys.map(function(k){if(k==='')return '<span></span>';if(k==='back')return '<button class="pin-key" data-action="pin-back" aria-label="Backspace">⌫</button>';return '<button class="pin-key" data-action="pin-digit" data-value="'+k+'">'+k+'</button>';}).join('');}
+function parentGate(){pinEntry='';if(game)pauseGame();dialog('<button class="icon-button dialog-close" data-action="close-modal" aria-label="Close">'+icon('close')+'</button><h2>Grown-ups only</h2><p>Enter the 4-digit parent PIN.</p><div class="pin-dots">'+pinDotsHtml()+'</div><div class="pin-pad">'+pinPadHtml()+'</div><div class="error" id="pin-error" role="alert"></div>','Parent area');}
+function updatePinDialog(){
+ var dotsEl=document.querySelector('.pin-dots');
+ if(!dotsEl)return;
+ dotsEl.innerHTML=pinDotsHtml();
+ if(pinEntry.length===4){
+  if(pinEntry===state.parentPin){
+   pinEntry='';closeModal();managing=state.active;screen='parent';render();
+  } else {
+   var dialogEl=document.querySelector('.dialog');
+   if(dialogEl)dialogEl.classList.add('nope');
+   var err=$('#pin-error');if(err)err.textContent='That\'s not it — try again.';
+   setTimeout(function(){pinEntry='';if(dialogEl)dialogEl.classList.remove('nope');var d=document.querySelector('.pin-dots');if(d)d.innerHTML=pinDotsHtml();},420);
+  }
+ }
+}
+function managedProfile(){return state.profiles.filter(function(p){return p.id===managing;})[0]||current();}
+function parentAssignmentList(p){
+ var pending=(p.assignments||[]).filter(function(a){return !a.completed;});
+ var done=(p.assignments||[]).filter(function(a){return a.completed;}).slice(-10).reverse();
+ var html='';
+ if(pending.length)html+='<p class="hint">Waiting to be played:</p><div class="done-list">'+pending.map(function(a){var g=catalogEntry(a.gameId);return '<div class="done-row"><span>'+(g?g.title:a.gameId)+'</span><span class="quiet">assigned '+new Date(a.assignedAt).toLocaleDateString()+'</span><button class="icon-button" data-action="remove-assignment" data-id="'+a.id+'" aria-label="Remove assignment">'+icon('close')+'</button></div>';}).join('')+'</div>';
+ if(done.length)html+='<p class="hint">Completed:</p><div class="done-list">'+done.map(function(a){var g=catalogEntry(a.gameId);return '<div class="done-row"><span>'+(g?g.title:a.gameId)+'</span><span class="quiet">'+new Date(a.completedAt).toLocaleDateString()+' · score '+a.score+'</span><span class="points-chip">+'+(10+a.score)+'</span></div>';}).join('')+'</div>';
+ if(!pending.length&&!done.length)html='<p class="hint">No schoolwork assigned yet.</p>';
+ return html;
+}
+function parentArea(){
+ var mp=managedProfile();
+ shell(pageHead('Parent area','Choose games, difficulty, and schoolwork for each player.')+'<main class="settings-grid"><section class="panel">'
+  +'<h2>Managing</h2><div class="choice-row">'+state.profiles.map(function(p){return '<button class="pill'+(p.id===mp.id?' selected':'')+'" data-action="manage-profile" data-id="'+esc(p.id)+'">'+esc(p.name)+'</button>';}).join('')+'</div>'
+  +'<div class="divider"></div><h2>Games shown to '+esc(mp.name)+'</h2><div class="choice-row">'+GAME_CATALOG.map(function(g){var on=mp.enabledGames.indexOf(g.id)>=0;return '<button class="pill toggle-pill'+(on?' on':'')+'" data-action="toggle-game" data-id="'+g.id+'">'+(on?icon('check'):'')+g.title+'</button>';}).join('')+'</div>'
+  +'<div class="divider"></div><h2>Difficulty levels shown</h2><div class="choice-row">'+DIFF_LEVELS.map(function(d){var on=mp.enabledDifficulties.indexOf(d)>=0;return '<button class="pill toggle-pill'+(on?' on':'')+'" data-action="toggle-diff" data-id="'+d+'">'+(on?icon('check'):'')+diffLabels[d]+'</button>';}).join('')+'</div>'
+  +'<p class="hint">Turn options off to simplify the menu for '+esc(mp.name)+'. At least one of each must stay on.</p>'
+  +'</section><section class="panel">'
+  +'<h2>Assign schoolwork</h2><label class="field"><span class="field-label">Pick a game to assign '+esc(mp.name)+'</span><select id="assign-game">'+GAME_CATALOG.map(function(g){return '<option value="'+g.id+'">'+g.title+'</option>';}).join('')+'</select></label><button class="big-button" data-action="assign-game">'+icon('spark')+'Assign it</button>'
+  +'<div class="divider"></div><h2>'+esc(mp.name)+'’s schoolwork</h2>'+parentAssignmentList(mp)
+  +'<div class="divider"></div><h2>Change parent PIN</h2><label class="field"><span class="field-label">New 4-digit PIN</span><input type="text" id="new-pin-1" maxlength="4" inputmode="numeric" placeholder="1234" autocomplete="off"></label><label class="field"><span class="field-label">Confirm new PIN</span><input type="text" id="new-pin-2" maxlength="4" inputmode="numeric" placeholder="1234" autocomplete="off"></label><button class="pill" data-action="save-pin">Save PIN</button><div class="error" id="pin-save-error"></div>'
+  +'</section></main>');
+}
 var audio=null,musicTimer=null,noteIndex=0;
 function unlockAudio(){try{if(!audio){var C=window.AudioContext||window.webkitAudioContext;if(C)audio=new C();}if(audio&&audio.state==='suspended')audio.resume();audioSync();}catch(e){}}
 function note(freq,duration,volume,type){if(!audio||audio.state!=='running'||state.settings.muted)return;var o=audio.createOscillator(),g=audio.createGain();o.type=type||'sine';o.frequency.value=freq;g.gain.setValueAtTime(0,audio.currentTime);g.gain.linearRampToValueAtTime(volume*state.settings.volume/100,audio.currentTime+.015);g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+duration);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+duration+.03);o.onended=function(){o.disconnect();g.disconnect();};}
@@ -191,11 +311,12 @@ function buildMaze(size){
 function openBetween(maze,ax,ay,bx,by){var a=maze.at(ax,ay);if(!a)return false;if(bx===ax&&by===ay-1)return !a.n;if(bx===ax&&by===ay+1)return !a.s;if(bx===ax+1&&by===ay)return !a.e;if(bx===ax-1&&by===ay)return !a.w;return false;}
 function mazeNeighbors(maze,x,y){var out=[];[[0,-1],[0,1],[1,0],[-1,0]].forEach(function(d){var nx=x+d[0],ny=y+d[1];if(maze.at(nx,ny)&&openBetween(maze,x,y,nx,ny))out.push({x:nx,y:ny});});return out;}
 function trailHas(trail,x,y){for(var i=0;i<trail.length;i++)if(trail[i].x===x&&trail[i].y===y)return i;return -1;}
-function mazeSizeFor(p){return (p&&p.mazeSize==='big')?7:5;}
+function mazeSizeFor(diff){return diff==='hard'?7:5;}
 function newMazeRound(g){g.maze=buildMaze(g.mazeSize||MAZE_SIZE);g.trail=[{x:0,y:0}];g.celebrating=false;}
-function mazeCorridors(maze,trail){
+function mazeCorridors(maze,trail,singleStep){
  var head=trail[trail.length-1];
  var immediate=mazeNeighbors(maze,head.x,head.y).filter(function(n){return trailHas(trail,n.x,n.y)<0;});
+ if(singleStep)return immediate.map(function(n){return [n];});
  var corridors=[];
  immediate.forEach(function(start){
   var path=[start],occupied=trail.concat(path),cur=start;
@@ -223,7 +344,7 @@ function fanfare(){
 }
 function mazeView(g){
  var maze=g.maze,size=maze.size,trail=g.trail,head=trail[trail.length-1];
- var corridors=g.celebrating?[]:mazeCorridors(maze,trail);
+ var corridors=g.celebrating?[]:mazeCorridors(maze,trail,g.diff==='easy');
  var cellMeta={};
  corridors.forEach(function(path){path.forEach(function(cell,idx){cellMeta[cell.x+','+cell.y]={end:idx===path.length-1&&path.length>1};});});
  var cellsHtml='';
@@ -249,7 +370,7 @@ function mazeView(g){
  }
  var maxWidth=size>5?640:430;
  var grid='<div class="maze-grid" style="grid-template-columns:repeat('+size+',1fr);max-width:'+maxWidth+'px">'+cellsHtml+'</div>';
- var actions='<div class="maze-actions"><button class="pill" data-action="maze-reset"'+(g.celebrating?' disabled':'')+'>'+icon('back')+'Start this maze over</button><button class="pill" data-action="maze-size"'+(g.celebrating?' disabled':'')+'>'+icon('spark')+((g.mazeSize||MAZE_SIZE)>5?'Cozy maze':'Bigger maze')+'</button></div>';
+ var actions='<div class="maze-actions"><button class="pill" data-action="maze-reset"'+(g.celebrating?' disabled':'')+'>'+icon('back')+'Start this maze over</button></div>';
  var overlay=g.celebrating?'<div class="maze-celebrate">'+confettiHtml()+'<div class="banner"><h3>Home safe!</h3><p>A new maze is on its way.</p></div></div>':'';
  return '<div class="maze-wrap">'+overlay+grid+actions+'</div>';
 }
@@ -260,7 +381,7 @@ function mazeClick(x,y){
   if(idx<trail.length-1){g.trail=trail.slice(0,idx+1);tone('bop');renderGame();}
   return;
  }
- var corridors=mazeCorridors(g.maze,trail),chain=null;
+ var corridors=mazeCorridors(g.maze,trail,g.diff==='easy'),chain=null;
  for(var i=0;i<corridors.length&&!chain;i++){
   var path=corridors[i];
   for(var j=0;j<path.length;j++){if(path[j].x===x&&path[j].y===y){chain=path.slice(0,j+1);break;}}
@@ -300,22 +421,114 @@ function classicField(g){
  }
  return extra+'<div class="target-grid">'+g.slots.map(function(s,i){return '<button class="target'+((g.type==='bouquet'&&s.growth>=.95&&matchTargetIndex(g,s)>=0)?' wanted':'')+'" id="target-'+i+'" data-action="hit" data-index="'+i+'" aria-label="'+(isMouse?'Mouse path':'Flower')+' '+(i+1)+'"><svg viewBox="0 0 200 125" aria-hidden="true">'+(isMouse?mouseArt():flowerArt(s.species,s.hue,s.growth))+'</svg><span class="keycap" aria-hidden="true">'+['Q · 1','W · 2','E · 3','A · 4','S · 5','D · 6','Z · 7','X · 8','C · 9'][i]+'</span></button>';}).join('')+'</div>';
 }
-function startGame(type){
+function countryById(cid){return saCountries.filter(function(c){return c.id===cid;})[0];}
+function saCentroid(cid){
+ var xs=[],ys=[];
+ saGrid.forEach(function(row,ry){row.forEach(function(c,cx){if(c===cid){xs.push(cx);ys.push(ry);}});});
+ return {x:xs.reduce(function(a,b){return a+b;},0)/xs.length,y:ys.reduce(function(a,b){return a+b;},0)/ys.length};
+}
+function puzzleView(g){
+ var pz=g.puzzle,cols=saGrid[0].length,rows=saGrid.length,showHints=g.diff!=='hard';
+ var cellsHtml='';
+ for(var ry=0;ry<rows;ry++){
+  for(var cx=0;cx<cols;cx++){
+   var cid=saGrid[ry][cx];
+   var classes=['sa-cell'],style='',clickable=false;
+   if(!cid){classes.push('ocean');}
+   else if(pz.placed[cid]){classes.push('placed');style='background:'+countryById(cid).color+';';}
+   else{classes.push('land');clickable=true;if(showHints&&pz.selected===cid)classes.push('hint');}
+   cellsHtml+='<button class="'+classes.join(' ')+'" style="'+style+'" '+(clickable?'data-action="sa-cell" ':'tabindex="-1" ')+'data-country="'+(cid||'')+'" aria-label="'+(cid?(pz.placed[cid]?countryById(cid).name:'unplaced land'):'ocean')+'" '+(clickable?'':'aria-hidden="true"')+'></button>';
+  }
+ }
+ var labelsHtml=saCountries.filter(function(c){return pz.placed[c.id];}).map(function(c){
+  var ctr=saCentroid(c.id);
+  return '<span class="sa-label" style="left:'+((ctr.x+.5)/cols*100)+'%;top:'+((ctr.y+.5)/rows*100)+'%">'+c.name+'</span>';
+ }).join('');
+ var trayList=saCountries.filter(function(c){return !pz.placed[c.id];});
+ var tray=trayList.map(function(c){return '<button class="pill sa-tile'+(pz.selected===c.id?' selected':'')+'" data-action="sa-select" data-country="'+c.id+'" style="border-color:'+c.color+'">'+c.name+'</button>';}).join('');
+ var allPlaced=!trayList.length;
+ var overlay=allPlaced?'<div class="maze-celebrate">'+confettiHtml()+'<div class="banner"><h3>All done!</h3><p>Every country is in its place.</p></div></div>':'';
+ return '<div class="sa-wrap">'+overlay+'<div class="sa-board" style="grid-template-columns:repeat('+cols+',1fr)">'+cellsHtml+labelsHtml+'</div><div class="sa-tray"><p class="hint">'+(allPlaced?'Great work, geographer!':'Pick a country, then tap its home on the map.')+'</p><div class="sa-tray-list">'+tray+'</div></div></div>';
+}
+function saClickCell(cid){
+ if(!game||game.paused||game.ended||game.type!=='countries')return;
+ var g=game,pz=g.puzzle;
+ if(!pz.selected){toast('Pick a country from the list first!');return;}
+ if(pz.selected!==cid){
+  tone('nope');
+  var boardEl=document.querySelector('.sa-board');if(boardEl){boardEl.classList.add('nope');setTimeout(function(){boardEl.classList.remove('nope');},380);}
+  return;
+ }
+ pz.placed[cid]=true;pz.selected=null;
+ g.score++;tone('snip');
+ var scoreEl=$('#score');if(scoreEl)scoreEl.textContent=g.score;
+ if(Object.keys(pz.placed).length>=saCountries.length){
+  tone('finish');
+  renderGame();
+  setTimeout(function(){if(!game||game!==g||game.ended)return;finishGame();},1800);
+  return;
+ }
+ renderGame();
+}
+function cowIcon(){return '<svg viewBox="0 0 60 50" aria-hidden="true"><ellipse cx="30" cy="30" rx="24" ry="16" fill="#fdfaf3"/><path d="M10 24q6-10 10 0" fill="#3a3226" opacity=".85"/><path d="M40 20q8 4 6 14" fill="#3a3226" opacity=".7"/><circle cx="14" cy="28" r="10" fill="#3a3226"/><circle cx="46" cy="28" r="10" fill="#3a3226"/><ellipse cx="30" cy="20" rx="14" ry="11" fill="#fdfaf3"/><ellipse cx="24" cy="19" rx="3" ry="4" fill="#3a3226"/><ellipse cx="36" cy="19" rx="3" ry="4" fill="#3a3226"/><path d="M20 27h20" stroke="#3a3226" stroke-width="2" stroke-linecap="round"/><ellipse cx="30" cy="44" rx="10" ry="6" fill="#e7c9a0"/></svg>';}
+function corralIcon(){return '<svg viewBox="0 0 140 100" aria-hidden="true"><rect x="6" y="30" width="128" height="60" rx="10" fill="#c9a877" opacity=".35"/><g stroke="#7a5a35" stroke-width="5" stroke-linecap="round"><path d="M10 40h120M10 60h120M10 80h120"/><path d="M10 30v60M40 30v60M70 30v60M100 30v60M130 30v60"/></g></svg>';}
+function newHerdRound(g){
+ var count=g.mode==='speedy'?7:g.mode==='gentle'?6:5;
+ var cows=[];
+ for(var i=0;i<count;i++)cows.push({id:i,x:8+Math.random()*62,y:12+Math.random()*70});
+ g.herd={cows:cows,total:count,corralled:0,celebrating:false};
+}
+function herdView(g){
+ var h=g.herd;
+ var cowsHtml=h.cows.map(function(c){return '<button class="cow-token" style="left:'+c.x+'%;top:'+c.y+'%" data-action="herd-cow" data-id="'+c.id+'" aria-label="Cow">'+cowIcon()+'</button>';}).join('');
+ var overlay=h.celebrating?'<div class="maze-celebrate">'+confettiHtml()+'<div class="banner"><h3>Herd’s home!</h3><p>A new herd is wandering in.</p></div></div>':'';
+ return '<div class="herd-wrap">'+overlay+'<div class="herd-field">'+cowsHtml+'<div class="corral"><div class="corral-count">'+h.corralled+' / '+h.total+'</div>'+corralIcon()+'</div></div></div>';
+}
+function herdClickCow(cowId){
+ if(!game||game.paused||game.ended||game.type!=='gauchos'||game.herd.celebrating)return;
+ var g=game,h=g.herd,idx=-1;
+ for(var i=0;i<h.cows.length;i++)if(h.cows[i].id===cowId){idx=i;break;}
+ if(idx<0)return;
+ h.cows.splice(idx,1);h.corralled++;g.score++;
+ tone('bop');
+ var scoreEl=$('#score');if(scoreEl)scoreEl.textContent=g.score;
+ if(!h.cows.length){
+  h.celebrating=true;
+  fanfare();
+  toast('The whole herd is home! A new herd is on its way.');
+  renderGame();
+  setTimeout(function(){if(!game||game!==g||game.ended)return;newHerdRound(g);renderGame();},1150);
+  return;
+ }
+ renderGame();
+}
+function diffToMode(d){return d==='hard'?'speedy':d==='medium'?'gentle':'relaxed';}
+function startGame(type,assignmentId){
  stopGame();screen='game';var p=current();
- game={type:type,score:0,elapsed:0,paused:false,mode:p.mode,last:performance.now(),frame:null,ended:false,spawn:0};
+ var diff=(p.difficulty&&p.difficulty[type])||'easy';
+ game={type:type,diff:diff,score:0,elapsed:0,paused:false,mode:diffToMode(diff),last:performance.now(),frame:null,ended:false,spawn:0,assignmentId:assignmentId||null};
  if(type==='bop'){game.slots=[];for(var i=0;i<9;i++)game.slots.push({active:false,until:0,cut:0});}
  else if(type==='bloom'){game.slots=[];for(var j=0;j<9;j++)game.slots.push(newFlowerSlot());}
  else if(type==='bouquet'){game.slots=[];for(var k=0;k<9;k++)game.slots.push(newFlowerSlot());newBouquetRound(game);}
- else if(type==='scurry'){game.mazeSize=mazeSizeFor(p);newMazeRound(game);}
+ else if(type==='scurry'){game.mazeSize=mazeSizeFor(diff);newMazeRound(game);}
+ else if(type==='countries'){game.puzzle={placed:{},selected:null};}
+ else if(type==='gauchos'){newHerdRound(game);}
  render();game.frame=requestAnimationFrame(tick);
+}
+function difficultyRow(g){
+ var p=current(),enabled=p.enabledDifficulties||DIFF_LEVELS;
+ if(enabled.length<2)return '';
+ return '<div class="diff-row">'+DIFF_LEVELS.filter(function(d){return enabled.indexOf(d)>=0;}).map(function(d){return '<button class="diff-pill'+(g.diff===d?' active':'')+'" data-action="set-difficulty" data-value="'+d+'">'+diffLabels[d]+'</button>';}).join('')+'</div>';
 }
 function renderGame(){
  if(!game)return;
  var g=game,timed=g.mode!=='relaxed';
- var prompt={bop:'Bop a mouse when it peeks out!',bloom:'Snip the flowers. Watch them grow again!',scurry:'Drop cheese to guide the mouse home!',bouquet:'Snip the matching flowers for the bouquet!'}[g.type];
- var body=g.type==='scurry'?mazeView(g):classicField(g);
- var tip=g.type==='scurry'?'Click, tap, or use arrow keys / W A S D to drop cheese.':'Click or tap to play. Keyboard: Q W E / A S D / Z X C, or 1–9.';
- shell('<main><div class="game-header"><div class="game-heading"><button class="icon-button" data-action="home" aria-label="Back to playroom">'+icon('home')+'</button><h1>'+esc(current().name)+'’s '+gameNames[g.type]+'</h1></div><div class="scoreboard"><div class="score"><small>'+gameScores[g.type]+'</small><span id="score">'+g.score+'</span></div><div class="score"><small>'+(timed?'SECONDS':'YOUR PACE')+'</small><span id="time">'+(timed?Math.ceil(60-g.elapsed):'∞')+'</span></div><button class="icon-button" data-action="pause" aria-label="Pause game">'+icon('pause')+'</button></div></div><div class="progress-track"><div id="progress" class="progress-bar"></div></div><div class="playfield '+g.type+'-field"><div class="field-top"><span>'+prompt+'</span><strong>'+(timed?'Let’s explore':'No hurry. Just play.')+'</strong></div>'+body+'<div id="pause-layer"></div></div><div class="field-footer"><span class="game-tip">'+tip+'</span><button class="pill" data-action="finish">'+icon('check')+'All done</button></div></main>');
+ var prompt={bop:'Bop a mouse when it peeks out!',bloom:'Snip the flowers. Watch them grow again!',scurry:'Drop cheese to guide the mouse home!',bouquet:'Snip the matching flowers for the bouquet!',countries:'Match each country to its place on the map!',gauchos:'Round up the wandering herd and bring them home!'}[g.type];
+ var bodies={scurry:mazeView,countries:puzzleView,gauchos:herdView};
+ var body=(bodies[g.type]||classicField)(g);
+ var tips={scurry:'Click, tap, or use arrow keys / W A S D to drop cheese.',countries:'Tap a country from the list, then tap its spot on the map.',gauchos:'Tap a cow to send it home to the corral.'};
+ var tip=tips[g.type]||'Click or tap to play. Keyboard: Q W E / A S D / Z X C, or 1–9.';
+ shell('<main><div class="game-header"><div class="game-heading"><button class="icon-button" data-action="home" aria-label="Back to playroom">'+icon('home')+'</button><h1>'+esc(current().name)+'’s '+gameNames[g.type]+'</h1></div><div class="scoreboard"><div class="score"><small>'+gameScores[g.type]+'</small><span id="score">'+g.score+'</span></div><div class="score"><small>'+(timed?'SECONDS':'YOUR PACE')+'</small><span id="time">'+(timed?Math.ceil(60-g.elapsed):'∞')+'</span></div><button class="icon-button" data-action="pause" aria-label="Pause game">'+icon('pause')+'</button></div></div>'+difficultyRow(g)+'<div class="progress-track"><div id="progress" class="progress-bar"></div></div><div class="playfield '+g.type+'-field"><div class="field-top"><span>'+prompt+'</span><strong>'+(timed?'Let’s explore':'No hurry. Just play.')+'</strong></div>'+body+'<div id="pause-layer"></div></div><div class="field-footer"><span class="game-tip">'+tip+'</span><button class="pill" data-action="finish">'+icon('check')+'All done</button></div></main>');
  if(g.paused)showPause();
 }
 function tick(now){
@@ -382,14 +595,26 @@ function pauseGame(){if(!game||game.paused)return;game.paused=true;showPause();a
 function showPause(){var layer=$('#pause-layer');if(layer)layer.innerHTML='<div class="pause-cover"><div><h2>A little breather.</h2><p>Your garden will wait for you.</p><button class="big-button" data-action="resume">'+icon('play')+'Keep playing</button></div></div>';}
 function resumeGame(){if(!game)return;game.paused=false;game.last=performance.now();$('#pause-layer').innerHTML='';audioSync();}
 function stopGame(){if(game&&game.frame)cancelAnimationFrame(game.frame);game=null;}
+function completeAssignment(g){
+ if(!g.assignmentId)return 0;
+ var p=current();
+ var a=(p.assignments||[]).filter(function(x){return x.id===g.assignmentId;})[0];
+ if(!a||a.completed)return 0;
+ var earned=10+g.score;
+ a.completed=true;a.completedAt=Date.now();a.score=g.score;
+ p.points=(p.points||0)+earned;
+ save();
+ return earned;
+}
 function finishGame(){
  if(!game||game.ended)return;
  game.ended=true;
  cancelAnimationFrame(game.frame);
  var g=game,p=current(),best=false;
  if(g.mode!=='relaxed'&&g.score>p.best[g.type]){p.best[g.type]=g.score;best=true;save();}
+ var earned=completeAssignment(g);
  tone('finish');
- toast((best?'New personal best! ':'')+g.score+' '+gameLabels[g.type]+'. Lovely playing, '+p.name+'!');
+ toast((best?'New personal best! ':'')+g.score+' '+gameLabels[g.type]+'. Lovely playing, '+p.name+'!'+(earned?' +'+earned+' points!':''));
  stopGame();draft=null;closeModal();screen='home';render();
 }
 function pressTarget(e){var t=e.target.closest('[data-action="hit"]');if(t){e.preventDefault();unlockAudio();hit(Number(t.getAttribute('data-index')));}}
@@ -397,12 +622,22 @@ if(window.PointerEvent){root.addEventListener('pointerdown',pressTarget);}else{r
 document.addEventListener('click',function(e){var b=e.target.closest('[data-action]');if(!b)return;unlockAudio();var a=b.getAttribute('data-action'),v=b.getAttribute('data-value');
  if(a==='hit'){if(e.detail===0)hit(Number(b.getAttribute('data-index')));return;}
  if(a==='home'){stopGame();draft=null;closeModal();screen='home';render();}
- else if(a==='start')startGame(b.getAttribute('data-game'));
+ else if(a==='start')startGame(b.getAttribute('data-game'),b.getAttribute('data-assignment'));
+ else if(a==='home-tab'){homeTab=v;render();}
  else if(a==='settings'){pauseGame();draft=null;closeModal();screen='settings';render();}
  else if(a==='back-game'){screen='game';render();}
  else if(a==='workshop'){draft=copy(current());screen='workshop';render();}
  else if(a==='mute'){state.settings.muted=!state.settings.muted;save();audioSync();b.innerHTML=icon(state.settings.muted?'mute':'sound');b.setAttribute('aria-label',state.settings.muted?'Turn sound on':'Mute all sound');b.setAttribute('aria-pressed',state.settings.muted);if(screen==='settings')settings();}
  else if(a==='profiles')profiles();
+ else if(a==='parent-gate')parentGate();
+ else if(a==='pin-digit'){if(pinEntry.length<4)pinEntry+=v;updatePinDialog();}
+ else if(a==='pin-back'){pinEntry=pinEntry.slice(0,-1);updatePinDialog();}
+ else if(a==='manage-profile'){managing=b.getAttribute('data-id');render();}
+ else if(a==='toggle-game'){var mp=managedProfile(),gid=b.getAttribute('data-id'),gi=mp.enabledGames.indexOf(gid);if(gi>=0){if(mp.enabledGames.length>1)mp.enabledGames.splice(gi,1);}else mp.enabledGames.push(gid);save();render();}
+ else if(a==='toggle-diff'){var mp2=managedProfile(),did=b.getAttribute('data-id'),di=mp2.enabledDifficulties.indexOf(did);if(di>=0){if(mp2.enabledDifficulties.length>1)mp2.enabledDifficulties.splice(di,1);}else mp2.enabledDifficulties.push(did);save();render();}
+ else if(a==='assign-game'){var mp3=managedProfile(),sel=$('#assign-game');mp3.assignments=mp3.assignments||[];mp3.assignments.push({id:id(),gameId:sel.value,assignedAt:Date.now(),completed:false,completedAt:null,score:0});save();render();toast('Assigned to '+esc(mp3.name)+'!');}
+ else if(a==='remove-assignment'){var mp4=managedProfile(),aid=b.getAttribute('data-id');mp4.assignments=(mp4.assignments||[]).filter(function(x){return x.id!==aid;});save();render();}
+ else if(a==='save-pin'){var v1=$('#new-pin-1').value,v2=$('#new-pin-2').value;if(!/^\d{4}$/.test(v1)){$('#pin-save-error').textContent='PIN must be 4 digits.';return;}if(v1!==v2){$('#pin-save-error').textContent='PINs don’t match.';return;}state.parentPin=v1;save();toast('Parent PIN updated.');render();}
  else if(a==='close-modal')closeModal();
  else if(a==='add-profile')addProfile();
  else if(a==='select-profile'){stopGame();state.active=b.getAttribute('data-id');save();draft=null;closeModal();screen='home';render();}
@@ -418,8 +653,11 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-acti
  else if(a==='resume')resumeGame();
  else if(a==='finish')finishGame();
  else if(a==='maze-cell'){mazeClick(Number(b.getAttribute('data-x')),Number(b.getAttribute('data-y')));}
+ else if(a==='sa-select'){var cid=b.getAttribute('data-country');game.puzzle.selected=(game.puzzle.selected===cid)?null:cid;renderGame();}
+ else if(a==='sa-cell'){saClickCell(b.getAttribute('data-country'));}
+ else if(a==='herd-cow'){herdClickCow(Number(b.getAttribute('data-id')));}
  else if(a==='maze-reset'){newMazeRound(game);renderGame();}
- else if(a==='maze-size'){var p=current();p.mazeSize=p.mazeSize==='big'?'cozy':'big';save();game.mazeSize=mazeSizeFor(p);newMazeRound(game);renderGame();}
+ else if(a==='set-difficulty'){var p=current();p.difficulty[game.type]=v;save();startGame(game.type,game.assignmentId);}
 });
 document.addEventListener('keydown',function(e){
  if(modalRoot.firstChild){if(e.key==='Tab'){var els=modalRoot.querySelectorAll('button:not([disabled]),input,select');var first=els[0],last=els[els.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}if(e.key==='Escape'&&!(game&&game.ended)){closeModal();}return;}
@@ -428,6 +666,7 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape'||e.key===' '){e.preventDefault();game.paused?resumeGame():pauseGame();return;}
   var k=e.key.toLowerCase();
   if(game.type==='scurry'){if(!e.repeat&&mazeKeyDirs.hasOwnProperty(k)){e.preventDefault();unlockAudio();mazeDirectionMove(k);}return;}
+  if(game.type==='countries'||game.type==='gauchos')return;
   var idx='qweasdzxc'.indexOf(k);
   if(/^[1-9]$/.test(k))idx=Number(k)-1;
   if(idx>=0&&!e.repeat){e.preventDefault();unlockAudio();hit(idx);}
