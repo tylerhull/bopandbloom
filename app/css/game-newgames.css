@@ -1,0 +1,35 @@
+/* Animal Sort!, Market Day!, and Time Traveler! */
+.sort-wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:18px}
+.sort-stage{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px 28px;min-height:150px;justify-content:center}
+.sort-stage svg{width:120px;height:100px}
+.sort-stage strong{font-size:20px}
+.habitat-bins{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.habitat-bin{display:flex;flex-direction:column;align-items:center;gap:4px;width:112px;padding:12px 8px;border-radius:18px;border:3px solid var(--line);background:var(--surface);color:var(--on-surface);font-weight:800;font-size:12px;cursor:pointer}
+.habitat-bin svg{width:58px;height:48px}
+.habitat-bin:hover{transform:translateY(-2px)}
+.habitat-bin.nope{animation:nopeshake .4s}
+.market-wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:14px}
+.market-stall{display:flex;flex-direction:column;align-items:center;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px 28px;min-height:150px;justify-content:center}
+.market-stall svg{width:120px;height:88px}
+.market-stall strong{font-size:18px}
+.market-price{margin-top:6px;background:var(--primary);color:var(--on-primary);border-radius:14px;padding:6px 16px;font-weight:900;font-size:18px}
+.purse{text-align:center;width:100%;max-width:320px}
+.purse-label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.7}
+.purse-total{font-size:22px;font-weight:900}
+.purse-bar{height:12px;border-radius:8px;background:var(--line);overflow:hidden;margin-top:4px}
+.purse-bar span{display:block;height:100%;background:var(--secondary);transition:width .2s}
+.coin-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.coin-btn{background:transparent;border:none;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.coin-btn svg{width:76px;height:76px;display:block}
+.coin-btn:hover svg{transform:scale(1.06)}
+.timeline-wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:12px}
+.timeline-track{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;min-height:96px;align-items:center}
+.tl-choices{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.tl-card{position:relative;width:170px;text-align:left;background:var(--surface);border:3px solid var(--line);border-radius:16px;padding:10px 12px}
+.tl-card p{margin:4px 0 0;font-size:12px;line-height:1.4}
+.tl-year{font-weight:900;font-size:15px;color:var(--primary)}
+.tl-card.placed{border-color:var(--secondary);opacity:.92}
+.tl-card.choice{cursor:pointer}.tl-card.choice:hover{transform:translateY(-2px)}
+.tl-card.choice.nope{animation:nopeshake .4s}
+.tl-num{position:absolute;top:-10px;right:-8px;background:var(--secondary);color:var(--on-secondary);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+@media(max-width:550px){.habitat-bin{width:92px}.tl-card{width:144px}.coin-btn svg{width:62px;height:62px}.sort-stage svg{width:96px;height:80px}}

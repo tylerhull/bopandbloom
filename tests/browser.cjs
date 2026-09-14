@@ -7,7 +7,9 @@ const fs=require('node:fs');
 const path=require('node:path');
 const assets=path.resolve(__dirname,'../app');
 const server=http.createServer((req,res)=>{
- const file=path.join(assets,req.url==='/'?'index.html':path.basename(req.url));
+ const reqPath=decodeURIComponent(req.url.split('?')[0]);
+ const file=path.join(assets,reqPath==='/'?'index.html':reqPath);
+ if(!file.startsWith(assets)){res.statusCode=403;res.end();return;}
  try{res.setHeader('Content-Type',file.endsWith('.js')?'application/javascript':file.endsWith('.css')?'text/css':'text/html');res.end(fs.readFileSync(file));}catch(e){res.statusCode=404;res.end();}
 });
 (async()=>{
@@ -62,20 +64,47 @@ const server=http.createServer((req,res)=>{
  await page.waitForSelector('[data-action=manage-profile]');await page.locator('[data-action=toggle-game][data-id=bouquet]').click();await page.locator('#assign-game').selectOption('countries');await page.locator('[data-action=assign-game]').click();
  await page.locator('[data-action=home]').click();assert.equal(await page.locator('[data-action=start][data-game=bouquet]').count(),0);
  await page.locator('[data-action=home-tab][data-value=school]').click();await page.locator('[data-action=start]').first().click();
- await page.waitForSelector('.sa-tile');for(const c of ['venezuela','colombia','guyana','suriname','ecuador','peru','brazil','bolivia','paraguay','chile','argentina','uruguay']){await page.locator(`[data-action=sa-select][data-country=${c}]`).click();await page.locator(`[data-action=sa-cell][data-country=${c}]`).click();}
+ await page.waitForSelector('.sa-tile');
+ for(const c of ['venezuela','colombia','guyana','suriname','ecuador','peru','brazil','bolivia','paraguay','chile','argentina','uruguay']){
+  await page.locator(`[data-action=sa-select][data-country=${c}]`).click();
+  if(c==='venezuela')await page.waitForSelector('.sa-info [data-action=speak-fact]');
+  await page.locator(`[data-action=sa-cell][data-country=${c}]`).click();
+ }
  await page.waitForSelector('.games',{timeout:4000});
  const pts=await page.evaluate(()=>JSON.parse(localStorage.getItem('bop-and-bloom-v1')).profiles[0].points);assert.equal(pts,22);
- console.log('PASS parent PIN gate, per-child game visibility, schoolwork assignment, and points');
+ console.log('PASS parent PIN gate, per-child game visibility, schoolwork assignment, and points, with a read-aloud button for the selected country');
  await page.locator('[data-action=home]').last().click();
  await page.locator('[data-action=start][data-game=biomes]').click();await page.waitForSelector('.biome-spot');
- for(const b of ['amazon','andes','atacama','pampas','patagonia','chaco']){await page.locator(`[data-action=biome-select][data-biome=${b}]`).click();await page.locator(`[data-action=biome-spot][data-biome=${b}]`).click();}
+ for(const b of ['amazon','andes','atacama','pampas','patagonia','chaco']){
+  await page.locator(`[data-action=biome-select][data-biome=${b}]`).click();
+  if(b==='amazon')await page.waitForSelector('.sa-info [data-action=speak-fact]');
+  await page.locator(`[data-action=biome-spot][data-biome=${b}]`).click();
+ }
  assert.equal(await page.locator('#score').innerText(),'6');await page.waitForSelector('.games',{timeout:4000});
- console.log('PASS biome placement on the real map');
+ console.log('PASS biome placement on the real map, with a read-aloud button for the selected place');
  await page.locator('[data-action=start][data-game=animals]').click();await page.waitForSelector('.habitat-bin');
  const bins=['rainforest','mountains','grasslands'];
  for(let n=0;n<3;n++){const before=Number(await page.locator('#score').innerText());for(const h of bins){await page.locator(`[data-action=sort-bin][data-habitat=${h}]`).click();if(Number(await page.locator('#score').innerText())>before)break;}}
+ await page.waitForSelector('.fact-banner [data-action=speak-fact]');
  assert.equal(await page.locator('#score').innerText(),'3');await page.locator('[data-action=home]').first().click();await page.waitForSelector('.games');
- console.log('PASS animal sorting with no penalty for a wrong bin');
+ console.log('PASS animal sorting with no penalty for a wrong bin, with a persistent read-aloud fact banner');
+ await page.locator('[data-action=start][data-game=gauchos]').click();await page.waitForSelector('.cow-token');
+ await page.waitForSelector('.fact-banner [data-action=speak-fact]');
+ await page.locator('.cow-token').first().click();
+ assert.equal(await page.locator('#score').innerText(),'1');
+ await page.locator('[data-action=home]').click();await page.waitForSelector('.games');
+ console.log('PASS gaucho herding plays a cow sound and reads a fact aloud');
+ await page.locator('[data-action=start][data-game=peaks]').click();await page.waitForSelector('.climb-mountain');
+ for(let n=0;n<20;n++){const step=page.locator('[data-action=climb-step]');if(await step.count()===0)break;await step.click();}
+ await page.waitForSelector('.summit-card .fact-banner [data-action=speak-fact]');
+ const factBefore=await page.locator('.summit-card .fact-banner p').innerText();
+ await page.locator('[data-action=settings]').click();await page.locator('[data-action=back-game]').click();
+ const factAfter=await page.locator('.summit-card .fact-banner p').innerText();
+ assert.equal(factBefore,factAfter);
+ await page.locator('[data-action=resume]').click();
+ await page.locator('[data-action=speak-fact]').click();
+ await page.locator('[data-action=home]').click();await page.waitForSelector('.games');
+ console.log('PASS peak climbing reads the summit fact aloud and keeps the same fact across a re-render');
  await page.locator('[data-action=start][data-game=market]').click();await page.waitForSelector('.coin-btn');
  const price=Number((await page.locator('.market-price').innerText()).split(' ')[0]);
  for(let n=0;n<price;n++)await page.locator('[data-action=market-coin][data-value="1"]').click();

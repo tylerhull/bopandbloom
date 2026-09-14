@@ -7,7 +7,7 @@ STAGING_DIR=$(mktemp -d)
 trap 'rm -rf "$STAGING_DIR"' EXIT HUP INT TERM
 mkdir -p "$STAGING_DIR/DEBIAN" "$STAGING_DIR/usr/share/bop-and-bloom/app" "$STAGING_DIR/usr/bin" "$STAGING_DIR/usr/share/applications" "$STAGING_DIR/usr/share/icons/hicolor/scalable/apps" "$STAGING_DIR/usr/share/doc/bop-and-bloom"
 cp "$SOURCE_DIR/launcher.py" "$STAGING_DIR/usr/share/bop-and-bloom/launcher.py"
-cp "$SOURCE_DIR"/app/* "$STAGING_DIR/usr/share/bop-and-bloom/app/"
+cp -r "$SOURCE_DIR"/app/* "$STAGING_DIR/usr/share/bop-and-bloom/app/"
 cp "$SOURCE_DIR/README.md" "$STAGING_DIR/usr/share/doc/bop-and-bloom/README.md"
 cp "$SOURCE_DIR/app/icon.svg" "$STAGING_DIR/usr/share/icons/hicolor/scalable/apps/bop-and-bloom.svg"
 cat > "$STAGING_DIR/usr/bin/bop-and-bloom" <<'LAUNCH'

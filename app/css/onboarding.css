@@ -1,0 +1,2 @@
+/* First-run welcome screen */
+.onboarding{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:30px}.welcome{max-width:580px;text-align:center}.welcome>.brand{justify-content:center;margin-bottom:35px}.welcome .welcome-art{width:220px;margin:0 auto 22px}.welcome h1{font-size:44px;letter-spacing:-2px;margin-bottom:14px}.welcome p{line-height:1.7;font-size:15px}.welcome form{max-width:360px;margin:25px auto 0}.welcome input{font-size:21px;text-align:center;margin-bottom:15px;height:58px}.empty-space{margin:20px 0}.badge-small{width:22px;height:22px}
