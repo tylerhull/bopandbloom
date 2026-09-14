@@ -1,0 +1,13 @@
+/* Letter Sounds! */
+.letters-wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:14px}
+.letters-card{position:relative;width:100%;max-width:340px;height:0;padding-top:75%;border-radius:20px;border:1px solid var(--line);background:#cfe8f2;overflow:hidden;box-shadow:0 6px 0 rgba(41,59,54,.06)}
+@supports (aspect-ratio:4/3){.letters-card{height:auto;padding-top:0;aspect-ratio:4/3}}
+.letters-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.letters-photo.img-fallback{object-fit:none;background:linear-gradient(160deg,#cfe8f2,#9fa8b0)}
+.letters-hear{position:absolute;right:10px;bottom:10px;background:#fffdf2;box-shadow:0 3px 10px rgba(0,0,0,.18)}
+.letter-choices{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.letter-choice{width:64px;height:64px;border-radius:18px;border:3px solid var(--line);background:var(--surface);color:var(--on-surface);font-size:30px;font-weight:900;cursor:pointer}
+.letter-choice:hover{transform:translateY(-2px)}
+.letter-choice.nope{animation:nopeshake .4s}
+.letters-credit{opacity:.55;margin-top:2px}
+@media(max-width:550px){.letter-choice{width:52px;height:52px;font-size:24px}.letters-card{max-width:280px}}

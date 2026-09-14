@@ -117,6 +117,16 @@ const server=http.createServer((req,res)=>{
  }
  assert.equal(await page.locator('#score').innerText(),'1');await page.locator('[data-action=home]').first().click();await page.waitForSelector('.games');
  console.log('PASS ordering historical events oldest first');
+ await page.locator('[data-action=start][data-game=letters]').click();await page.waitForSelector('.letter-choice');
+ await page.waitForSelector('.fact-banner, .letters-hear');
+ for(let n=0;n<3;n++){
+  const correct=await page.evaluate(()=>game.letters.current.name[0].toUpperCase());
+  await page.locator(`[data-action=letter-pick][data-letter="${correct}"]`).click();
+ }
+ assert.equal(await page.locator('#score').innerText(),'3');
+ await page.locator('[data-action=speak-fact]').click();
+ await page.locator('[data-action=home]').click();await page.waitForSelector('.games');
+ console.log('PASS letter-sounds phonics matching against real animal photos');
  await page.setViewportSize({width:640,height:720});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  assert.deepEqual(errors,[]);console.log('PASS compact layout and zero JavaScript errors');
  const touch=await browser.newContext({hasTouch:true,viewport:{width:700,height:800}});const tp=await touch.newPage();await tp.goto(url);await tp.locator('#welcome-name').fill('Touch');await tp.locator('button[type=submit]').tap();await tp.locator('[data-action=start][data-game=bop]').tap();await tp.waitForSelector('.target.ready');await tp.locator('.target.ready').first().tap();assert.equal(await tp.locator('#score').innerText(),'1');

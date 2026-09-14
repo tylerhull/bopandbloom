@@ -34,7 +34,7 @@ var MAZE_SIZE=5;
 var mazeKeyDirs={arrowup:'n',w:'n',arrowdown:'s',s:'s',arrowleft:'w',a:'w',arrowright:'e',d:'e'};
 var DIFF_LEVELS=['easy','medium','hard'];
 var diffLabels={easy:'Easy',medium:'Medium',hard:'Hard'};
-var GAME_IDS=['bop','bloom','scurry','bouquet','countries','gauchos','peaks','biomes','animals','market','timeline'];
+var GAME_IDS=['bop','bloom','scurry','bouquet','countries','gauchos','peaks','biomes','animals','market','timeline','letters'];
 var PRE_KNOWN_GAME_IDS=['bop','bloom','scurry','bouquet','countries','gauchos'];
 var GAME_CATALOG=[
  {id:'bop',title:'Bop!',desc:'Peekaboo, little mice. Can you catch them?',label:'PEEK · BOP · GIGGLE',secondary:false,verb:'bop'},
@@ -47,8 +47,9 @@ var GAME_CATALOG=[
  {id:'biomes',title:'Wild Places!',desc:'Find the Amazon, the Andes, the Atacama and more on the map of South America.',label:'FIND · LEARN · EXPLORE',secondary:true,verb:'explore'},
  {id:'animals',title:'Animal Sort!',desc:'Sort South American animals into the wild places they call home.',label:'SPOT · SORT · LEARN',secondary:false,verb:'sort'},
  {id:'market',title:'Market Day!',desc:'Count out coins to buy treats at a South American market.',label:'COUNT · PAY · SHOP',secondary:true,verb:'shop'},
- {id:'timeline',title:'Time Traveler!',desc:'Put big moments in South American history in the right order.',label:'ORDER · LEARN · HISTORY',secondary:false,verb:'travel'}
+ {id:'timeline',title:'Time Traveler!',desc:'Put big moments in South American history in the right order.',label:'ORDER · LEARN · HISTORY',secondary:false,verb:'travel'},
+ {id:'letters',title:'Letter Sounds!',desc:'Meet a real South American animal, hear its name, and tap the letter it starts with.',label:'LOOK · LISTEN · MATCH',secondary:true,verb:'match'}
 ];
-var gameNames={bop:'Bop!',bloom:'Bloom!',scurry:'Scurry!',bouquet:'Bouquet!',countries:'Country Match!',gauchos:'Gaucho Herd!',peaks:'Peak Climber!',biomes:'Wild Places!',animals:'Animal Sort!',market:'Market Day!',timeline:'Time Traveler!'};
-var gameScores={bop:'BOPS',bloom:'FLOWERS',scurry:'MICE',bouquet:'BOUQUETS',countries:'COUNTRIES',gauchos:'COWS',peaks:'SUMMITS',biomes:'PLACES',animals:'ANIMALS',market:'BOUGHT',timeline:'IN ORDER'};
-var gameLabels={bop:'happy little bops',bloom:'flowers snipped',scurry:'mice guided home',bouquet:'bouquets made',countries:'countries placed',gauchos:'cows herded home',peaks:'peaks summited',biomes:'wild places found',animals:'animals sorted home',market:'market treats bought',timeline:'timelines sorted'};
+var gameNames={bop:'Bop!',bloom:'Bloom!',scurry:'Scurry!',bouquet:'Bouquet!',countries:'Country Match!',gauchos:'Gaucho Herd!',peaks:'Peak Climber!',biomes:'Wild Places!',animals:'Animal Sort!',market:'Market Day!',timeline:'Time Traveler!',letters:'Letter Sounds!'};
+var gameScores={bop:'BOPS',bloom:'FLOWERS',scurry:'MICE',bouquet:'BOUQUETS',countries:'COUNTRIES',gauchos:'COWS',peaks:'SUMMITS',biomes:'PLACES',animals:'ANIMALS',market:'BOUGHT',timeline:'IN ORDER',letters:'MATCHED'};
+var gameLabels={bop:'happy little bops',bloom:'flowers snipped',scurry:'mice guided home',bouquet:'bouquets made',countries:'countries placed',gauchos:'cows herded home',peaks:'peaks summited',biomes:'wild places found',animals:'animals sorted home',market:'market treats bought',timeline:'timelines sorted',letters:'letters matched'};

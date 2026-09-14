@@ -16,26 +16,28 @@ Skim the table below to find the right file before grepping the whole tree.
 | 01 | `data-core.js` | Palettes, mascots, lettering/pattern lists, difficulty levels, `GAME_IDS`, `GAME_CATALOG`, game name/label maps. Edit here to add/rename a game in the catalog. |
 | 02 | `data-map.js` | `saCountries` (real South America path data traced from Wikimedia, huge single lines — rarely touched) and `countryFlag()`. |
 | 03 | `data-southamerica.js` | Country facts, peaks, climb route, biomes, habitats, animals, market items/countries, timeline events, gaucho facts. Edit here to add facts/content. |
-| 04 | `state.js` | `$`/`root`/`modalRoot` bootstrap, profile schema, `sanitize*`/migration, `save`/`current`, theming (`theme`/`contrast`/`shade`). |
-| 05 | `audio.js` | Web Audio tones (`tone`, `fanfare`, `moo`), `speakText` (speech synthesis read-aloud), `audioSync`, `unlockAudio`. Add new sound effects here. |
-| 06 | `celebration.js` | Shared confetti/fireworks/lasers/fountain celebration overlay used by several games. |
-| 07 | `art-common.js` | `icon()` (UI icon set), `brand()`, `mascot()`, `mouseArt()`. |
-| 08 | `ui-shell.js` | Topbar, footer, page shell, toast, modal dialog primitives. |
-| 09 | `ui-workshop.js` | "Make it yours" personalization screen. |
-| 10 | `ui-settings.js` | Settings screen. |
-| 11 | `ui-parent.js` | Parent PIN gate, per-child game/difficulty toggles, assignments. |
-| 12 | `ui-home.js` | Playroom home screen, game cards, School tab, onboarding, new-profile creation. |
-| 13 | `game-flowers.js` | Bloom!/Bouquet!: flower art, vases, and `classicField` (the 3×3 target grid also used by Bop!). |
-| 14 | `game-scurry.js` | Procedural maze generation and play. |
-| 15 | `game-countries.js` | Country Match!: place countries on the real map. |
-| 16 | `game-gauchos.js` | Gaucho Herd!: wandering cows, corral. Cow sound (`moo()`) is called from `herdClickCow`. |
-| 17 | `game-peaks.js` | Peak Climber!: route up a real peak, summit photo/fact. |
-| 18 | `game-biomes.js` | Wild Places!: place regions on the real map. |
-| 19 | `game-animals.js` | Animal Sort!: sort animals into habitats. |
-| 20 | `game-market.js` | Market Day!: count coins to pay an exact price. |
-| 21 | `game-timeline.js` | Time Traveler!: order historical events. |
-| 22 | `game-engine.js` | Generic engine: `startGame`, `renderGame`, the per-frame `tick`, `hit`, pause/resume/finish, difficulty. The `bodies`/`prompt`/`tips` dispatch maps in `renderGame` are how a game's view function gets wired in. |
-| 23 | `main.js` | `render()` dispatcher, all pointer/click/keyboard event wiring, page lifecycle (visibility/blur/beforeunload). **Loads last** — everything else must already be defined by the time its click handler and final `render()` call run. |
+| 04 | `data-letters.js` | `letterAnimals` — real animal photos + credits for Letter Sounds! (photos live in `app/animals/`). |
+| 05 | `state.js` | `$`/`root`/`modalRoot` bootstrap, profile schema, `sanitize*`/migration, `save`/`current`, theming (`theme`/`contrast`/`shade`). |
+| 06 | `audio.js` | Web Audio tones (`tone`, `fanfare`, `moo`), `speakText` (speech synthesis read-aloud), `audioSync`, `unlockAudio`. Add new sound effects here. |
+| 07 | `celebration.js` | Shared confetti/fireworks/lasers/fountain celebration overlay used by several games. |
+| 08 | `art-common.js` | `icon()` (UI icon set), `brand()`, `mascot()`, `mouseArt()`. |
+| 09 | `ui-shell.js` | Topbar, footer, page shell, toast, modal dialog primitives. |
+| 10 | `ui-workshop.js` | "Make it yours" personalization screen. |
+| 11 | `ui-settings.js` | Settings screen. |
+| 12 | `ui-parent.js` | Parent PIN gate, per-child game/difficulty toggles, assignments. |
+| 13 | `ui-home.js` | Playroom home screen, game cards, School tab, onboarding, new-profile creation. |
+| 14 | `game-flowers.js` | Bloom!/Bouquet!: flower art, vases, and `classicField` (the 3×3 target grid also used by Bop!). |
+| 15 | `game-scurry.js` | Procedural maze generation and play. |
+| 16 | `game-countries.js` | Country Match!: place countries on the real map. |
+| 17 | `game-gauchos.js` | Gaucho Herd!: wandering cows, corral. Cow sound (`moo()`) is called from `herdClickCow`. |
+| 18 | `game-peaks.js` | Peak Climber!: route up a real peak (the actual photo is the climb background too, not just the reward). |
+| 19 | `game-biomes.js` | Wild Places!: place regions on the real map. |
+| 20 | `game-animals.js` | Animal Sort!: sort animals into habitats. |
+| 21 | `game-market.js` | Market Day!: count coins to pay an exact price. |
+| 22 | `game-timeline.js` | Time Traveler!: order historical events. |
+| 23 | `game-letters.js` | Letter Sounds!: flashcard phonics — real animal photo, hear its name, tap the starting letter. |
+| 24 | `game-engine.js` | Generic engine: `startGame`, `renderGame`, the per-frame `tick`, `hit`, pause/resume/finish, difficulty. The `bodies`/`prompt`/`tips` dispatch maps in `renderGame` are how a game's view function gets wired in. |
+| 25 | `main.js` | `render()` dispatcher, all pointer/click/keyboard event wiring, page lifecycle (visibility/blur/beforeunload). **Loads last** — everything else must already be defined by the time its click handler and final `render()` call run. |
 
 ### Why the load order mostly doesn't matter
 
@@ -43,10 +45,15 @@ These are classic (non-module) scripts sharing one global scope, so a
 `function` or `var` in file 20 can freely call one declared in file 5 — name
 resolution happens when the function *runs* (after every file has loaded),
 not when it's declared. Only two things actually depend on order:
-- `04-state.js` reads `GAME_IDS.slice()` at the top level, so `01-data-core.js`
+- `05-state.js` reads `GAME_IDS.slice()` at the top level, so `01-data-core.js`
   must load first.
-- `23-main.js` wires up the real event listeners and calls `render()` at the
+- `25-main.js` wires up the real event listeners and calls `render()` at the
   very end, so it must load last.
+
+Renumbering files when inserting a new one (as happened for `data-letters.js`
+and `game-letters.js`) is optional busywork, not a correctness requirement —
+do it if it's cheap (`git mv` + fix `index.html`), skip it under time pressure
+and just pick the next free number.
 
 ### Naming gotcha
 
@@ -75,11 +82,12 @@ single-IIFE wrapper made this a real global, so don't reintroduce a top-level
 | `game-gauchos.css` | Gaucho Herd!. |
 | `game-peaks.css` | Peak Climber!. |
 | `game-newgames.css` | Animal Sort!, Market Day!, Time Traveler!. |
+| `game-letters.css` | Letter Sounds!. |
 
 ## The "fact audio" pattern
 
 Every game that teaches a fact follows the same convention, so there's one
-shared replay handler (`speak-fact` in `23-main.js`) instead of one per game:
+shared replay handler (`speak-fact` in `25-main.js`) instead of one per game:
 
 1. The moment a fact becomes the "current" one (a country/biome is selected,
    a round starts, an animal is sorted correctly, a peak is summited), set
@@ -99,6 +107,21 @@ shared replay handler (`speak-fact` in `23-main.js`) instead of one per game:
 
 Games without an educational fact (Bop!, Bloom!, Scurry!, Bouquet!, Market
 Day!, Time Traveler!) don't need any of this.
+
+## Real photos and the `img-fallback` pattern
+
+Peak Climber! and Letter Sounds! both show real, CC-licensed photos (Peak
+Climber!'s under `app/peaks/`, Letter Sounds!'s under `app/animals/`). Every
+such `<img>` should carry a class matched by the delegated `error` listener
+in `main.js` (currently `climb-photo`, `summit-photo`, `letters-photo`) —
+add a new class to that list for any new photo-based game, and give it an
+`.img-fallback` CSS rule (a plain gradient background) so a failed load
+never shows a broken-image icon. New photos: search Wikimedia Commons,
+require a CC0/CC-BY/CC-BY-SA license, verify the thumbnail actually shows
+the right subject before downloading full-size (search hits are unreliable —
+e.g. a query for "chinchilla" surfaced a viscacha, a related but different
+species, and one for "eagle" surfaced a New Guinea harpy eagle illustration
+for a South American harpy eagle photo), then credit the photographer.
 
 ## Adding a new game, end to end
 
