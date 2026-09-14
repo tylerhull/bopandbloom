@@ -76,6 +76,7 @@ document.addEventListener('keydown',function(e){
   if(idx>=0&&!e.repeat){e.preventDefault();unlockAudio();hit(idx);}
  }
 });
+document.addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='IMG'&&(t.classList.contains('climb-photo')||t.classList.contains('summit-photo')))t.classList.add('img-fallback');},true);
 document.addEventListener('visibilitychange',function(){if(document.hidden)pauseGame();audioSync();});
 window.addEventListener('blur',function(){pauseGame();});
 window.addEventListener('beforeunload',save);

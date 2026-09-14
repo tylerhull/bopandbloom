@@ -5,26 +5,25 @@ function mountainScene(g){
  var route=climbWaypoints.map(function(p){return p[0]+','+p[1];}).join(' L ');
  var head=climbWaypoints[g.climb.progress];
  var summit=climbWaypoints[climbWaypoints.length-1];
- return '<svg class="climb-mountain" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-label="Mountain route">'
-  +'<rect width="100" height="100" fill="#cfe8f2"/>'
-  +'<path d="M0,100 L18,55 L38,80 L50,40 L65,75 L82,45 L100,100 Z" fill="#9fa8b0"/>'
-  +'<path d="M50,40 L58,55 L50,52 L44,58 Z" fill="#fff"/>'
-  +'<path d="M82,45 L88,58 L82,55 L77,60 Z" fill="#fff"/>'
-  +'<path d="M18,55 L23,64 L18,62 L14,66 Z" fill="#fff"/>'
-  +'<path d="M '+route+'" stroke="#7a5a35" stroke-width="1.2" stroke-dasharray="2 2" fill="none"/>'
-  +climbWaypoints.map(function(p,i){
+ var p=g.climb.peak;
+ return '<div class="climb-photo-wrap">'
+  +'<img class="climb-photo" src="'+p.photo+'" alt="'+esc(p.name)+'">'
+  +'<svg class="climb-mountain" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-label="Route up '+esc(p.name)+'">'
+  +'<path d="M '+route+'" stroke="#fffdf4" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".8"/>'
+  +'<path d="M '+route+'" stroke="#5a4632" stroke-width="1" stroke-dasharray="2.4 2.2" stroke-linecap="round" fill="none"/>'
+  +climbWaypoints.map(function(p2,i){
    var isLast=i===climbWaypoints.length-1;
    var isNext=i===g.climb.progress+1;
    var isPast=i<=g.climb.progress;
    var showHint=isNext&&g.diff!=='hard'&&!g.climb.celebrating;
    var clickable=isNext&&!g.climb.celebrating;
-   var r=isLast?(clickable?5:0):(isPast?3.2:2.4);
+   var r=isLast?(clickable?8:0):(clickable?6:(isPast?3.6:2.6));
    if(isLast&&!clickable)return '';
-   return '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="'+r+'" fill="'+(isLast?'transparent':(isPast?'#78a063':'#fff'))+'" stroke="'+(isLast?'none':'#5a4632')+'" stroke-width="0.8" class="'+(showHint?'climb-hint':'')+'" '+(clickable?'data-action="climb-step" data-idx="'+i+'"':'')+'/>';
+   return '<circle cx="'+p2[0]+'" cy="'+p2[1]+'" r="'+r+'" fill="'+(isLast?'transparent':(isPast?'#78a063':'#fffdf4'))+'" stroke="'+(isLast?'none':'#5a4632')+'" stroke-width="1" class="'+(showHint?'climb-hint':'')+'" '+(clickable?'data-action="climb-step" data-idx="'+i+'"':'')+'/>';
   }).join('')
   +'<g transform="translate('+(summit[0]-4)+' '+(summit[1]-13)+') scale(0.9)">'+flagIcon()+'</g>'
   +'<g transform="translate('+(head[0]-5)+' '+(head[1]-11)+') scale(0.9)">'+climberIcon()+'</g>'
-  +'</svg>';
+  +'</svg></div>';
 }
 function newClimbRound(g){
  var pool=peaks.filter(function(p){return !g.climb||p.id!==g.climb.peak.id;});
