@@ -72,7 +72,7 @@ The browser preview uses browser local storage and is separate from the installe
 
 ## Source and development
 
-- `app/`: HTML, CSS, JavaScript, and original vector icon. `app/js/` and `app/css/` are split into small, single-purpose files (loaded via plain `<script>`/`<link>` tags, no bundler) — see [ARCHITECTURE.md](ARCHITECTURE.md) for the file map before diving in. Nearly all graphics and music are generated locally with no third-party downloads; the exceptions are licensed real photos, downloaded and resized from Wikimedia Commons — see "Photo and map credits" below. Text-to-speech for read-aloud facts uses the browser's built-in speech synthesis, not a network service.
+- `app/`: HTML, CSS, JavaScript, and original vector icon. `app/js/` and `app/css/` are split into small, single-purpose files (loaded via plain `<script>`/`<link>` tags, no bundler) — see [ARCHITECTURE.md](ARCHITECTURE.md) for the file map before diving in. Nearly all graphics and music are generated locally with no third-party downloads; the exceptions are licensed real photos, downloaded and resized from Wikimedia Commons — see "Photo and map credits" below. Read-aloud facts and names play from pre-recorded audio clips in `app/audio/`, generated offline with `espeak-ng` — not the browser's built-in speech synthesis (which isn't available in the packaged app's WebKitGTK build) and not a network service.
 - `launcher.py`: Python 3.6-compatible GTK desktop host, native profile storage, and local-only navigation.
 - `build-deb.sh`: builds an architecture-independent, gzip-compressed Debian package using `dpkg-deb`.
 - `tests/`: native storage tests and browser integration tests.

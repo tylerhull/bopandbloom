@@ -1,5 +1,5 @@
-/* Web Audio tones/music, unlock-on-first-tap, and speech-synthesis read-aloud. */
-var audio=null,musicTimer=null,noteIndex=0;
+/* Web Audio tones/music, unlock-on-first-tap, and read-aloud facts. */
+var audio=null,musicTimer=null,noteIndex=0,speechAudio=null;
 function unlockAudio(){try{if(!audio){var C=window.AudioContext||window.webkitAudioContext;if(C)audio=new C();}if(audio&&audio.state==='suspended')audio.resume();audioSync();}catch(e){}}
 function note(freq,duration,volume,type){if(!audio||audio.state!=='running'||state.settings.muted)return;var o=audio.createOscillator(),g=audio.createGain();o.type=type||'sine';o.frequency.value=freq;g.gain.setValueAtTime(0,audio.currentTime);g.gain.linearRampToValueAtTime(volume*state.settings.volume/100,audio.currentTime+.015);g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+duration);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+duration+.03);o.onended=function(){o.disconnect();g.disconnect();};}
 function tone(kind){if(!state.settings.effects)return;var v=.15*state.settings.effectsVolume/100;note(kind==='snip'?740:kind==='hello'?523:kind==='finish'?784:kind==='nope'?220:330,.17,v,'sine');if(kind==='finish'||kind==='hello')setTimeout(function(){if(state.settings.effects)note(1046,.35,v*.7);},150);}
@@ -28,7 +28,17 @@ function fanfare(){
 }
 function speakText(text){
  try{
-  if(!window.speechSynthesis||!window.SpeechSynthesisUtterance||state.settings.muted||!state.settings.effects)return;
+  if(state.settings.muted||!state.settings.effects)return;
+  var file=typeof AUDIO_MAP!=='undefined'?AUDIO_MAP[text]:null;
+  if(file){
+   if(speechAudio){speechAudio.pause();speechAudio.onended=null;}
+   speechAudio=new Audio('audio/'+file);
+   speechAudio.volume=state.settings.effectsVolume/100;
+   var playResult=speechAudio.play();
+   if(playResult&&playResult.catch)playResult.catch(function(){});
+   return;
+  }
+  if(!window.speechSynthesis||!window.SpeechSynthesisUtterance)return;
   var u=new SpeechSynthesisUtterance(text);
   u.rate=0.95;u.volume=state.settings.effectsVolume/100;
   u.onerror=function(){};

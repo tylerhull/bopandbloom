@@ -18,26 +18,27 @@ Skim the table below to find the right file before grepping the whole tree.
 | 03 | `data-southamerica.js` | Country facts, peaks, climb route, biomes, habitats, animals, market items/countries, timeline events, gaucho facts. Edit here to add facts/content. |
 | 04 | `data-letters.js` | `letterAnimals` — real animal photos + credits for Letter Sounds! (photos live in `app/animals/`). |
 | 05 | `state.js` | `$`/`root`/`modalRoot` bootstrap, profile schema, `sanitize*`/migration, `save`/`current`, theming (`theme`/`contrast`/`shade`). |
-| 06 | `audio.js` | Web Audio tones (`tone`, `fanfare`, `moo`), `speakText` (speech synthesis read-aloud), `audioSync`, `unlockAudio`. Add new sound effects here. |
-| 07 | `celebration.js` | Shared confetti/fireworks/lasers/fountain celebration overlay used by several games. |
-| 08 | `art-common.js` | `icon()` (UI icon set), `brand()`, `mascot()`, `mouseArt()`. |
-| 09 | `ui-shell.js` | Topbar, footer, page shell, toast, modal dialog primitives. |
-| 10 | `ui-workshop.js` | "Make it yours" personalization screen. |
-| 11 | `ui-settings.js` | Settings screen. |
-| 12 | `ui-parent.js` | Parent PIN gate, per-child game/difficulty toggles, assignments. |
-| 13 | `ui-home.js` | Playroom home screen, game cards, School tab, onboarding, new-profile creation. |
-| 14 | `game-flowers.js` | Bloom!/Bouquet!: flower art, vases, and `classicField` (the 3×3 target grid also used by Bop!). |
-| 15 | `game-scurry.js` | Procedural maze generation and play. |
-| 16 | `game-countries.js` | Country Match!: place countries on the real map. |
-| 17 | `game-gauchos.js` | Gaucho Herd!: wandering cows, corral. Cow sound (`moo()`) is called from `herdClickCow`. |
-| 18 | `game-peaks.js` | Peak Climber!: route up a real peak (the actual photo is the climb background too, not just the reward). |
-| 19 | `game-biomes.js` | Wild Places!: place regions on the real map. |
-| 20 | `game-animals.js` | Animal Sort!: sort animals into habitats. |
-| 21 | `game-market.js` | Market Day!: count coins to pay an exact price. |
-| 22 | `game-timeline.js` | Time Traveler!: order historical events. |
-| 23 | `game-letters.js` | Letter Sounds!: flashcard phonics — real animal photo, hear its name, tap the starting letter. |
-| 24 | `game-engine.js` | Generic engine: `startGame`, `renderGame`, the per-frame `tick`, `hit`, pause/resume/finish, difficulty. The `bodies`/`prompt`/`tips` dispatch maps in `renderGame` are how a game's view function gets wired in. |
-| 25 | `main.js` | `render()` dispatcher, all pointer/click/keyboard event wiring, page lifecycle (visibility/blur/beforeunload). **Loads last** — everything else must already be defined by the time its click handler and final `render()` call run. |
+| 06 | `audio.js` | Web Audio tones (`tone`, `fanfare`, `moo`), `speakText` (read-aloud), `audioSync`, `unlockAudio`. Add new sound effects here. |
+| 07 | `audio-map.js` | `AUDIO_MAP` — exact spoken text → pre-recorded filename in `app/audio/`. Generated, not hand-written; see "Read-aloud audio" below before touching this. |
+| 08 | `celebration.js` | Shared confetti/fireworks/lasers/fountain celebration overlay used by several games. |
+| 09 | `art-common.js` | `icon()` (UI icon set), `brand()`, `mascot()`, `mouseArt()`. |
+| 10 | `ui-shell.js` | Topbar, footer, page shell, toast, modal dialog primitives. |
+| 11 | `ui-workshop.js` | "Make it yours" personalization screen. |
+| 12 | `ui-settings.js` | Settings screen. |
+| 13 | `ui-parent.js` | Parent PIN gate, per-child game/difficulty toggles, assignments. |
+| 14 | `ui-home.js` | Playroom home screen, game cards, School tab, onboarding, new-profile creation. |
+| 15 | `game-flowers.js` | Bloom!/Bouquet!: flower art, vases, and `classicField` (the 3×3 target grid also used by Bop!). |
+| 16 | `game-scurry.js` | Procedural maze generation and play. |
+| 17 | `game-countries.js` | Country Match!: place countries on the real map. |
+| 18 | `game-gauchos.js` | Gaucho Herd!: wandering cows, corral. Cow sound (`moo()`) is called from `herdClickCow`. |
+| 19 | `game-peaks.js` | Peak Climber!: route up a real peak (the actual photo is the climb background too, not just the reward). |
+| 20 | `game-biomes.js` | Wild Places!: place regions on the real map. |
+| 21 | `game-animals.js` | Animal Sort!: sort animals into habitats. |
+| 22 | `game-market.js` | Market Day!: count coins to pay an exact price. |
+| 23 | `game-timeline.js` | Time Traveler!: order historical events. |
+| 24 | `game-letters.js` | Letter Sounds!: flashcard phonics — real animal photo, hear its name, tap the starting letter. |
+| 25 | `game-engine.js` | Generic engine: `startGame`, `renderGame`, the per-frame `tick`, `hit`, pause/resume/finish, difficulty. The `bodies`/`prompt`/`tips` dispatch maps in `renderGame` are how a game's view function gets wired in. |
+| 26 | `main.js` | `render()` dispatcher, all pointer/click/keyboard event wiring, page lifecycle (visibility/blur/beforeunload). **Loads last** — everything else must already be defined by the time its click handler and final `render()` call run. |
 
 ### Why the load order mostly doesn't matter
 
@@ -47,7 +48,7 @@ resolution happens when the function *runs* (after every file has loaded),
 not when it's declared. Only two things actually depend on order:
 - `05-state.js` reads `GAME_IDS.slice()` at the top level, so `01-data-core.js`
   must load first.
-- `25-main.js` wires up the real event listeners and calls `render()` at the
+- `26-main.js` wires up the real event listeners and calls `render()` at the
   very end, so it must load last.
 
 Renumbering files when inserting a new one (as happened for `data-letters.js`
@@ -87,7 +88,7 @@ single-IIFE wrapper made this a real global, so don't reintroduce a top-level
 ## The "fact audio" pattern
 
 Every game that teaches a fact follows the same convention, so there's one
-shared replay handler (`speak-fact` in `25-main.js`) instead of one per game:
+shared replay handler (`speak-fact` in `26-main.js`) instead of one per game:
 
 1. The moment a fact becomes the "current" one (a country/biome is selected,
    a round starts, an animal is sorted correctly, a peak is summited), set
@@ -107,6 +108,42 @@ shared replay handler (`speak-fact` in `25-main.js`) instead of one per game:
 
 Games without an educational fact (Bop!, Bloom!, Scurry!, Bouquet!, Market
 Day!, Time Traveler!) don't need any of this.
+
+`speakText(text)` itself (`audio.js`) looks `text` up in `AUDIO_MAP`
+(`audio-map.js`) and plays the matching pre-recorded clip from `app/audio/`
+if found, falling back to the live Web Speech API (`window.speechSynthesis`)
+only for text with no matching clip. **The lookup key is the exact string
+passed to `speakText`** — including any `name+'. '+fact` concatenation a
+call site does before calling it — so if you edit a fact's wording, its
+audio goes stale (falls back to live speech, which usually doesn't work at
+all — see below) until the clip is regenerated for the new text.
+
+## Read-aloud audio: why it's pre-recorded, not live text-to-speech
+
+The Web Speech Synthesis API doesn't work in the packaged desktop app: a
+real WebKitGTK 4.1 WebView has `window.speechSynthesis === undefined`,
+confirmed by direct testing 2026-09-15. WebKitGTK's speech-synthesis backend
+needs `libspiel` (a GNOME library from 2023/2024) that Ubuntu 18.04 doesn't
+have and likely won't for a long time. So every fact and name that gets
+read aloud (162 clips as of 2026-09-15: every `saFacts` entry, every
+`gauchoFacts` entry, every peak's facts, every biome's `name+'. '+fact`,
+every Animal Sort! animal's `name+'. '+fact`, every Letter Sounds! animal
+name) is a real pre-recorded WAV file in `app/audio/`, generated offline
+with `espeak-ng` — **not** something requiring network access or a paid
+TTS service, and not something to regenerate lightly (it needs a Linux box
+with `libespeak-ng1` installed; there's no pip in this project's sandbox,
+so generation used ctypes directly against the shared library rather than
+a Python TTS package — see the session transcript from 2026-09-15 for the
+generator script if this needs rebuilding, or ask for it to be rewritten).
+
+**Adding a new fact/name that should be read aloud:** add it to the
+relevant data file as usual, then regenerate `app/js/07-audio-map.js` and
+the matching WAV file in `app/audio/` for that exact string (same
+espeak-ng-via-ctypes approach) — if you skip this, `speakText` silently
+falls back to live speech synthesis, which plays nothing in the packaged
+app. Files are plain 22050Hz mono 16-bit PCM WAV (no compression — no
+encoder tools were available in the generating sandbox either, and PCM WAV
+is the one audio format every engine here is guaranteed to decode).
 
 ## Real photos and the `img-fallback` pattern
 
