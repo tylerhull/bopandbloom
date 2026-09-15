@@ -6,7 +6,7 @@ function mountainScene(g){
  var head=climbWaypoints[g.climb.progress];
  var summit=climbWaypoints[climbWaypoints.length-1];
  var p=g.climb.peak;
- return '<div class="climb-photo-wrap">'
+ return '<div class="climb-photo-outer"><div class="climb-photo-wrap" style="padding-top:'+(p.pt||75)+'%">'
   +'<img class="climb-photo" src="'+p.photo+'" alt="'+esc(p.name)+'">'
   +'<svg class="climb-mountain" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-label="Route up '+esc(p.name)+'">'
   +'<path d="M '+route+'" stroke="#fffdf4" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".8"/>'
@@ -23,7 +23,7 @@ function mountainScene(g){
   }).join('')
   +'<g transform="translate('+(summit[0]-4)+' '+(summit[1]-13)+') scale(0.9)">'+flagIcon()+'</g>'
   +'<g transform="translate('+(head[0]-5)+' '+(head[1]-11)+') scale(0.9)">'+climberIcon()+'</g>'
-  +'</svg></div>';
+  +'</svg></div></div>';
 }
 function newClimbRound(g){
  var pool=peaks.filter(function(p){return !g.climb||p.id!==g.climb.peak.id;});

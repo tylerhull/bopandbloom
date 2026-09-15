@@ -1,6 +1,8 @@
 /* Shared South America map: Country Match! and Wild Places! */
 .sa-wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:16px}
-.sa-map{width:100%;max-width:300px;background:#bfe0ea;border-radius:14px;border:3px solid var(--ink);padding:8px}
+.sa-map-outer{width:100%;max-width:300px;margin:0 auto}
+.sa-map-frame{position:relative;width:100%;height:0;padding-top:171.16%}
+.sa-map{position:absolute;inset:0;width:100%;height:100%;box-sizing:border-box;background:#bfe0ea;border-radius:14px;border:3px solid var(--ink);padding:8px}
 .sa-country{stroke:rgba(41,59,54,.45);stroke-width:5;cursor:default}
 .sa-country.land{cursor:pointer}.sa-country.land:hover{opacity:.85}
 .sa-country.hint{animation:sapulse 1s infinite}
@@ -10,7 +12,7 @@
 .country-flag{width:52px;height:35px;flex-shrink:0;border:1px solid var(--line);border-radius:4px;overflow:hidden}
 .sa-info strong{font-size:13px}.sa-info p{margin:2px 0 0;font-size:12px;line-height:1.4;opacity:.85}
 .sa-tray{text-align:center}.sa-tray-list{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:520px}.sa-tile{border-width:2px;font-size:12px}.sa-tile.selected{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
-.sa-map.biome-map{max-width:360px}
+.sa-map-outer.biome-map{max-width:360px}
 .biome-label{font-size:58px;stroke-width:14px}
 .biome-spot{cursor:pointer;stroke-dasharray:18 14}.biome-spot:hover{fill-opacity:.5}
 .biome-spot.placed{cursor:default;stroke-dasharray:none}

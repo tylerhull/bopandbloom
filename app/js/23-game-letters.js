@@ -40,7 +40,7 @@ function letterView(g){
  if(lt.celebrating)return '<div class="letters-wrap"><div class="maze-celebrate">'+confettiHtml()+'<div class="banner"><h3>All matched!</h3><p>A fresh set of animals is on its way.</p></div></div><div class="letters-stage"></div></div>';
  var a=lt.current;
  var choices=lt.choices.map(function(l){return '<button class="letter-choice" data-action="letter-pick" data-letter="'+l+'">'+l+'</button>';}).join('');
- return '<div class="letters-wrap"><div class="letters-card"><img class="letters-photo" src="'+a.photo+'" alt="An animal to name"><button class="icon-button letters-hear" data-action="speak-fact" aria-label="Hear its name">'+icon('sound')+'</button></div><span class="quiet">'+lt.done+' of '+lt.total+' matched</span><p class="hint">Tap the letter it starts with!</p><div class="letter-choices">'+choices+'</div><p class="hint letters-credit">'+esc(a.credit)+'</p></div>';
+ return '<div class="letters-wrap"><div class="letters-outer"><div class="letters-card" style="padding-top:'+(a.pt||75)+'%"><img class="letters-photo" src="'+a.photo+'" alt="An animal to name"><button class="icon-button letters-hear" data-action="speak-fact" aria-label="Hear its name">'+icon('sound')+'</button></div></div><span class="quiet">'+lt.done+' of '+lt.total+' matched</span><p class="hint">Tap the letter it starts with!</p><div class="letter-choices">'+choices+'</div><p class="hint letters-credit">'+esc(a.credit)+'</p></div>';
 }
 function letterPick(letter){
  if(!game||game.paused||game.ended||game.type!=='letters'||game.letters.celebrating)return;

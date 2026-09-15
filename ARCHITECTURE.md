@@ -123,6 +123,33 @@ e.g. a query for "chinchilla" surfaced a viscacha, a related but different
 species, and one for "eagle" surfaced a New Guinea harpy eagle illustration
 for a South American harpy eagle photo), then credit the photographer.
 
+Each photo's real aspect ratio is stored as `pt` (a `padding-top` percentage,
+`height/width*100`) on its data entry and applied inline (`peaks`/
+`letterAnimals` in the data files) — **never force photos into one fixed
+box with `object-fit:cover`**. A tall portrait shot (a mountain spire, a
+vertically-framed animal) cropped into a fixed landscape box loses exactly
+the part of the photo that mattered (the summit; the animal's head). Compute
+each new photo's `pt` with Pillow (`round(h/w*100, 2)`) when adding one.
+
+### The `padding-top` aspect-ratio box needs *two* nested elements
+
+The classic zero-height, `padding-top:N%` trick for sizing a box by aspect
+ratio only works correctly when the element carrying the padding fills
+100% of a parent whose width is *already* constrained to the box's final
+width. Percentage `padding-top`/`padding-bottom` always resolves against
+the **containing block's width** — not the element's own rendered width —
+so putting `max-width:300px` and `padding-top:N%` on the *same* element
+inside a wider flex container (every `*-wrap` here is `display:flex;
+flex-direction:column`) computes the padding against the flex container's
+full width, not the 300px cap, producing a badly wrong height. This was a
+real bug shipped and fixed the same day (2026-09-15) in the South America
+map, Peak Climber!, and Letter Sounds! — all three needed splitting into an
+outer element (`width:100%;max-width:Npx`, no padding) wrapping an inner
+one (`width:100%;height:0;padding-top:N%`). Follow that two-level shape for
+any new aspect-ratio box; a single element with both rules on it will look
+right only by coincidence (when its ancestor happens to already be exactly
+that width).
+
 ## Adding a new game, end to end
 
 1. Data → a `data-*.js` file (or a new one).

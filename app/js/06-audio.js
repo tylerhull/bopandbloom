@@ -28,9 +28,10 @@ function fanfare(){
 }
 function speakText(text){
  try{
-  if(!window.speechSynthesis||state.settings.muted||!state.settings.effects)return;
+  if(!window.speechSynthesis||!window.SpeechSynthesisUtterance||state.settings.muted||!state.settings.effects)return;
   var u=new SpeechSynthesisUtterance(text);
   u.rate=0.95;u.volume=state.settings.effectsVolume/100;
+  u.onerror=function(){};
   window.speechSynthesis.cancel();
   window.speechSynthesis.speak(u);
  }catch(e){}

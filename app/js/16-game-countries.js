@@ -15,7 +15,7 @@ function puzzleView(g){
  var overlay=allPlaced?'<div class="maze-celebrate">'+confettiHtml()+'<div class="banner"><h3>All done!</h3><p>Every country is in its place.</p></div></div>':'';
  var selected=pz.selected?countryById(pz.selected):null;
  var infoHtml=selected?'<div class="sa-info">'+countryFlag(selected.id)+'<div><strong>'+esc(selected.name)+'</strong><p>'+esc(pz.fact||'')+'</p></div><button class="icon-button" data-action="speak-fact" aria-label="Read fact aloud">'+icon('sound')+'</button></div>':'';
- return '<div class="sa-wrap">'+overlay+'<svg class="sa-map" viewBox="330 -545 1075 1840" preserveAspectRatio="xMidYMid meet" aria-label="Map of South America">'+pathsHtml+labelsHtml+'</svg><div class="sa-tray">'+infoHtml+'<p class="hint">'+(allPlaced?'Great work, geographer!':'Pick a country, then tap its home on the map.')+'</p><div class="sa-tray-list">'+tray+'</div></div></div>';
+ return '<div class="sa-wrap">'+overlay+'<div class="sa-map-outer"><div class="sa-map-frame"><svg class="sa-map" viewBox="330 -545 1075 1840" preserveAspectRatio="xMidYMid meet" aria-label="Map of South America">'+pathsHtml+labelsHtml+'</svg></div></div><div class="sa-tray">'+infoHtml+'<p class="hint">'+(allPlaced?'Great work, geographer!':'Pick a country, then tap its home on the map.')+'</p><div class="sa-tray-list">'+tray+'</div></div></div>';
 }
 function saClickCell(cid){
  if(!game||game.paused||game.ended||game.type!=='countries')return;
