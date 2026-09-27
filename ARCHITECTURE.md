@@ -240,18 +240,34 @@ screenshot at whatever size the browser preview tool happens to use won't
 catch this either — it caught neither this nor the original aspect-ratio
 bug.
 
-`.sa-map-outer`'s `max-width` (currently 145px; 154px for the `.biome-map`
-variant, which has more circles/labels needing room) was tuned by loading
-the real page in an actual GTK window sized to `launcher.py`'s default
-(1120×850 — see its `window.set_default_size` call) via the WebKitGTK
-diagnostic technique below, **in the state with an item selected** (the
-`.sa-info` fact banner adds real height, and is the tallest state) —
-checking `document.body.scrollHeight <= window.innerHeight`, not just eyeballing
-proportions. If either map's content changes enough to need more room
-again (a longer fact, more tray buttons), re-measure the same way rather
-than guessing a percentage — an 80% guess against the old 300px/360px
-sizes was tried first here and was still short by over 150px in the
-selected state.
+First attempt at fitting the window just shrank `.sa-map-outer` (repeatedly
+— 240px, then 170px, then 145/154px) until the page height stopped
+exceeding `window.innerHeight`. That was the wrong fix: it made the map
+tiny to compensate for a layout that stacked it *above* the country/place
+tray, so the page height was always map-height-plus-tray-height. The user
+correctly pushed back ("I don't need the blue box to be small... resize
+the play area... so the entire map shows") — the real fix is **`.sa-wrap`
+is a row flex container** (`flex-direction:row`, wraps to a column below
+`max-width:800px` for phone-width windows), map on the left and the
+tray/fact-banner on the right, so the map's height only has to compete
+with the *taller of the two columns*, not their sum. That alone let the
+map grow from ~150px wide back up to 250px (`.sa-map-outer`'s current
+`max-width`; 250px for `.biome-map` too — both need the same room) while
+still fitting the window.
+
+Tune `.sa-map-outer`'s width by loading the real page in an actual GTK
+window sized to `launcher.py`'s default (1120×850 — see its
+`window.set_default_size` call) via the WebKitGTK diagnostic technique
+below, **in the state with an item selected** (the `.sa-info` fact banner
+adds real height, and is the tallest state) — check
+`document.body.scrollHeight <= window.innerHeight` directly, don't
+eyeball proportions from a screenshot or guess a percentage of a previous
+size (an 80% guess against the old 300px/360px sizes was tried first here
+and was still short by over 150px in the selected state — measure, don't
+guess). If a future change needs the map bigger still, look for more
+width to reclaim (the tray column, the playfield's side padding) before
+reaching for `.sa-map-outer`'s width again — that's the dial that
+directly trades off against how big and legible the map is.
 
 ## Adding a new game, end to end
 
