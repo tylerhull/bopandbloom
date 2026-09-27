@@ -9,6 +9,25 @@ under `app/js/` and `app/css/`, loaded via plain `<script>`/`<link>` tags in
 
 Skim the table below to find the right file before grepping the whole tree.
 
+## Verify layout/audio/engine-specific changes in real WebKitGTK, not just Chromium
+
+This project ships as a native GTK app around WebKitGTK, but day-to-day
+development and browser-preview testing happens in Chromium (this repo's
+own dev tooling, and the `python3 -m http.server` preview workflow). Three
+separate real bugs this project shipped — a CSS aspect-ratio computation
+that was wrong in a way Chromium happened to render forgivingly, a
+read-aloud feature built on an API that doesn't exist in WebKitGTK at all,
+and a map sized correctly in proportion but never checked against the
+packaged app's actual window height — all looked completely fine in
+Chromium screenshots and only showed up once loaded in a real WebKitGTK
+`WebView`. If a change touches layout sizing, anything read-aloud/audio, or
+anything else that could plausibly differ by engine, verify it by actually
+loading `app/index.html` in a `WebKit2.WebView` (PyGObject: `gi.require_version('WebKit2','4.1')`,
+`WebKit2.WebContext.new_ephemeral()`, drive it with `view.run_javascript(...)`
+and read results back via the callback's `get_js_value()`) rather than
+trusting a Chromium-based screenshot or a mocked function call. This machine
+has the GTK/WebKit2 bindings needed to do this already installed.
+
 ## JS files (`app/js/`, loaded in this order)
 
 | # | File | Holds |
@@ -186,6 +205,32 @@ one (`width:100%;height:0;padding-top:N%`). Follow that two-level shape for
 any new aspect-ratio box; a single element with both rules on it will look
 right only by coincidence (when its ancestor happens to already be exactly
 that width).
+
+### Sizing the South America map: measure against the real window, not a screenshot
+
+Getting the aspect ratio right (above) wasn't enough on its own — the map
+still doesn't fit on screen just because its *proportions* are correct.
+`.playfield` has no max-height, so a portrait-oriented box that's taller
+than the window just pushes the page height past `window.innerHeight`,
+and the packaged app's WebKitGTK view gives no obvious scroll affordance
+(no visible scrollbar) — a kid or parent has no reason to think to scroll,
+so a technically-scrollable page reads as "the map is cut off." A Chromium
+screenshot at whatever size the browser preview tool happens to use won't
+catch this either — it caught neither this nor the original aspect-ratio
+bug.
+
+`.sa-map-outer`'s `max-width` (currently 145px; 154px for the `.biome-map`
+variant, which has more circles/labels needing room) was tuned by loading
+the real page in an actual GTK window sized to `launcher.py`'s default
+(1120×850 — see its `window.set_default_size` call) via the WebKitGTK
+diagnostic technique below, **in the state with an item selected** (the
+`.sa-info` fact banner adds real height, and is the tallest state) —
+checking `document.body.scrollHeight <= window.innerHeight`, not just eyeballing
+proportions. If either map's content changes enough to need more room
+again (a longer fact, more tray buttons), re-measure the same way rather
+than guessing a percentage — an 80% guess against the old 300px/360px
+sizes was tried first here and was still short by over 150px in the
+selected state.
 
 ## Adding a new game, end to end
 

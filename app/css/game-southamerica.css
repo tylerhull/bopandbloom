@@ -1,6 +1,6 @@
 /* Shared South America map: Country Match! and Wild Places! */
-.sa-wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:16px}
-.sa-map-outer{width:100%;max-width:300px;margin:0 auto}
+.sa-wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px}
+.sa-map-outer{width:100%;max-width:145px;margin:0 auto}
 .sa-map-frame{position:relative;width:100%;height:0;padding-top:171.16%}
 .sa-map{position:absolute;inset:0;width:100%;height:100%;box-sizing:border-box;background:#bfe0ea;border-radius:14px;border:3px solid var(--ink);padding:8px}
 .sa-country{stroke:rgba(41,59,54,.45);stroke-width:5;cursor:default}
@@ -8,11 +8,11 @@
 .sa-country.hint{animation:sapulse 1s infinite}
 .sa-map.nope{animation:nopeshake .35s}
 .sa-label{font-size:30px;font-weight:800;fill:#293b36;paint-order:stroke;stroke:#fffdf2;stroke-width:8px;pointer-events:none}
-.sa-info{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:10px 14px;margin-bottom:10px;text-align:left;max-width:420px;margin-left:auto;margin-right:auto}
-.country-flag{width:52px;height:35px;flex-shrink:0;border:1px solid var(--line);border-radius:4px;overflow:hidden}
-.sa-info strong{font-size:13px}.sa-info p{margin:2px 0 0;font-size:12px;line-height:1.4;opacity:.85}
-.sa-tray{text-align:center}.sa-tray-list{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:520px}.sa-tile{border-width:2px;font-size:12px}.sa-tile.selected{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
-.sa-map-outer.biome-map{max-width:360px}
+.sa-info{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:7px 12px;margin-bottom:4px;text-align:left;max-width:420px;margin-left:auto;margin-right:auto}
+.country-flag{width:40px;height:27px;flex-shrink:0;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.sa-info strong{font-size:12px}.sa-info p{margin:1px 0 0;font-size:11px;line-height:1.3;opacity:.85}
+.sa-tray{text-align:center}.sa-tray-list{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:520px}.sa-tile{border-width:2px;font-size:11px;padding:8px 12px}.sa-tile.selected{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+.sa-map-outer.biome-map{max-width:154px}
 .biome-label{font-size:58px;stroke-width:14px}
 .biome-spot{cursor:pointer;stroke-dasharray:18 14}.biome-spot:hover{fill-opacity:.5}
 .biome-spot.placed{cursor:default;stroke-dasharray:none}
