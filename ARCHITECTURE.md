@@ -269,6 +269,43 @@ width to reclaim (the tray column, the playfield's side padding) before
 reaching for `.sa-map-outer`'s width again — that's the dial that
 directly trades off against how big and legible the map is.
 
+### The real "map is cut off" cause: the SVG `viewBox` didn't match its own path data
+
+Both bugs above (the `padding-top` containing-block bug, and the stacked
+vs. row layout bug) were real, but fixing them still didn't fully solve the
+user's original complaint — because the actual root cause was something
+else entirely: the hardcoded `viewBox="330 -545 1075 1840"` on `.sa-map`
+(used in `17-game-countries.js`, `20-game-biomes.js`, and the home-card
+mini-map in `14-ui-home.js`) **did not actually bound the country path
+data**. Measuring the live SVG's real content extent with
+`svg.getBBox()` gave `{x:346.77, y:-522.18, w:1548.94, h:2100.31}` — the
+real content is ~44% wider and ~14% taller than the declared viewBox.
+Since an SVG's root element clips to its viewBox by default (`overflow:
+hidden`, not just a suggestion for scaling), the parts of the map outside
+that rectangle — the eastern bulge of Brazil and the southern tip past
+Patagonia — were being silently clipped no matter how the surrounding CSS
+box was sized or shaped. This is why two rounds of CSS fixes still left
+the user saying "you can't see all of it" — neither fix touched the
+viewBox itself.
+
+Fixed by computing a new viewBox from the measured content bbox plus a
+small margin: `viewBox="310 -570 1620 2200"` (verified afterward with
+`getBBox()` again — content now falls entirely inside the declared box on
+all four sides). This also changed the map's *true* aspect ratio from the
+old, wrong 1840/1075≈1.71 to the real 2200/1620≈1.358, so
+`.sa-map-frame`'s `padding-top` had to be recomputed too (171.16% →
+135.8%) — the two must always be updated together. The home-card mini-map
+in `14-ui-home.js` uses the same viewBox and needed its `height` attribute
+recomputed to match (130×177, from 130×192).
+
+**Lesson:** when a `viewBox` string on hand-authored/traced SVG path data
+looks suspicious (was hand-computed once, long ago, rather than generated
+from the paths), don't trust it — measure `getBBox()` against it directly.
+`getBBox()` returns the same tight geometric bounding box regardless of
+rendering engine (it's pure path math, not a rendering quirk), so this
+diagnostic is trustworthy even from the Chromium preview, unlike
+audio/TTS or font-rendering questions which do need real WebKitGTK.
+
 ## Adding a new game, end to end
 
 1. Data → a `data-*.js` file (or a new one).

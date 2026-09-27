@@ -15,7 +15,7 @@ function biomeView(g){
  var overlay=allPlaced?'<div class="maze-celebrate">'+confettiHtml()+'<div class="banner"><h3>Every wild place found!</h3><p>You really know South America.</p></div></div>':'';
  var sel=bz.selected?biomeById(bz.selected):null;
  var info=sel?'<div class="sa-info"><button class="icon-button" data-action="speak-fact" aria-label="Read this aloud">'+icon('sound')+'</button><div><strong>'+esc(sel.name)+'</strong><p>'+esc(sel.fact)+'</p></div></div>':'';
- return '<div class="sa-wrap">'+overlay+'<div class="sa-map-outer biome-map"><div class="sa-map-frame"><svg class="sa-map" viewBox="330 -545 1075 1840" preserveAspectRatio="xMidYMid meet" aria-label="Map of South America">'+mapHtml+spots+labels+'</svg></div></div><div class="sa-tray">'+info+'<p class="hint">'+(allPlaced?'Wonderful exploring!':'Pick a wild place, then tap where it belongs on the map.')+'</p><div class="sa-tray-list">'+tray+'</div></div></div>';
+ return '<div class="sa-wrap">'+overlay+'<div class="sa-map-outer biome-map"><div class="sa-map-frame"><svg class="sa-map" viewBox="310 -570 1620 2200" preserveAspectRatio="xMidYMid meet" aria-label="Map of South America">'+mapHtml+spots+labels+'</svg></div></div><div class="sa-tray">'+info+'<p class="hint">'+(allPlaced?'Wonderful exploring!':'Pick a wild place, then tap where it belongs on the map.')+'</p><div class="sa-tray-list">'+tray+'</div></div></div>';
 }
 function biomeClickSpot(bid){
  if(!game||game.paused||game.ended||game.type!=='biomes')return;
