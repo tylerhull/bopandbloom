@@ -1,5 +1,5 @@
 /* Generic game engine: start/pause/resume/finish, the per-frame tick loop, and difficulty. */
-function diffToMode(type,d){if(type==='scurry')return d==='hard'?'speedy':'relaxed';return d==='hard'?'speedy':d==='medium'?'gentle':'relaxed';}
+function diffToMode(type,d){if(type==='trace')return 'relaxed';if(type==='scurry')return d==='hard'?'speedy':'relaxed';return d==='hard'?'speedy':d==='medium'?'gentle':'relaxed';}
 function startGame(type,assignmentId){
  stopGame();uiScreen='game';var p=current();
  var diff=(p.difficulty&&p.difficulty[type])||'easy';
@@ -16,9 +16,11 @@ function startGame(type,assignmentId){
  else if(type==='market'){newMarketRound(game);}
  else if(type==='timeline'){newTimelineRound(game);}
  else if(type==='letters'){newLetterRound(game);}
+ else if(type==='trace'){newTraceRound(game);}
  render();game.frame=requestAnimationFrame(tick);
 }
 function difficultyRow(g){
+ if(g.type==='trace')return '';
  var p=current(),enabled=p.enabledDifficulties||DIFF_LEVELS;
  if(enabled.length<2)return '';
  return '<div class="diff-row">'+DIFF_LEVELS.filter(function(d){return enabled.indexOf(d)>=0;}).map(function(d){return '<button class="diff-pill'+(g.diff===d?' active':'')+'" data-action="set-difficulty" data-value="'+d+'">'+diffLabels[d]+'</button>';}).join('')+'</div>';
@@ -26,12 +28,13 @@ function difficultyRow(g){
 function renderGame(){
  if(!game)return;
  var g=game,timed=g.mode!=='relaxed';
- var prompt={bop:'Bop a mouse when it peeks out!',bloom:'Snip the flowers. Watch them grow again!',scurry:'Drop cheese to guide the mouse home!',bouquet:'Snip the matching flowers for the bouquet!',countries:'Match each country to its place on the map!',gauchos:'Round up the wandering herd and bring them home!',peaks:'Guide the climber up the route to the summit!',biomes:'Find each wild place on the map of South America!',animals:'Send each animal home to the right wild place!',market:'Count out the right coins to buy the treat!',timeline:'Put these moments in order, oldest first!',letters:'Look, listen, and match the letter it starts with!'}[g.type];
- var bodies={scurry:mazeView,countries:puzzleView,gauchos:herdView,peaks:climbView,biomes:biomeView,animals:sortView,market:marketView,timeline:timelineView,letters:letterView};
+ var prompt={bop:'Bop a mouse when it peeks out!',bloom:'Snip the flowers. Watch them grow again!',scurry:'Drop cheese to guide the mouse home!',bouquet:'Snip the matching flowers for the bouquet!',countries:'Match each country to its place on the map!',gauchos:'Round up the wandering herd and bring them home!',peaks:'Guide the climber up the route to the summit!',biomes:'Find each wild place on the map of South America!',animals:'Send each animal home to the right wild place!',market:'Count out the right coins to buy the treat!',timeline:'Put these moments in order, oldest first!',letters:'Look, listen, and match the letter it starts with!',trace:'Trace the letter or number with your finger!'}[g.type];
+ var bodies={scurry:mazeView,countries:puzzleView,gauchos:herdView,peaks:climbView,biomes:biomeView,animals:sortView,market:marketView,timeline:timelineView,letters:letterView,trace:traceView};
  var body=(bodies[g.type]||classicField)(g);
- var tips={scurry:'Click, tap, or use arrow keys / W A S D to drop cheese.',countries:'Tap a country from the list, then tap its spot on the map.',gauchos:'Tap a cow to send it home to the corral.',peaks:'Tap the next dot up the route.',biomes:'Tap a wild place, then tap its circle on the map.',animals:'Tap the habitat where this animal lives.',market:'Tap coins until they add up to the price.',timeline:'Tap the card that happened earliest.',letters:'Tap the speaker to hear its name again, then tap a letter.'};
+ var tips={scurry:'Click, tap, or use arrow keys / W A S D to drop cheese.',countries:'Tap a country from the list, then tap its spot on the map.',gauchos:'Tap a cow to send it home to the corral.',peaks:'Tap the next dot up the route.',biomes:'Tap a wild place, then tap its circle on the map.',animals:'Tap the habitat where this animal lives.',market:'Tap coins until they add up to the price.',timeline:'Tap the card that happened earliest.',letters:'Tap the speaker to hear its name again, then tap a letter.',trace:'Draw over the shape. Tap Clear to redo, Next for a new one.'};
  var tip=tips[g.type]||'Click or tap to play. Keyboard: Q W E / A S D / Z X C, or 1–9.';
  shell('<main><div class="game-header"><div class="game-heading"><button class="icon-button" data-action="home" aria-label="Back to playroom">'+icon('home')+'</button><h1>'+esc(current().name)+'’s '+gameNames[g.type]+'</h1></div><div class="scoreboard"><div class="score"><small>'+gameScores[g.type]+'</small><span id="score">'+g.score+'</span></div><div class="score"><small>'+(timed?'SECONDS':'YOUR PACE')+'</small><span id="time">'+(timed?Math.ceil(60-g.elapsed):'∞')+'</span></div><button class="icon-button" data-action="pause" aria-label="Pause game">'+icon('pause')+'</button></div></div>'+difficultyRow(g)+'<div class="progress-track"><div id="progress" class="progress-bar"></div></div><div class="playfield '+g.type+'-field"><div class="field-top"><span>'+prompt+'</span><strong>'+(timed?'Let’s explore':'No hurry. Just play.')+'</strong></div>'+body+'<div id="pause-layer"></div></div><div class="field-footer"><span class="game-tip">'+tip+'</span><button class="pill" data-action="finish">'+icon('check')+'All done</button></div></main>');
+ if(g.type==='trace')setupTraceCanvas(g);
  if(g.paused)showPause();
 }
 function tick(now){

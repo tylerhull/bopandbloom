@@ -58,7 +58,7 @@ license checks). Lean icons for these.
 
 | Game | Status | Effort | What it is | Reuses |
 |---|---|---|---|---|
-| **Letter / Number Tracing** | `[next]` | M | draw the shape with finger/mouse; letter formation + fine motor | — (new canvas/SVG path drawing) |
+| **Letter / Number Tracing** | `[done]` | M | Trace It! (`25-game-trace.js`) — draw big glyphs on a canvas; ABC/abc/123 toggles; no audio, no timer | new canvas drawing |
 | **Shape & Color Sorting** | `[idea]` | S | drag shapes to bins; pure toddler game for the 3-yo | existing art primitives |
 | **Simple Patterns** | `[idea]` | S | "what comes next?" (red, blue, red, ?); early reasoning | existing art primitives |
 | **Memory / Matching Pairs** | `[idea]` | S | flip cards to match animal↔animal or animal↔name | existing photos; name version = early word recognition |

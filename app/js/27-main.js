@@ -62,6 +62,9 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-acti
  else if(a==='market-reset'){game.market.paid=0;renderGame();}
  else if(a==='timeline-pick'){timelinePick(Number(b.getAttribute('data-idx')));}
  else if(a==='letter-pick'){letterPick(b.getAttribute('data-letter'));}
+ else if(a==='trace-set'){traceSet(b.getAttribute('data-set'));}
+ else if(a==='trace-clear'){traceClear();}
+ else if(a==='trace-next'){traceNext();}
  else if(a==='set-difficulty'){var p=current();p.difficulty[game.type]=v;save();startGame(game.type,game.assignmentId);}
 });
 document.addEventListener('keydown',function(e){
@@ -71,7 +74,7 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape'||e.key===' '){e.preventDefault();game.paused?resumeGame():pauseGame();return;}
   var k=e.key.toLowerCase();
   if(game.type==='scurry'){if(!e.repeat&&mazeKeyDirs.hasOwnProperty(k)){e.preventDefault();unlockAudio();mazeDirectionMove(k);}return;}
-  if(['countries','gauchos','peaks','biomes','animals','market','timeline','letters'].indexOf(game.type)>=0)return;
+  if(['countries','gauchos','peaks','biomes','animals','market','timeline','letters','trace'].indexOf(game.type)>=0)return;
   var idx='qweasdzxc'.indexOf(k);
   if(/^[1-9]$/.test(k))idx=Number(k)-1;
   if(idx>=0&&!e.repeat){e.preventDefault();unlockAudio();hit(idx);}

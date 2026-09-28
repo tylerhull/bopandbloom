@@ -68,8 +68,9 @@ has the GTK/WebKit2 bindings needed to do this already installed.
 | 22 | `game-market.js` | Market Day!: count coins to pay an exact price. |
 | 23 | `game-timeline.js` | Time Traveler!: order historical events. |
 | 24 | `game-letters.js` | Letter Sounds!: flashcard phonics — real animal photo, hear its name, tap the starting letter. |
-| 25 | `game-engine.js` | Generic engine: `startGame`, `renderGame`, the per-frame `tick`, `hit`, pause/resume/finish, difficulty. The `bodies`/`prompt`/`tips` dispatch maps in `renderGame` are how a game's view function gets wired in. |
-| 26 | `main.js` | `render()` dispatcher, all pointer/click/keyboard event wiring, page lifecycle (visibility/blur/beforeunload). **Loads last** — everything else must already be defined by the time its click handler and final `render()` call run. |
+| 25 | `game-trace.js` | Trace It!: trace big letters/numbers on a `<canvas>`. No audio, no timer (always `relaxed`). Drawing is bound by `setupTraceCanvas()`, called from `renderGame`'s post-render hook (the canvas is recreated each render). |
+| 26 | `game-engine.js` | Generic engine: `startGame`, `renderGame`, the per-frame `tick`, `hit`, pause/resume/finish, difficulty. The `bodies`/`prompt`/`tips` dispatch maps in `renderGame` are how a game's view function gets wired in. |
+| 27 | `main.js` | `render()` dispatcher, all pointer/click/keyboard event wiring, page lifecycle (visibility/blur/beforeunload). **Loads last** — everything else must already be defined by the time its click handler and final `render()` call run. |
 
 ### Why the load order mostly doesn't matter
 
@@ -79,13 +80,15 @@ resolution happens when the function *runs* (after every file has loaded),
 not when it's declared. Only two things actually depend on order:
 - `05-state.js` reads `GAME_IDS.slice()` at the top level, so `01-data-core.js`
   must load first.
-- `26-main.js` wires up the real event listeners and calls `render()` at the
-  very end, so it must load last.
+- `main.js` (currently `27-main.js`) wires up the real event listeners and
+  calls `render()` at the very end, so it must load last.
 
-Renumbering files when inserting a new one (as happened for `data-letters.js`
-and `game-letters.js`) is optional busywork, not a correctness requirement —
-do it if it's cheap (`git mv` + fix `index.html`), skip it under time pressure
-and just pick the next free number.
+Renumbering files when inserting a new one is optional busywork, not a
+correctness requirement. It's now cheap, though: `index.html`'s tags are
+auto-generated, so inserting `25-game-trace.js` only meant `git mv`-ing the
+engine/main to 26/27 and re-running `build_index.py` — no hand-editing of tags.
+Skip the renumber under time pressure and just pick the next free number if you
+prefer; correctness doesn't depend on it.
 
 ### Naming gotcha
 
@@ -115,6 +118,7 @@ single-IIFE wrapper made this a real global, so don't reintroduce a top-level
 | `game-peaks.css` | Peak Climber!. |
 | `game-newgames.css` | Animal Sort!, Market Day!, Time Traveler!. |
 | `game-letters.css` | Letter Sounds!. |
+| `game-trace.css` | Trace It! (canvas + set toggles). |
 
 ## The "fact audio" pattern
 

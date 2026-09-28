@@ -1,0 +1,10 @@
+/* Trace It! — letter/number tracing on a canvas. */
+.trace-wrap{display:flex;flex-direction:column;align-items:center;gap:16px}
+.trace-sets{display:flex;gap:8px}
+.trace-set{font-weight:800}
+.trace-set.active{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+.trace-stage{width:100%;max-width:420px}
+.trace-canvas{width:100%;height:auto;display:block;background:var(--surface);border:3px solid var(--ink);border-radius:20px;touch-action:none;cursor:crosshair}
+.trace-controls{display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify-content:center}
+.trace-now{font-size:18px}
+.trace-now strong{font-size:28px;color:var(--primary)}
