@@ -62,7 +62,7 @@ license checks). Lean icons for these.
 | **Shape & Color Sorting** | `[idea]` | S | drag shapes to bins; pure toddler game for the 3-yo | existing art primitives |
 | **Simple Patterns** | `[idea]` | S | "what comes next?" (red, blue, red, ?); early reasoning | existing art primitives |
 | **Memory / Matching Pairs** | `[idea]` | S | flip cards to match animal↔animal or animal↔name | existing photos; name version = early word recognition |
-| **Flag Match** | `[idea]` | S | match flags to countries | existing `countryFlag()` + country data — nearly free |
+| **Flag Match** | `[done]` | S | Flag Match! (`26-game-flags.js`) — hear/read a country, tap its flag; Easy/Medium/Hard = 3/4/6 choices | `countryFlag()` + `saCountries` names; country names added to audio CSV |
 
 ### Needs audio (schedule after Phase 0)
 

@@ -1,0 +1,11 @@
+/* Flag Match! — hear a country, tap its flag. */
+.flags-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.flags-prompt{display:flex;align-items:center;gap:12px}
+.flags-prompt strong{font-size:34px;color:var(--primary)}
+.flags-hear{flex-shrink:0}
+.flag-choices{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;max-width:560px}
+.flag-choice{padding:0;border:3px solid var(--ink);border-radius:12px;background:var(--surface);overflow:hidden;cursor:pointer;line-height:0;transition:transform .1s}
+.flag-choice:hover{transform:scale(1.05)}
+.flag-choice .country-flag{width:150px;height:100px;display:block;border:0;border-radius:0}
+.flag-choice.nope{animation:nopeshake .35s}
+@media(max-width:560px){.flag-choice .country-flag{width:120px;height:80px}}
