@@ -1,5 +1,6 @@
 'use strict';
 /* Core config & data: palettes, mascots, difficulty levels, and the game catalog. */
+var APP_VERSION='0.1.0';
 var palettes = [
  {name:'Blueberry meadow',primary:'#5755c9',secondary:'#ee945b',background:'#faf7ef',surface:'#fffdf8',ink:'#293b36',garden:'#90b99a'},
  {name:'Strawberry picnic',primary:'#b63f62',secondary:'#edb950',background:'#fff6ed',surface:'#fffdf8',ink:'#543841',garden:'#96bc8e'},
