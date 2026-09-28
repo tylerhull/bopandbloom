@@ -103,8 +103,8 @@ reduce ongoing per-edit token cost and drift.
 
 | Item | Status | Effort | Why | Payoff |
 |---|---|---|---|---|
-| **Generate the `<script>`/`<link>` block + cache-buster** | `[planned]` | S | Every CSS/JS edit currently forces rewriting all ~41 `?v=N` tags in `index.html`. A tiny script would stamp the buster from `APP_VERSION` (or a file hash) so a change touches **one** place. | **Highest** — pays back on every future edit |
-| **Single source for the version** | `[planned]` | S | `build-deb.sh` has its own `Version:` that can drift from `APP_VERSION`; have the build read the constant. | Prevents mismatched version numbers |
+| **Generate the `<script>`/`<link>` block + cache-buster** | `[done]` | S | `tools/build_index.py` stamps each asset with a `?v=<content-hash>` between `build:` markers in `index.html` — run it after editing js/css instead of hand-bumping ~41 tags. | **Highest** — pays back on every future edit |
+| **Single source for the version** | `[done]` | S | `build-deb.sh` reads `APP_VERSION` from `01-data-core.js` for the .deb version + filename, and runs `build_index.py` before packaging. | Prevents mismatched version numbers |
 | **Per-file header index line** | `[idea]` | S | one comment line per file listing what it owns, so exploration reads less. | Minor, cheap |
 
 ---

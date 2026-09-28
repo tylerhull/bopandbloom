@@ -9,6 +9,18 @@ under `app/js/` and `app/css/`, loaded via plain `<script>`/`<link>` tags in
 
 Skim the table below to find the right file before grepping the whole tree.
 
+**After editing anything under `app/js/` or `app/css/`, run
+`python3 tools/build_index.py`.** The `<link>`/`<script>` blocks in
+`index.html` live between `<!-- build:css -->` / `<!-- build:js -->` markers
+and are auto-generated: the script stamps each file with a `?v=<hash>`
+cache-buster computed from that file's own contents (a browser will otherwise
+serve a stale copy across reloads with no server cache headers to stop it).
+Don't hand-edit those blocks or hand-bump the busters — add/rename/remove a
+file, then re-run the script. It's idempotent; `--check` exits non-zero if
+stale. `build-deb.sh` runs it automatically before packaging, and also reads
+the single version constant (`APP_VERSION` in `01-data-core.js`) for the
+`.deb` version + filename, so there's one place to bump the version.
+
 ## Verify layout/audio/engine-specific changes in real WebKitGTK, not just Chromium
 
 This project ships as a native GTK app around WebKitGTK, but day-to-day
@@ -319,7 +331,10 @@ audio/TTS or font-rendering questions which do need real WebKitGTK.
    doesn't use the classic 3×3 keyboard grid.
 5. Add it to `GAME_IDS` and `GAME_CATALOG` in `data-core.js`, plus a card
    scene in `ui-home.js`'s `scene()`.
-6. New CSS → a new `game-*.css` file plus a `<link>` in `index.html`.
-7. Test in the browser preview (`python3 -m http.server 8765 --directory app`),
+6. New CSS → a new `game-*.css` file (no manual `<link>` — `build_index.py`
+   picks up any `app/css/*.css`; just re-run it).
+7. New JS/CSS files → run `python3 tools/build_index.py` to add them to
+   `index.html` with cache-busters (see the note near the top of this file).
+8. Test in the browser preview (`python3 -m http.server 8765 --directory app`),
    then update `tests/browser.cjs` (never actually executable in this
    environment — no Node/Playwright — so flag it as unverified).

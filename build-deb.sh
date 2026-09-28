@@ -3,6 +3,9 @@ set -eu
 SOURCE_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 DEST_DIR=${1:-"$SOURCE_DIR/.."}
 mkdir -p "$DEST_DIR"
+APP_VERSION=$(sed -n "s/.*APP_VERSION *= *'\([^']*\)'.*/\1/p" "$SOURCE_DIR/app/js/01-data-core.js" | head -n1)
+[ -n "$APP_VERSION" ] || { echo "build-deb: could not read APP_VERSION from app/js/01-data-core.js" >&2; exit 1; }
+python3 "$SOURCE_DIR/tools/build_index.py"
 STAGING_DIR=$(mktemp -d)
 trap 'rm -rf "$STAGING_DIR"' EXIT HUP INT TERM
 mkdir -p "$STAGING_DIR/DEBIAN" "$STAGING_DIR/usr/share/bop-and-bloom/app" "$STAGING_DIR/usr/bin" "$STAGING_DIR/usr/share/applications" "$STAGING_DIR/usr/share/icons/hicolor/scalable/apps" "$STAGING_DIR/usr/share/doc/bop-and-bloom"
@@ -26,9 +29,9 @@ Terminal=false
 Categories=Game;KidsGame;Education;
 StartupNotify=true
 DESKTOP
-cat > "$STAGING_DIR/DEBIAN/control" <<'CONTROL'
+cat > "$STAGING_DIR/DEBIAN/control" <<CONTROL
 Package: bop-and-bloom
-Version: 0.1.0
+Version: $APP_VERSION
 Section: games
 Priority: optional
 Architecture: all
@@ -41,4 +44,4 @@ Description: A personalized offline playroom for little explorers
 CONTROL
 find "$STAGING_DIR" -type d -exec chmod 755 {} +
 find "$STAGING_DIR" -type f ! -path '*/usr/bin/*' -exec chmod 644 {} +
-dpkg-deb --root-owner-group -Zgzip --build "$STAGING_DIR" "$DEST_DIR/bop-and-bloom_0.1.0_all.deb"
+dpkg-deb --root-owner-group -Zgzip --build "$STAGING_DIR" "$DEST_DIR/bop-and-bloom_${APP_VERSION}_all.deb"
