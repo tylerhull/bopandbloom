@@ -92,7 +92,7 @@ has the GTK/WebKit2 bindings needed to do this already installed.
 | 21 | `game-animals.js` | Animal Sort!: sort animals into habitats. |
 | 22 | `game-market.js` | Market Day!: count coins to pay an exact price. |
 | 23 | `game-timeline.js` | Time Traveler!: order historical events. |
-| 24 | `game-letters.js` | Letter Sounds!: flashcard phonics — real animal photo, hear its name, tap the starting letter. |
+| 24 | `game-letters.js` | Letter Sounds!: flashcard phonics — see a picture, hear its name, tap the starting letter. Pack-driven (`activePackItems()`); renders photo or flag svg. |
 | 25 | `game-trace.js` | Trace It!: trace big letters/numbers on a `<canvas>`. No audio, no timer (always `relaxed`). Drawing is bound by `setupTraceCanvas()`, called from `renderGame`'s post-render hook (the canvas is recreated each render). |
 | 26 | `game-flags.js` | Flag Match!: hear/read a country name, tap its flag. Reuses `countryFlag()` + `saCountries` names; follows the fact-audio convention (speaks the country name). |
 | 27 | `game-memory.js` | Memory Match!: flip cards two at a time to find matching pairs of animal photos (reuses `letterAnimals`). No audio, no timer (always `relaxed`); difficulty sets the pair count (3/6/8). |

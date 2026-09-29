@@ -57,7 +57,7 @@ Tap the lock icon in the top bar and enter the 4-digit parent PIN (**1234** by d
 
 - **Games shown** — turn any game on or off per child, so the playroom menu only shows what's appropriate for them right now.
 - **Difficulty levels shown** — turn Easy/Medium/Hard on or off per child; whatever stays on is what that child can choose from on each game's own screen. At least one game and one difficulty level always stay on.
-- **Content packs** — choose which sets of pictures and words the picture games (Flashcards!, Memory Match!) draw from, per child. At least one pack always stays on.
+- **Content packs** — choose which sets of pictures and words the picture games (Flashcards!, Memory Match!, Letter Sounds!) draw from, per child. At least one pack always stays on.
 - **Assign schoolwork** — pick a game and assign it to a child. It shows up under the **School** tab on their playroom menu (next to **Play**), with a badge for how many assignments are waiting.
 - **Review completed work** — every finished assignment records the date, the score, and the points earned (10 points plus the score achieved) for the parent to look back on.
 

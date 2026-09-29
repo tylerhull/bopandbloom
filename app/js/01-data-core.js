@@ -49,7 +49,7 @@ var GAME_CATALOG=[
  {id:'animals',title:'Animal Sort!',desc:'Sort South American animals into the wild places they call home.',label:'SPOT · SORT · LEARN',secondary:false,verb:'sort'},
  {id:'market',title:'Market Day!',desc:'Count out coins to buy treats at a South American market.',label:'COUNT · PAY · SHOP',secondary:true,verb:'shop'},
  {id:'timeline',title:'Time Traveler!',desc:'Put big moments in South American history in the right order.',label:'ORDER · LEARN · HISTORY',secondary:false,verb:'travel'},
- {id:'letters',title:'Letter Sounds!',desc:'Meet a real South American animal, hear its name, and tap the letter it starts with.',label:'LOOK · LISTEN · MATCH',secondary:true,verb:'match'},
+ {id:'letters',title:'Letter Sounds!',desc:'See a picture, hear its name, and tap the letter it starts with. Pick the packs in the Parent Area.',label:'LOOK · LISTEN · MATCH',secondary:true,verb:'match'},
  {id:'trace',title:'Trace It!',desc:'Trace big letters and numbers with your finger to learn how to write them.',label:'TRACE · WRITE · LEARN',secondary:false,verb:'trace'},
  {id:'flags',title:'Flag Match!',desc:'Hear a South American country’s name, then tap its flag from a set of choices.',label:'LISTEN · MATCH · FLAGS',secondary:true,verb:'match'},
  {id:'memory',title:'Memory Match!',desc:'Flip the cards two at a time to find matching pairs of South American animals.',label:'FLIP · FIND · MATCH',secondary:false,verb:'play'},

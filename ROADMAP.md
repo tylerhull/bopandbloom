@@ -125,7 +125,7 @@ credits (in-app + README) must stay; share-alike is fine for this use.
 |---|---|---|---|
 | **Pack data model** | `[done]` | M | `04b-data-packs.js`: `PACKS` registry + `activePackItems()`; item = `{id,label,image?,svg?,pt?,credit?}` (`speakText(label)` handles audio via `AUDIO_MAP`). Two **built-in** packs derived from existing data (South American Animals from `letterAnimals`; South American Flags from `saCountries`+`countryFlag`) — no duplication. Fuller content-out-of-code refactor can follow as new packs. |
 | **Parent Tools: pack selection** | `[done]` | M | "Content packs" section in the Parent Area with on/off toggles per pack, stored as `profile.enabledPacks` (empty/absent = all), mirroring the "Games shown" toggles. |
-| **Pack-driven games** | `[done]` | M | New **Flashcards!** game (`30-game-flash.js`) and **Memory Match!** both draw from the child's enabled packs and render photo or flag-svg items. (Letter Sounds! still uses the animal list directly — could become pack-driven later; it's phonics/photo-specific.) |
+| **Pack-driven games** | `[done]` | M | **Flashcards!** (`30-game-flash.js`), **Memory Match!**, and **Letter Sounds!** all draw from the child's enabled packs and render photo or flag-svg items. (The map/geography games, Animal Sort!, and the procedural games stay on their own content — packs don't fit them.) |
 | **User-imported packs** | `[planned]` | L | Parents import a downloaded pack (e.g. a `.zip`) — file picker, validation, asset storage. **Much easier after Electron** (real filesystem access; browser sandboxing makes this awkward). Built-in packs done; import is the remaining piece. |
 
 Suggested order for release: **Electron build first** (low-risk, unblocks
