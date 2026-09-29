@@ -1,0 +1,12 @@
+/* Memory Match! — flip cards to find matching pairs. */
+.mem-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
+.mem-grid{display:grid;gap:12px;width:100%;max-width:440px}
+.mem-card{position:relative;width:100%;padding:0;border:0;background:none;cursor:pointer;padding-top:100%}
+.mem-face{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:14px;border:3px solid var(--ink);overflow:hidden;background:var(--surface)}
+.mem-card:not(.open) .mem-face{background:var(--primary)}
+.mem-back{color:var(--on-primary);width:44%;height:44%;display:flex;align-items:center;justify-content:center}
+.mem-back svg{width:100%;height:100%}
+.mem-photo{width:100%;height:100%;object-fit:contain;background:var(--surface)}
+.mem-card.matched .mem-face{border-color:var(--secondary);box-shadow:0 0 0 3px var(--secondary)}
+.mem-card.matched{opacity:.85}
+.mem-card:not(.open):hover .mem-face{filter:brightness(1.06)}
