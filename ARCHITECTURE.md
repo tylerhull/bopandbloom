@@ -44,7 +44,7 @@ has the GTK/WebKit2 bindings needed to do this already installed.
 
 | # | File | Holds |
 |---|------|-------|
-| 01 | `data-core.js` | Palettes, mascots, lettering/pattern lists, difficulty levels, `GAME_IDS`, `GAME_CATALOG`, game name/label maps. Edit here to add/rename a game in the catalog. |
+| 01 | `data-core.js` | Palettes, mascots, lettering/pattern lists, difficulty levels, `GAME_IDS`, `GAME_CATALOG`, `GAME_GROUPS` (home-screen Play-tab sections), game name/label maps. Edit here to add/rename a game in the catalog. |
 | 02 | `data-map.js` | `saCountries` (real South America path data traced from Wikimedia, huge single lines — rarely touched) and `countryFlag()`. |
 | 03 | `data-southamerica.js` | Country facts, peaks, climb route, biomes, habitats, animals, market items/countries, timeline events, gaucho facts. Edit here to add facts/content. |
 | 04 | `data-letters.js` | `letterAnimals` — real animal photos + credits for Letter Sounds! (photos live in `app/animals/`). |
@@ -341,8 +341,10 @@ audio/TTS or font-rendering questions which do need real WebKitGTK.
 4. Wire it into `main.js`: the click-handler `else if(a===...)` chain, and
    add the type to the keydown guard's game-type exclusion list if it
    doesn't use the classic 3×3 keyboard grid.
-5. Add it to `GAME_IDS` and `GAME_CATALOG` in `data-core.js`, plus a card
-   scene in `ui-home.js`'s `scene()`.
+5. Add it to `GAME_IDS`, `GAME_CATALOG`, and a `GAME_GROUPS` section
+   (which home-screen collection it belongs to — else it lands in the
+   "More games" catch-all) in `data-core.js`, plus a card scene in
+   `ui-home.js`'s `scene()`.
 6. New CSS → a new `game-*.css` file (no manual `<link>` — `build_index.py`
    picks up any `app/css/*.css`; just re-run it).
 7. New JS/CSS files → run `python3 tools/build_index.py` to add them to

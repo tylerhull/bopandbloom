@@ -20,10 +20,21 @@ function scene(type){var b='<svg viewBox="0 0 520 210" preserveAspectRatio="xMid
 function catalogEntry(id){return GAME_CATALOG.filter(function(g){return g.id===id;})[0];}
 function visibleGames(p){var en=p.enabledGames&&p.enabledGames.length?p.enabledGames:GAME_IDS;return GAME_CATALOG.filter(function(g){return en.indexOf(g.id)>=0;});}
 function card(g,num,assignmentId){return '<article class="game-card" data-action="start" data-game="'+g.id+'"'+(assignmentId?' data-assignment="'+assignmentId+'"':'')+'><div class="scene">'+scene(g.id)+'<span class="scene-label">'+g.label+'</span></div><div class="card-body"><div class="card-title-row"><h2>'+g.title+'</h2>'+(num?'<span class="game-number">'+num+'</span>':'')+'</div><p>'+g.desc+'</p><button class="big-button wide '+(g.secondary?'secondary-button':'')+'" data-action="start" data-game="'+g.id+'"'+(assignmentId?' data-assignment="'+assignmentId+'"':'')+'>'+icon('play')+'Let’s '+g.verb+'!</button></div></article>';}
+function padNum(n){return n<10?'0'+n:String(n);}
 function playSection(p){
  var games=visibleGames(p);
  if(!games.length)return '<p class="hint">No games are turned on yet. Ask a grown-up to choose some in the Parent Area.</p>';
- return '<div class="section-heading"><h2>Pick your adventure</h2><span class="quiet">'+games.length+' game'+(games.length===1?'':'s')+' · endless smiles</span></div><section class="games" aria-label="Games">'+games.map(function(g,i){return card(g,String(i+1).length<2?'0'+(i+1):(i+1));}).join('')+'</section>';
+ var byId={};games.forEach(function(g){byId[g.id]=g;});
+ var used={},num=0;
+ var html='<div class="section-heading"><h2>Pick your adventure</h2><span class="quiet">'+games.length+' game'+(games.length===1?'':'s')+' · endless smiles</span></div>';
+ GAME_GROUPS.forEach(function(grp){
+  var gs=grp.ids.map(function(id){return byId[id];}).filter(function(g){return g;});
+  if(!gs.length)return;
+  html+='<div class="group-heading"><h3>'+esc(grp.title)+'</h3><span class="quiet">'+esc(grp.blurb)+'</span></div><section class="games" aria-label="'+esc(grp.title)+'">'+gs.map(function(g){used[g.id]=true;num++;return card(g,padNum(num));}).join('')+'</section>';
+ });
+ var extra=games.filter(function(g){return !used[g.id];});
+ if(extra.length)html+='<div class="group-heading"><h3>More games</h3></div><section class="games" aria-label="More games">'+extra.map(function(g){num++;return card(g,padNum(num));}).join('')+'</section>';
+ return html;
 }
 function schoolSection(p){
  var assignments=p.assignments||[];

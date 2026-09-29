@@ -56,6 +56,14 @@ var GAME_CATALOG=[
  {id:'shapes',title:'Shape Sort!',desc:'Sort colorful shapes into the right bin — by shape, then by color.',label:'SHAPES · COLORS · SORT',secondary:true,verb:'sort'},
  {id:'patterns',title:'Pattern Play!',desc:'Look at the repeating pattern of shapes and tap what comes next.',label:'LOOK · THINK · NEXT',secondary:false,verb:'play'}
 ];
+/* Home-screen groupings for the Play tab. Every game id should live in exactly
+   one group; any visible game missing from these lists falls into a "More games"
+   catch-all so nothing ever disappears. */
+var GAME_GROUPS=[
+ {id:'playroom',title:'Playroom',blurb:'Gentle taps, snips, and giggles',ids:['bop','bloom','scurry','bouquet']},
+ {id:'southamerica',title:'Explore South America',blurb:'A whole continent to discover',ids:['countries','gauchos','peaks','biomes','animals','market','timeline','flags']},
+ {id:'learning',title:'Letters, numbers & thinking',blurb:'Warm-ups for reading and school',ids:['letters','trace','shapes','patterns','memory']}
+];
 var gameNames={bop:'Bop!',bloom:'Bloom!',scurry:'Scurry!',bouquet:'Bouquet!',countries:'Country Match!',gauchos:'Gaucho Herd!',peaks:'Peak Climber!',biomes:'Wild Places!',animals:'Animal Sort!',market:'Market Day!',timeline:'Time Traveler!',letters:'Letter Sounds!',trace:'Trace It!',flags:'Flag Match!',memory:'Memory Match!',shapes:'Shape Sort!',patterns:'Pattern Play!'};
 var gameScores={bop:'BOPS',bloom:'FLOWERS',scurry:'MICE',bouquet:'BOUQUETS',countries:'COUNTRIES',gauchos:'COWS',peaks:'SUMMITS',biomes:'PLACES',animals:'ANIMALS',market:'BOUGHT',timeline:'IN ORDER',letters:'MATCHED',trace:'TRACED',flags:'MATCHED',memory:'PAIRS',shapes:'SORTED',patterns:'SOLVED'};
 var gameLabels={bop:'happy little bops',bloom:'flowers snipped',scurry:'mice guided home',bouquet:'bouquets made',countries:'countries placed',gauchos:'cows herded home',peaks:'peaks summited',biomes:'wild places found',animals:'animals sorted home',market:'market treats bought',timeline:'timelines sorted',letters:'letters matched',trace:'letters and numbers traced',flags:'flags matched',memory:'pairs found',shapes:'shapes and colors sorted',patterns:'patterns solved'};

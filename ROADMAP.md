@@ -89,7 +89,7 @@ Build on the existing Parent Area (assignments, points, per-game/difficulty togg
 
 | Feature | Status | Effort | What it is |
 |---|---|---|---|
-| **Home-screen collection grouping** | `[planned]` | M | group games into "Reading," "South America," "Numbers" — turns the game list into visible collections, keeps it navigable as it grows |
+| **Home-screen collection grouping** | `[done]` | M | Play tab now groups games into Playroom / Explore South America / Letters, numbers & thinking via `GAME_GROUPS` in `data-core.js` (with a "More games" catch-all) |
 | **Stickers / reward collection** | `[idea]` | M | earn a sticker per finished game, shown on a "my collection" page; big motivator, ties into points |
 | **"Read to me" everywhere** | `[idea]` | M | tap-to-hear on any on-screen text (not just facts) so pre-readers can navigate solo. *Needs Phase 0 audio.* |
 | **Daily "pick 3"** | `[idea]` | S | rotating small set on the home screen so the list isn't overwhelming for a little kid |
