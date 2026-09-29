@@ -71,8 +71,9 @@ has the GTK/WebKit2 bindings needed to do this already installed.
 | 25 | `game-trace.js` | Trace It!: trace big letters/numbers on a `<canvas>`. No audio, no timer (always `relaxed`). Drawing is bound by `setupTraceCanvas()`, called from `renderGame`'s post-render hook (the canvas is recreated each render). |
 | 26 | `game-flags.js` | Flag Match!: hear/read a country name, tap its flag. Reuses `countryFlag()` + `saCountries` names; follows the fact-audio convention (speaks the country name). |
 | 27 | `game-memory.js` | Memory Match!: flip cards two at a time to find matching pairs of animal photos (reuses `letterAnimals`). No audio, no timer (always `relaxed`); difficulty sets the pair count (3/6/8). |
-| 28 | `game-engine.js` | Generic engine: `startGame`, `renderGame`, the per-frame `tick`, `hit`, pause/resume/finish, difficulty. The `bodies`/`prompt`/`tips` dispatch maps in `renderGame` are how a game's view function gets wired in. |
-| 29 | `main.js` | `render()` dispatcher, all pointer/click/keyboard event wiring, page lifecycle (visibility/blur/beforeunload). **Loads last** — everything else must already be defined by the time its click handler and final `render()` call run. |
+| 28 | `game-shapes.js` | Shape Sort!: tap the bin a colorful shape belongs in. Rounds alternate sort-by-shape / sort-by-color (`shapeArt()` draws the shapes). No audio, no timer; difficulty sets how many shapes/colors (3/4/5). |
+| 29 | `game-engine.js` | Generic engine: `startGame`, `renderGame`, the per-frame `tick`, `hit`, pause/resume/finish, difficulty. The `bodies`/`prompt`/`tips` dispatch maps in `renderGame` are how a game's view function gets wired in. |
+| 30 | `main.js` | `render()` dispatcher, all pointer/click/keyboard event wiring, page lifecycle (visibility/blur/beforeunload). **Loads last** — everything else must already be defined by the time its click handler and final `render()` call run. |
 
 ### Why the load order mostly doesn't matter
 
@@ -82,7 +83,7 @@ resolution happens when the function *runs* (after every file has loaded),
 not when it's declared. Only two things actually depend on order:
 - `05-state.js` reads `GAME_IDS.slice()` at the top level, so `01-data-core.js`
   must load first.
-- `main.js` (currently `29-main.js`) wires up the real event listeners and
+- `main.js` (currently `30-main.js`) wires up the real event listeners and
   calls `render()` at the very end, so it must load last.
 
 Renumbering files when inserting a new one is optional busywork, not a
@@ -123,6 +124,7 @@ single-IIFE wrapper made this a real global, so don't reintroduce a top-level
 | `game-trace.css` | Trace It! (canvas + set toggles). |
 | `game-flags.css` | Flag Match! (country-name prompt + flag choice grid). |
 | `game-memory.css` | Memory Match! (flip-card grid). |
+| `game-shapes.css` | Shape Sort! (hero shape + shape/color bins). |
 
 ## The "fact audio" pattern
 

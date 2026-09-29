@@ -35,7 +35,7 @@ var MAZE_SIZE=5;
 var mazeKeyDirs={arrowup:'n',w:'n',arrowdown:'s',s:'s',arrowleft:'w',a:'w',arrowright:'e',d:'e'};
 var DIFF_LEVELS=['easy','medium','hard'];
 var diffLabels={easy:'Easy',medium:'Medium',hard:'Hard'};
-var GAME_IDS=['bop','bloom','scurry','bouquet','countries','gauchos','peaks','biomes','animals','market','timeline','letters','trace','flags','memory'];
+var GAME_IDS=['bop','bloom','scurry','bouquet','countries','gauchos','peaks','biomes','animals','market','timeline','letters','trace','flags','memory','shapes'];
 var PRE_KNOWN_GAME_IDS=['bop','bloom','scurry','bouquet','countries','gauchos'];
 var GAME_CATALOG=[
  {id:'bop',title:'Bop!',desc:'Peekaboo, little mice. Can you catch them?',label:'PEEK · BOP · GIGGLE',secondary:false,verb:'bop'},
@@ -52,8 +52,9 @@ var GAME_CATALOG=[
  {id:'letters',title:'Letter Sounds!',desc:'Meet a real South American animal, hear its name, and tap the letter it starts with.',label:'LOOK · LISTEN · MATCH',secondary:true,verb:'match'},
  {id:'trace',title:'Trace It!',desc:'Trace big letters and numbers with your finger to learn how to write them.',label:'TRACE · WRITE · LEARN',secondary:false,verb:'trace'},
  {id:'flags',title:'Flag Match!',desc:'Hear a South American country’s name, then tap its flag from a set of choices.',label:'LISTEN · MATCH · FLAGS',secondary:true,verb:'match'},
- {id:'memory',title:'Memory Match!',desc:'Flip the cards two at a time to find matching pairs of South American animals.',label:'FLIP · FIND · MATCH',secondary:false,verb:'play'}
+ {id:'memory',title:'Memory Match!',desc:'Flip the cards two at a time to find matching pairs of South American animals.',label:'FLIP · FIND · MATCH',secondary:false,verb:'play'},
+ {id:'shapes',title:'Shape Sort!',desc:'Sort colorful shapes into the right bin — by shape, then by color.',label:'SHAPES · COLORS · SORT',secondary:true,verb:'sort'}
 ];
-var gameNames={bop:'Bop!',bloom:'Bloom!',scurry:'Scurry!',bouquet:'Bouquet!',countries:'Country Match!',gauchos:'Gaucho Herd!',peaks:'Peak Climber!',biomes:'Wild Places!',animals:'Animal Sort!',market:'Market Day!',timeline:'Time Traveler!',letters:'Letter Sounds!',trace:'Trace It!',flags:'Flag Match!',memory:'Memory Match!'};
-var gameScores={bop:'BOPS',bloom:'FLOWERS',scurry:'MICE',bouquet:'BOUQUETS',countries:'COUNTRIES',gauchos:'COWS',peaks:'SUMMITS',biomes:'PLACES',animals:'ANIMALS',market:'BOUGHT',timeline:'IN ORDER',letters:'MATCHED',trace:'TRACED',flags:'MATCHED',memory:'PAIRS'};
-var gameLabels={bop:'happy little bops',bloom:'flowers snipped',scurry:'mice guided home',bouquet:'bouquets made',countries:'countries placed',gauchos:'cows herded home',peaks:'peaks summited',biomes:'wild places found',animals:'animals sorted home',market:'market treats bought',timeline:'timelines sorted',letters:'letters matched',trace:'letters and numbers traced',flags:'flags matched',memory:'pairs found'};
+var gameNames={bop:'Bop!',bloom:'Bloom!',scurry:'Scurry!',bouquet:'Bouquet!',countries:'Country Match!',gauchos:'Gaucho Herd!',peaks:'Peak Climber!',biomes:'Wild Places!',animals:'Animal Sort!',market:'Market Day!',timeline:'Time Traveler!',letters:'Letter Sounds!',trace:'Trace It!',flags:'Flag Match!',memory:'Memory Match!',shapes:'Shape Sort!'};
+var gameScores={bop:'BOPS',bloom:'FLOWERS',scurry:'MICE',bouquet:'BOUQUETS',countries:'COUNTRIES',gauchos:'COWS',peaks:'SUMMITS',biomes:'PLACES',animals:'ANIMALS',market:'BOUGHT',timeline:'IN ORDER',letters:'MATCHED',trace:'TRACED',flags:'MATCHED',memory:'PAIRS',shapes:'SORTED'};
+var gameLabels={bop:'happy little bops',bloom:'flowers snipped',scurry:'mice guided home',bouquet:'bouquets made',countries:'countries placed',gauchos:'cows herded home',peaks:'peaks summited',biomes:'wild places found',animals:'animals sorted home',market:'market treats bought',timeline:'timelines sorted',letters:'letters matched',trace:'letters and numbers traced',flags:'flags matched',memory:'pairs found',shapes:'shapes and colors sorted'};
