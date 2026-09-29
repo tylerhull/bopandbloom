@@ -72,6 +72,7 @@ has the GTK/WebKit2 bindings needed to do this already installed.
 | 02 | `data-map.js` | `saCountries` (real South America path data traced from Wikimedia, huge single lines — rarely touched) and `countryFlag()`. |
 | 03 | `data-southamerica.js` | Country facts, peaks, climb route, biomes, habitats, animals, market items/countries, timeline events, gaucho facts. Edit here to add facts/content. |
 | 04 | `data-letters.js` | `letterAnimals` — real animal photos + credits for Letter Sounds! (photos live in `app/animals/`). |
+| 04b | `data-packs.js` | Content-pack system: `PACKS` registry, `registerPack`, `activePacks`/`activePackItems`/`packItemMedia`. Two built-in packs (South American Animals, from `letterAnimals`; South American Flags, from `saCountries`+`countryFlag`). Loads after 02/04 (derives from them). Pack-driven games (Flashcards, Memory Match!) read from the child's `enabledPacks`. |
 | 05 | `state.js` | `$`/`root`/`modalRoot` bootstrap, profile schema, `sanitize*`/migration, `save`/`current`, theming (`theme`/`contrast`/`shade`). |
 | 06 | `audio.js` | Web Audio tones (`tone`, `fanfare`, `moo`), `speakText` (read-aloud), `audioSync`, `unlockAudio`. Add new sound effects here. |
 | 07 | `audio-map.js` | `AUDIO_MAP` — exact spoken text → pre-recorded filename in `app/audio/`. Generated, not hand-written; see "Read-aloud audio" below before touching this. |
@@ -97,8 +98,9 @@ has the GTK/WebKit2 bindings needed to do this already installed.
 | 27 | `game-memory.js` | Memory Match!: flip cards two at a time to find matching pairs of animal photos (reuses `letterAnimals`). No audio, no timer (always `relaxed`); difficulty sets the pair count (3/6/8). |
 | 28 | `game-shapes.js` | Shape Sort!: tap the bin a colorful shape belongs in. Rounds alternate sort-by-shape / sort-by-color (`shapeArt()` draws the shapes). No audio, no timer; difficulty sets how many shapes/colors (3/4/5). |
 | 29 | `game-patterns.js` | Pattern Play!: a repeating pattern of colorful shapes with the next hidden — tap what comes next. Reuses `shapeArt()`/`colorHex()`/`SORT_SHAPES`/`SORT_COLORS` from `game-shapes.js` (so it must load after it). No audio, no timer; difficulty sets the unit size (2/3/4). |
-| 30 | `game-engine.js` | Generic engine: `startGame`, `renderGame`, the per-frame `tick`, `hit`, pause/resume/finish, difficulty. The `bodies`/`prompt`/`tips` dispatch maps in `renderGame` are how a game's view function gets wired in. |
-| 31 | `main.js` | `render()` dispatcher, all pointer/click/keyboard event wiring, page lifecycle (visibility/blur/beforeunload). **Loads last** — everything else must already be defined by the time its click handler and final `render()` call run. |
+| 30 | `game-flash.js` | Flashcards!: browse the child's active content packs one card at a time (photo or flag svg + name read aloud + Next). Pack-driven via `activePackItems()`. No timer. |
+| 31 | `game-engine.js` | Generic engine: `startGame`, `renderGame`, the per-frame `tick`, `hit`, pause/resume/finish, difficulty. The `bodies`/`prompt`/`tips` dispatch maps in `renderGame` are how a game's view function gets wired in. |
+| 32 | `main.js` | `render()` dispatcher, all pointer/click/keyboard event wiring, page lifecycle (visibility/blur/beforeunload). **Loads last** — everything else must already be defined by the time its click handler and final `render()` call run. |
 
 ### Why the load order mostly doesn't matter
 
@@ -108,8 +110,11 @@ resolution happens when the function *runs* (after every file has loaded),
 not when it's declared. Only two things actually depend on order:
 - `05-state.js` reads `GAME_IDS.slice()` at the top level, so `01-data-core.js`
   must load first.
-- `main.js` (currently `31-main.js`) wires up the real event listeners and
+- `main.js` (currently `32-main.js`) wires up the real event listeners and
   calls `render()` at the very end, so it must load last.
+- `04b-data-packs.js` derives its built-in packs from `letterAnimals` (04) and
+  `saCountries`/`countryFlag` (02) at load, so it must come after them; it's
+  numbered `04b` to slot in without renumbering everything below it.
 
 Renumbering files when inserting a new one is optional busywork, not a
 correctness requirement. It's now cheap, though: `index.html`'s tags are
@@ -151,6 +156,7 @@ single-IIFE wrapper made this a real global, so don't reintroduce a top-level
 | `game-memory.css` | Memory Match! (flip-card grid). |
 | `game-shapes.css` | Shape Sort! (hero shape + shape/color bins). |
 | `game-patterns.css` | Pattern Play! (pattern row + choice tiles). |
+| `game-flash.css` | Flashcards! (big card + name). |
 
 ## The "fact audio" pattern
 

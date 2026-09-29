@@ -1,0 +1,8 @@
+/* Flashcards! — big picture, name, and Next. Pack-driven (photo or flag svg). */
+.flash-wrap{display:flex;flex-direction:column;align-items:center;gap:16px}
+.flash-card{width:100%;max-width:340px;background:var(--surface);border:3px solid var(--ink);border-radius:22px;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:14px;box-sizing:border-box;min-height:240px}
+.flash-media{max-width:100%;max-height:300px;object-fit:contain;border-radius:10px}
+.flash-media.pack-svg{display:flex;align-items:center;justify-content:center;width:100%}
+.flash-media.pack-svg svg{width:100%;max-height:260px}
+.flash-word{display:flex;align-items:center;gap:12px}
+.flash-word strong{font-size:34px;color:var(--primary)}

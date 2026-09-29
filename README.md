@@ -35,6 +35,7 @@ Ubuntu 18.04 should have its normal system updates installed. The package requir
 - **Memory Match!** Flip cards two at a time to find matching pairs of South American animals. Easy uses 3 pairs, Medium 6, Hard 8. No timer — a calm, classic concentration game.
 - **Shape Sort!** A colorful shape appears; tap the bin it belongs in. Rounds alternate between sorting by shape and by color, so it teaches both. Easy uses 3 shapes/colors, Medium 4, Hard 5. No timer — made for the littlest players.
 - **Pattern Play!** A repeating pattern of colorful shapes is shown with the next one hidden; tap the shape that comes next. Easy repeats a 2-shape pattern, Medium 3, Hard 4. No timer — a gentle early-reasoning game.
+- **Flashcards!** Flip through big pictures — animals, flags, and whatever content packs are turned on — with each name read aloud, at your own pace. No timer, no wrong answers. Grown-ups choose which content packs to include in the Parent Area.
 - Wherever a game shows a fact or a name to learn (Country Match!, Gaucho Herd!, Peak Climber!, Wild Places!, Animal Sort!, Letter Sounds!, Flag Match!), it's read aloud automatically the first time, with a speaker icon next to it to hear it again any time.
 - **Easy, Medium, and Hard** are chosen separately for each game, right on that game's own screen, and each game remembers its own choice. Easy has no timer and is the original, gentlest version of each game. Medium and Hard add a 60-second timer (except Scurry's corridor shortcuts, which don't need one) and a bit more challenge — never a point penalty for missing.
 - Choose **All done**, or the home button mid-round, to head straight back to the playroom — no extra confirmation step.
@@ -56,6 +57,7 @@ Tap the lock icon in the top bar and enter the 4-digit parent PIN (**1234** by d
 
 - **Games shown** — turn any game on or off per child, so the playroom menu only shows what's appropriate for them right now.
 - **Difficulty levels shown** — turn Easy/Medium/Hard on or off per child; whatever stays on is what that child can choose from on each game's own screen. At least one game and one difficulty level always stay on.
+- **Content packs** — choose which sets of pictures and words the picture games (Flashcards!, Memory Match!) draw from, per child. At least one pack always stays on.
 - **Assign schoolwork** — pick a game and assign it to a child. It shows up under the **School** tab on their playroom menu (next to **Play**), with a badge for how many assignments are waiting.
 - **Review completed work** — every finished assignment records the date, the score, and the points earned (10 points plus the score achieved) for the parent to look back on.
 

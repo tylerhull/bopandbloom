@@ -37,6 +37,7 @@ function sanitize(raw){
   difficulty:sanitizeDifficulty(p.difficulty),
   enabledGames:sanitizeEnabledGames(p.enabledGames,newGameIds),
   enabledDifficulties:sanitizeList(p.enabledDifficulties,DIFF_LEVELS)||DIFF_LEVELS.slice(),
+  enabledPacks:sanitizeList(p.enabledPacks,allPackIds()),
   assignments:sanitizeAssignments(p.assignments),
   points:clamp(p.points,0,9999999),
   best:sanitizeBest(p.best)

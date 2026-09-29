@@ -1,16 +1,17 @@
-/* Memory Match!: flip cards two at a time to find matching pairs of animal photos.
-   No audio, no timer. Reuses letterAnimals photos (app/animals/). Difficulty sets
+/* Memory Match!: flip cards two at a time to find matching pairs. No audio, no
+   timer. Cards come from the child's active content packs (04b-data-packs.js),
+   so a pack item may be a photo or an inline SVG (e.g. a flag). Difficulty sets
    how many pairs are on the board. */
 function memoryPairCount(diff){return diff==='hard'?8:diff==='medium'?6:3;}
 function newMemoryRound(g){
- var pool=letterAnimals.slice();
+ var pool=activePackItems(current()).slice();
  for(var i=pool.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=pool[i];pool[i]=pool[j];pool[j]=t;}
  var pairs=Math.min(memoryPairCount(g.diff),pool.length);
  var chosen=pool.slice(0,pairs);
  var cards=[];
- chosen.forEach(function(a){
-  cards.push({key:a.id,photo:a.photo,name:a.name,flipped:false,matched:false});
-  cards.push({key:a.id,photo:a.photo,name:a.name,flipped:false,matched:false});
+ chosen.forEach(function(it){
+  cards.push({key:it.id,item:it,name:it.label,flipped:false,matched:false});
+  cards.push({key:it.id,item:it,name:it.label,flipped:false,matched:false});
  });
  for(var k=cards.length-1;k>0;k--){var m=Math.floor(Math.random()*(k+1)),tt=cards[k];cards[k]=cards[m];cards[m]=tt;}
  g.memory={cards:cards,first:null,second:null,lock:false,pairs:pairs,matched:0,celebrating:false};
@@ -23,7 +24,7 @@ function memoryView(g){
  var tiles=mem.cards.map(function(c,i){
   var open=c.flipped||c.matched;
   var inner=open
-   ? '<img class="mem-photo" src="'+c.photo+'" alt="'+esc(c.name)+'">'
+   ? packItemMedia(c.item,'mem-photo')
    : '<span class="mem-back" aria-hidden="true">'+icon('leaf')+'</span>';
   return '<button class="mem-card'+(c.matched?' matched':'')+(open?' open':'')+'" data-action="mem-flip" data-index="'+i+'" aria-label="'+(open?esc(c.name):'Hidden card')+'"><span class="mem-face">'+inner+'</span></button>';
  }).join('');

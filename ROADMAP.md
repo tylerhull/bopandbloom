@@ -107,8 +107,8 @@ maintainer's family. Decisions recorded 2026-09-29.
 
 | Item | Status | Effort | Notes |
 |---|---|---|---|
-| **Wrap the existing web app in Electron** | `[planned]` | M | Point an Electron `BrowserWindow` at `app/index.html`. App code barely changes; `localStorage` keeps working. Chosen over Tauri because Electron ships its own Chromium = **one engine to test on all three OSes** (avoids the per-webview bugs that already bit us, e.g. WebKitGTK `speechSynthesis`). |
-| **`electron-builder` producing all installers** | `[planned]` | M | One config → `.exe` (Windows), `.dmg` (Mac), `.AppImage` + `.deb` (Linux). Keep the existing GTK `launcher.py`/`build-deb.sh` path working in parallel until Electron is proven. |
+| **Wrap the existing web app in Electron** | `[done]` | M | `electron/main.js` + `package.json` load `app/index.html` in a locked-down window (`nodeIntegration:false`, `contextIsolation:true`, `sandbox:true`); `localStorage` persistence carries over. Not launchable in the dev sandbox (no Node) — verify with `npm start`. |
+| **`electron-builder` producing all installers** | `[done]` | M | `build` config in `package.json` → `.exe` (Windows), `.dmg` (Mac), `.AppImage` + `.deb` (Linux) via `npm run dist`. Icons go in `build/` (see `build/README.md`). GTK `launcher.py`/`build-deb.sh` path kept in parallel. Not buildable in the dev sandbox — run on a real machine. |
 | **Mac notarization + Windows code signing** | `[planned]` | L | The real hard part of a public release, not the build. Mac: Apple Developer account ($99/yr) + notarization to clear Gatekeeper. Windows: code-signing cert to avoid SmartScreen warnings. Can ship unsigned as a stopgap (users click through warnings) but not ideal for a wide audience. |
 | **Persistence review under Electron** | `[planned]` | S | `localStorage` works in Electron; confirm save/restore across app restarts, and decide whether to move to a real user-data file now that filesystem access is available (also unblocks pack imports below). |
 
@@ -123,10 +123,10 @@ credits (in-app + README) must stay; share-alike is fine for this use.
 
 | Item | Status | Effort | Notes |
 |---|---|---|---|
-| **Pack data model** | `[planned]` | M | A pack = manifest + assets: a list of `{image, label, audio}` items plus name/topic/age tag. Refactor current hardcoded content (the 30 animals, SA countries) into the first **built-in** pack(s) — this content-out-of-code refactor is the bulk of the work. |
-| **Parent Tools: pack selection** | `[planned]` | M | A "Content packs" section with on/off toggles per pack, stored like the existing per-child "Games shown" toggles. |
-| **Pack-driven games** | `[planned]` | M | Memory Match! and Letter Sounds! draw their item pool from enabled packs; add a generic **Flashcards** game (flip / hear / next) as the showcase for packs. |
-| **User-imported packs** | `[planned]` | L | Parents import a downloaded pack (e.g. a `.zip`) — file picker, validation, asset storage. **Much easier after Electron** (real filesystem access; browser sandboxing makes this awkward). Do bundled packs first, import later. |
+| **Pack data model** | `[done]` | M | `04b-data-packs.js`: `PACKS` registry + `activePackItems()`; item = `{id,label,image?,svg?,pt?,credit?}` (`speakText(label)` handles audio via `AUDIO_MAP`). Two **built-in** packs derived from existing data (South American Animals from `letterAnimals`; South American Flags from `saCountries`+`countryFlag`) — no duplication. Fuller content-out-of-code refactor can follow as new packs. |
+| **Parent Tools: pack selection** | `[done]` | M | "Content packs" section in the Parent Area with on/off toggles per pack, stored as `profile.enabledPacks` (empty/absent = all), mirroring the "Games shown" toggles. |
+| **Pack-driven games** | `[done]` | M | New **Flashcards!** game (`30-game-flash.js`) and **Memory Match!** both draw from the child's enabled packs and render photo or flag-svg items. (Letter Sounds! still uses the animal list directly — could become pack-driven later; it's phonics/photo-specific.) |
+| **User-imported packs** | `[planned]` | L | Parents import a downloaded pack (e.g. a `.zip`) — file picker, validation, asset storage. **Much easier after Electron** (real filesystem access; browser sandboxing makes this awkward). Built-in packs done; import is the remaining piece. |
 
 Suggested order for release: **Electron build first** (low-risk, unblocks
 filesystem access and gives a shippable cross-platform download; do
