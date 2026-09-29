@@ -60,7 +60,7 @@ license checks). Lean icons for these.
 |---|---|---|---|---|
 | **Letter / Number Tracing** | `[done]` | M | Trace It! (`25-game-trace.js`) — draw big glyphs on a canvas; ABC/abc/123 toggles; no audio, no timer | new canvas drawing |
 | **Shape & Color Sorting** | `[done]` | S | Shape Sort! (`28-game-shapes.js`) — tap the bin a shape belongs in; rounds alternate by-shape / by-color; no audio/timer | new `shapeArt()` |
-| **Simple Patterns** | `[idea]` | S | "what comes next?" (red, blue, red, ?); early reasoning | existing art primitives |
+| **Simple Patterns** | `[done]` | S | Pattern Play! (`29-game-patterns.js`) — tap what comes next in a repeating shape/color pattern; difficulty sets unit size 2/3/4; no audio/timer | reuses `shapeArt()` |
 | **Memory / Matching Pairs** | `[done]` | S | Memory Match! (`27-game-memory.js`) — flip cards to match animal-photo pairs; Easy/Medium/Hard = 3/6/8 pairs; no audio/timer | `letterAnimals` photos |
 | **Flag Match** | `[done]` | S | Flag Match! (`26-game-flags.js`) — hear/read a country, tap its flag; Easy/Medium/Hard = 3/4/6 choices | `countryFlag()` + `saCountries` names; country names added to audio CSV |
 

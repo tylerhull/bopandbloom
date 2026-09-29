@@ -1,0 +1,12 @@
+/* Pattern Play! — what comes next in the repeating pattern. */
+.pat-wrap{display:flex;flex-direction:column;align-items:center;gap:16px}
+.pat-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;max-width:600px}
+.pat-tile{width:60px;height:60px;display:flex;align-items:center;justify-content:center}
+.pat-tile .shape-art{width:100%;height:100%;display:block}
+.pat-slot{font-size:40px;font-weight:900;color:var(--ink);background:var(--surface);border:3px dashed var(--line);border-radius:12px}
+.pat-wrap strong{font-size:22px}
+.pat-choices{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+.pat-choice{width:88px;height:88px;padding:10px;background:var(--surface);border:3px solid var(--line);border-radius:16px;cursor:pointer;transition:transform .1s}
+.pat-choice:hover{transform:scale(1.05)}
+.pat-choice .shape-art{width:100%;height:100%;display:block}
+.pat-choice.nope{animation:nopeshake .35s}
