@@ -96,6 +96,45 @@ Build on the existing Parent Area (assignments, points, per-game/difficulty togg
 
 ---
 
+## Phase 5 — Release readiness (v1.0, before the first public users)
+
+Goal: ship a downloadable app for **Windows, Mac, and Linux** aimed at
+homeschool families. **Everything in this phase is a pre-release
+requirement** — the target audience is the general public, not just the
+maintainer's family. Decisions recorded 2026-09-29.
+
+### Cross-platform packaging — Electron
+
+| Item | Status | Effort | Notes |
+|---|---|---|---|
+| **Wrap the existing web app in Electron** | `[planned]` | M | Point an Electron `BrowserWindow` at `app/index.html`. App code barely changes; `localStorage` keeps working. Chosen over Tauri because Electron ships its own Chromium = **one engine to test on all three OSes** (avoids the per-webview bugs that already bit us, e.g. WebKitGTK `speechSynthesis`). |
+| **`electron-builder` producing all installers** | `[planned]` | M | One config → `.exe` (Windows), `.dmg` (Mac), `.AppImage` + `.deb` (Linux). Keep the existing GTK `launcher.py`/`build-deb.sh` path working in parallel until Electron is proven. |
+| **Mac notarization + Windows code signing** | `[planned]` | L | The real hard part of a public release, not the build. Mac: Apple Developer account ($99/yr) + notarization to clear Gatekeeper. Windows: code-signing cert to avoid SmartScreen warnings. Can ship unsigned as a stopgap (users click through warnings) but not ideal for a wide audience. |
+| **Persistence review under Electron** | `[planned]` | S | `localStorage` works in Electron; confirm save/restore across app restarts, and decide whether to move to a real user-data file now that filesystem access is available (also unblocks pack imports below). |
+
+Notes: the ES5 / no-modules / `file://` constraints existed only for old
+Ubuntu WebKitGTK — under Electron they relax (no rewrite needed, but future
+code may use modern JS). Pre-recorded Polly audio remains the right choice:
+it sounds identical on every OS rather than depending on each platform's TTS.
+**Photo licensing** matters more once public — the Wikimedia CC-BY / CC-BY-SA
+credits (in-app + README) must stay; share-alike is fine for this use.
+
+### Content packs
+
+| Item | Status | Effort | Notes |
+|---|---|---|---|
+| **Pack data model** | `[planned]` | M | A pack = manifest + assets: a list of `{image, label, audio}` items plus name/topic/age tag. Refactor current hardcoded content (the 30 animals, SA countries) into the first **built-in** pack(s) — this content-out-of-code refactor is the bulk of the work. |
+| **Parent Tools: pack selection** | `[planned]` | M | A "Content packs" section with on/off toggles per pack, stored like the existing per-child "Games shown" toggles. |
+| **Pack-driven games** | `[planned]` | M | Memory Match! and Letter Sounds! draw their item pool from enabled packs; add a generic **Flashcards** game (flip / hear / next) as the showcase for packs. |
+| **User-imported packs** | `[planned]` | L | Parents import a downloaded pack (e.g. a `.zip`) — file picker, validation, asset storage. **Much easier after Electron** (real filesystem access; browser sandboxing makes this awkward). Do bundled packs first, import later. |
+
+Suggested order for release: **Electron build first** (low-risk, unblocks
+filesystem access and gives a shippable cross-platform download; do
+notarization as a follow-up), **then the pack system** (built-in packs +
+parent toggles + Flashcards, designed so imported packs slot in later).
+
+---
+
 ## Dev efficiency & structure
 
 The big win (splitting `app.js`/`style.css` into small files) is done. These
@@ -111,9 +150,20 @@ reduce ongoing per-edit token cost and drift.
 
 ## Suggested build order
 
-1. **User:** kick off Phase 0 audio generation now (unblocks all reading games).
-2. **Dev, in parallel:** dev-efficiency #1 + #2 (cheap, make everything after cheaper), then **Letter/Number Tracing** (real value, no audio).
-3. Once audio plays: **Beginning Sounds** → **Sound It Out** → **Rhyme Time** → **Sight Words**.
-4. Fill in the easy no-audio games (Flag Match, Memory, Shapes, Patterns) as quick wins between bigger items.
-5. **Homeschool features** (reading path + progress report), then **home-screen grouping** to tie the collections together.
-6. Engagement polish (stickers, daily pick 3, read-to-me) last.
+**Done:** dev-efficiency #1 + #2 · version number · the no-audio games
+(Trace It!, Flag Match!, Memory Match!, Shape Sort!, Pattern Play!) ·
+home-screen collection grouping.
+
+**Remaining, roughly in order:**
+1. **User:** run Phase 0 Polly audio generation (unblocks every read-aloud/phonics game).
+2. Once audio plays: **Beginning Sounds** → **Sound It Out** → **Rhyme Time** → **Sight Words**; then **Counting** and **Spot-the-difference**.
+3. **Homeschool features** (guided reading path + progress report).
+4. Engagement polish (stickers, daily pick 3, read-to-me).
+
+**Before the first public release (Phase 5 — all required):**
+5. **Electron build** for Windows/Mac/Linux first (low-risk, unblocks filesystem access), then **Mac notarization / Windows signing** as a follow-up.
+6. **Content packs**: refactor current content into built-in packs → parent-tools pack toggles → a **Flashcards** game; user-imported packs after that (easier on Electron).
+
+Phase 5 doesn't strictly depend on finishing the phonics games, but the
+maintainer wants the fuller game set, packs, and cross-platform build all in
+place before onboarding the first outside users.
