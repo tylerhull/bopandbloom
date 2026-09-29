@@ -78,8 +78,9 @@ The browser preview uses browser local storage and is separate from the installe
 ## Source and development
 
 - `app/`: HTML, CSS, JavaScript, and original vector icon. `app/js/` and `app/css/` are split into small, single-purpose files (loaded via plain `<script>`/`<link>` tags, no bundler) — see [ARCHITECTURE.md](ARCHITECTURE.md) for the file map before diving in. Nearly all graphics and music are generated locally with no third-party downloads; the exceptions are licensed real photos, downloaded and resized from Wikimedia Commons — see "Photo and map credits" below. Read-aloud facts and names play from pre-recorded audio clips in `app/audio/` (one subfolder per game), generated with Amazon Polly from `tools/audio/facts_manifest.csv` — not the browser's built-in speech synthesis, which isn't available in the packaged app's WebKitGTK build. See `tools/audio/` and [ARCHITECTURE.md](ARCHITECTURE.md) to regenerate or change a voice; the app itself makes no network calls at runtime either way.
-- `launcher.py`: Python 3.6-compatible GTK desktop host, native profile storage, and local-only navigation.
-- `build-deb.sh`: builds an architecture-independent, gzip-compressed Debian package using `dpkg-deb`.
+- `launcher.py`: Python 3.6-compatible GTK desktop host, native profile storage, and local-only navigation (the original Ubuntu path, kept alongside the Electron build).
+- `build-deb.sh`: builds an architecture-independent, gzip-compressed Debian package of the GTK app using `dpkg-deb`.
+- `electron/` + `package.json`: the cross-platform desktop shell (Windows, Mac, Linux) — see "Cross-platform build" below.
 - `tests/`: native storage tests and browser integration tests.
 
 ### Photo and map credits
@@ -102,11 +103,39 @@ python3 -m http.server 8765 --bind 127.0.0.1 --directory app
 
 Open `http://127.0.0.1:8765` in your browser.
 
-Build the package:
+Build the Debian package (GTK path):
 
 ```sh
 ./build-deb.sh
 ```
+
+### Cross-platform build (Windows, Mac, Linux)
+
+The game is wrapped in [Electron](https://www.electronjs.org/) for a
+one-codebase desktop app on all three platforms. Electron bundles its own
+Chromium, so the same engine runs everywhere. Requires Node.js (18+).
+
+Run it in development:
+
+```sh
+npm install
+npm start
+```
+
+Build installers (produces `dist/`):
+
+```sh
+npm run dist          # for the current OS
+npm run dist:linux    # AppImage + .deb
+npm run dist:mac      # .dmg   (build on macOS)
+npm run dist:win      # NSIS installer (build on Windows)
+```
+
+Notes:
+- Each OS's installer is normally built on that OS (especially macOS, which needs Xcode tooling to sign/notarize).
+- App icons come from `build/` — see [build/README.md](build/README.md). Until you add them, the build uses Electron's default icon.
+- For public distribution, sign the apps: macOS needs an Apple Developer account + notarization to clear Gatekeeper; Windows needs a code-signing certificate to avoid SmartScreen warnings. Unsigned builds run but show "unknown developer" warnings.
+- Keep `package.json`'s `version` in sync with `APP_VERSION` in `app/js/01-data-core.js`.
 
 Test storage:
 

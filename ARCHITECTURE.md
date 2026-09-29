@@ -21,9 +21,33 @@ stale. `build-deb.sh` runs it automatically before packaging, and also reads
 the single version constant (`APP_VERSION` in `01-data-core.js`) for the
 `.deb` version + filename, so there's one place to bump the version.
 
+## Two desktop hosts: GTK (WebKitGTK) and Electron (Chromium)
+
+The same static app under `app/` is shipped two ways:
+
+- **`launcher.py` + `build-deb.sh`** — the original GTK/WebKitGTK host, packaged
+  as a `.deb` for Ubuntu. This is the engine the "verify in real WebKitGTK"
+  section below is about, and the reason for the ES5 / no-ES-modules /
+  runs-from-`file://` constraints.
+- **`electron/main.js` + `package.json`** — the cross-platform host (Windows,
+  Mac, Linux), built with `electron-builder` (`npm run dist`). Electron bundles
+  its own Chromium, so on this path the browser-preview / Chromium testing *is*
+  representative, and the WebKitGTK-specific constraints don't apply (no rewrite
+  needed, but new code may use modern JS). No Node is used in the renderer
+  (`nodeIntegration:false`, `contextIsolation:true`, `sandbox:true`); the app
+  stays pure client-side and saves to `localStorage` (Electron persists it in
+  the OS user-data dir; `05-state.js` `save()` already falls back to
+  `localStorage` when the GTK `window.webkit` bridge is absent).
+
+Both hosts load the exact same `app/index.html`, so a change made for one works
+in the other. Keep both working until the Electron path is proven in the wild.
+There is no Node/npm in the dev sandbox, so the Electron app can't be launched
+or built here — verify it by running `npm start` / `npm run dist` on a real
+machine.
+
 ## Verify layout/audio/engine-specific changes in real WebKitGTK, not just Chromium
 
-This project ships as a native GTK app around WebKitGTK, but day-to-day
+*(Applies to the GTK/`.deb` path.)* This project ships as a native GTK app around WebKitGTK, but day-to-day
 development and browser-preview testing happens in Chromium (this repo's
 own dev tooling, and the `python3 -m http.server` preview workflow). Three
 separate real bugs this project shipped — a CSS aspect-ratio computation
