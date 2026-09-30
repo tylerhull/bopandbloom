@@ -20,6 +20,13 @@ function updatePinDialog(){
  }
 }
 function managedProfile(){return state.profiles.filter(function(p){return p.id===managing;})[0]||current();}
+function parentPackManager(){
+ var electron=window.bopPacks&&window.bopPacks.available;
+ if(!electron)return '<p class="hint">More content packs can be added in the downloadable desktop app.</p>';
+ var imported=PACKS.filter(function(pk){return pk.imported;});
+ var list=imported.length?'<div class="pack-installed">'+imported.map(function(pk){return '<div class="pack-row"><span>'+esc(pk.name)+' <span class="quiet">('+pk.items.length+')</span></span><button class="pill" data-action="remove-pack" data-id="'+esc(pk.id)+'">Remove</button></div>';}).join('')+'</div>':'';
+ return list+'<button class="pill" data-action="import-pack">'+icon('spark')+'Add a pack…</button><p class="hint">Add a Bop &amp; Bloom pack file (.bop) you downloaded or made yourself.</p>';
+}
 function parentAssignmentList(p){
  var pending=(p.assignments||[]).filter(function(a){return a.recurring||!a.completed;});
  var done=(p.assignments||[]).filter(function(a){return a.completed&&!a.recurring;}).slice(-10).reverse();
@@ -35,7 +42,8 @@ function parentArea(){
   +'<h2>Managing</h2><div class="choice-row">'+state.profiles.map(function(p){return '<button class="pill'+(p.id===mp.id?' selected':'')+'" data-action="manage-profile" data-id="'+esc(p.id)+'">'+esc(p.name)+'</button>';}).join('')+'</div>'
   +'<div class="divider"></div><h2>Games shown to '+esc(mp.name)+'</h2><div class="choice-row">'+GAME_CATALOG.map(function(g){var on=mp.enabledGames.indexOf(g.id)>=0;return '<button class="pill toggle-pill'+(on?' on':'')+'" data-action="toggle-game" data-id="'+g.id+'">'+(on?icon('check'):'')+g.title+'</button>';}).join('')+'</div>'
   +'<div class="divider"></div><h2>Difficulty levels shown</h2><div class="choice-row">'+DIFF_LEVELS.map(function(d){var on=mp.enabledDifficulties.indexOf(d)>=0;return '<button class="pill toggle-pill'+(on?' on':'')+'" data-action="toggle-diff" data-id="'+d+'">'+(on?icon('check'):'')+diffLabels[d]+'</button>';}).join('')+'</div>'
-  +'<div class="divider"></div><h2>Content packs</h2><p class="hint">Choose which sets of pictures and words the picture games (Flashcards, Memory Match!) use for '+esc(mp.name)+'.</p><div class="choice-row">'+PACKS.map(function(pk){var on=(mp.enabledPacks&&mp.enabledPacks.length)?mp.enabledPacks.indexOf(pk.id)>=0:true;return '<button class="pill toggle-pill'+(on?' on':'')+'" data-action="toggle-pack" data-id="'+pk.id+'">'+(on?icon('check'):'')+esc(pk.name)+'</button>';}).join('')+'</div>'
+  +'<div class="divider"></div><h2>Content packs</h2><p class="hint">Choose which sets of pictures and words the picture games (Flashcards, Memory Match!, Letter Sounds!) use for '+esc(mp.name)+'.</p><div class="choice-row">'+PACKS.map(function(pk){var on=(mp.enabledPacks&&mp.enabledPacks.length)?mp.enabledPacks.indexOf(pk.id)>=0:true;return '<button class="pill toggle-pill'+(on?' on':'')+'" data-action="toggle-pack" data-id="'+pk.id+'">'+(on?icon('check'):'')+esc(pk.name)+'</button>';}).join('')+'</div>'
+  +parentPackManager()
   +'<p class="hint">Turn options off to simplify the menu for '+esc(mp.name)+'. At least one game, difficulty, and pack must stay on.</p>'
   +'</section><section class="panel">'
   +'<h2>Assign schoolwork</h2><label class="field"><span class="field-label">Pick a game to assign '+esc(mp.name)+'</span><select id="assign-game">'+GAME_CATALOG.map(function(g){return '<option value="'+g.id+'">'+g.title+'</option>';}).join('')+'</select></label><label class="setting-row"><span id="label-assign-recurring">Keep it assigned until I remove it<small>Otherwise it moves to their finished list after one play.</small></span><button class="switch" role="switch" id="assign-recurring" aria-labelledby="label-assign-recurring" aria-checked="true" data-action="toggle-assign-recurring"></button></label><button class="big-button" data-action="assign-game">'+icon('spark')+'Assign it</button>'

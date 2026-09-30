@@ -12,10 +12,81 @@
 // whose save() falls back to localStorage when the GTK `window.webkit` bridge
 // is absent (it always is here).
 
-const { app, BrowserWindow, Menu, shell } = require('electron');
+const { app, BrowserWindow, Menu, shell, ipcMain, dialog } = require('electron');
 const path = require('path');
+const fs = require('fs');
 
 const APP_INDEX = path.join(__dirname, '..', 'app', 'index.html');
+
+// ---- Content packs -------------------------------------------------------
+// Imported packs are single JSON files kept under <userData>/packs/. Each is a
+// {id,name,blurb,tag,items:[{id,label,image,pt}]} where every image is a
+// data: URI (so nothing outside the file needs to travel with it, and the
+// renderer can show it under the app's strict CSP, which allows data: images).
+// Imported items are images only — no inline SVG — so a downloaded pack can't
+// smuggle markup into the page.
+function packsDir() {
+  const dir = path.join(app.getPath('userData'), 'packs');
+  try { fs.mkdirSync(dir, { recursive: true }); } catch (e) { /* ignore */ }
+  return dir;
+}
+
+function validatePack(p) {
+  if (!p || typeof p.id !== 'string' || !/^[a-z0-9][a-z0-9-]{0,39}$/.test(p.id)) return false;
+  if (typeof p.name !== 'string' || !p.name) return false;
+  if (!Array.isArray(p.items) || !p.items.length || p.items.length > 500) return false;
+  for (let i = 0; i < p.items.length; i++) {
+    const it = p.items[i];
+    if (!it || typeof it.label !== 'string' || !it.label) return false;
+    if (typeof it.image !== 'string' || it.image.slice(0, 11) !== 'data:image/') return false;
+  }
+  return true;
+}
+
+function readPackFile(file) {
+  try {
+    const p = JSON.parse(fs.readFileSync(file, 'utf8'));
+    return validatePack(p) ? p : null;
+  } catch (e) { return null; }
+}
+
+function listPacks() {
+  const dir = packsDir();
+  let out = [];
+  try {
+    fs.readdirSync(dir).forEach((name) => {
+      if (!/\.(json|bop)$/i.test(name)) return;
+      const p = readPackFile(path.join(dir, name));
+      if (p) out.push(p);
+    });
+  } catch (e) { /* ignore */ }
+  return out;
+}
+
+ipcMain.handle('packs:list', () => listPacks());
+
+ipcMain.handle('packs:import', async () => {
+  const res = await dialog.showOpenDialog({
+    title: 'Add a Bop & Bloom content pack',
+    filters: [{ name: 'Bop & Bloom pack', extensions: ['bop', 'json'] }],
+    properties: ['openFile']
+  });
+  if (res.canceled || !res.filePaths.length) return { ok: false };
+  const pack = readPackFile(res.filePaths[0]);
+  if (!pack) return { ok: false, error: 'That file is not a valid content pack.' };
+  try {
+    fs.writeFileSync(path.join(packsDir(), pack.id + '.json'), JSON.stringify(pack));
+  } catch (e) {
+    return { ok: false, error: 'Could not save the pack.' };
+  }
+  return { ok: true, pack: pack };
+});
+
+ipcMain.handle('packs:remove', (_e, id) => {
+  if (typeof id !== 'string' || !/^[a-z0-9][a-z0-9-]{0,39}$/.test(id)) return { ok: false };
+  try { fs.unlinkSync(path.join(packsDir(), id + '.json')); } catch (e) { /* already gone */ }
+  return { ok: true };
+});
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -27,7 +98,9 @@ function createWindow() {
     title: 'Bop & Bloom',
     autoHideMenuBar: true,
     webPreferences: {
-      // The app needs no Node access; keep the renderer locked down.
+      // The app needs no Node access; keep the renderer locked down. The preload
+      // exposes only a small pack-management API via contextBridge.
+      preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
       contextIsolation: true,
       sandbox: true

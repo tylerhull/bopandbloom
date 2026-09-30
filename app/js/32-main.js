@@ -19,6 +19,8 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-acti
  else if(a==='toggle-game'){var mp=managedProfile(),gid=b.getAttribute('data-id'),gi=mp.enabledGames.indexOf(gid);if(gi>=0){if(mp.enabledGames.length>1)mp.enabledGames.splice(gi,1);}else mp.enabledGames.push(gid);save();render();}
  else if(a==='toggle-diff'){var mp2=managedProfile(),did=b.getAttribute('data-id'),di=mp2.enabledDifficulties.indexOf(did);if(di>=0){if(mp2.enabledDifficulties.length>1)mp2.enabledDifficulties.splice(di,1);}else mp2.enabledDifficulties.push(did);save();render();}
  else if(a==='toggle-pack'){var mpk=managedProfile(),pid=b.getAttribute('data-id'),list=(mpk.enabledPacks&&mpk.enabledPacks.length)?mpk.enabledPacks.slice():allPackIds(),pi=list.indexOf(pid);if(pi>=0){if(list.length>1)list.splice(pi,1);}else list.push(pid);mpk.enabledPacks=list;save();render();}
+ else if(a==='import-pack'){if(window.bopPacks&&window.bopPacks.available){window.bopPacks.importPack().then(function(res){if(res&&res.ok&&res.pack){if(registerImportedPacks([res.pack]))toast('Added pack: '+res.pack.name);else toast('That pack had no usable cards.');}else if(res&&res.error)toast(res.error);render();}).catch(function(){toast('Could not add that pack.');});}}
+ else if(a==='remove-pack'){var rid=b.getAttribute('data-id');var go=function(){for(var i=PACKS.length-1;i>=0;i--){if(PACKS[i].id===rid&&PACKS[i].imported)PACKS.splice(i,1);}render();};if(window.bopPacks&&window.bopPacks.available)window.bopPacks.removePack(rid).then(go).catch(go);else go();}
  else if(a==='assign-game'){var mp3=managedProfile(),sel=$('#assign-game'),recurEl=$('#assign-recurring');mp3.assignments=mp3.assignments||[];mp3.assignments.push({id:id(),gameId:sel.value,assignedAt:Date.now(),recurring:!recurEl||recurEl.getAttribute('aria-checked')==='true',completed:false,completedAt:null,score:0,timesPlayed:0});save();render();toast('Assigned to '+esc(mp3.name)+'!');}
  else if(a==='toggle-assign-recurring'){var checked=b.getAttribute('aria-checked')==='true';b.setAttribute('aria-checked',!checked);}
  else if(a==='remove-assignment'){var mp4=managedProfile(),aid=b.getAttribute('data-id');mp4.assignments=(mp4.assignments||[]).filter(function(x){return x.id!==aid;});save();render();}
@@ -91,3 +93,9 @@ document.addEventListener('visibilitychange',function(){if(document.hidden)pause
 window.addEventListener('blur',function(){pauseGame();});
 window.addEventListener('beforeunload',save);
 render();
+// Load any user-imported content packs (Electron only) and refresh the view.
+if(window.bopPacks&&window.bopPacks.available){
+ window.bopPacks.list().then(function(list){
+  if(registerImportedPacks(list)&&(uiScreen==='home'||uiScreen==='parent'))render();
+ }).catch(function(){});
+}

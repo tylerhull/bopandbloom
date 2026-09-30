@@ -72,7 +72,7 @@ has the GTK/WebKit2 bindings needed to do this already installed.
 | 02 | `data-map.js` | `saCountries` (real South America path data traced from Wikimedia, huge single lines — rarely touched) and `countryFlag()`. |
 | 03 | `data-southamerica.js` | Country facts, peaks, climb route, biomes, habitats, animals, market items/countries, timeline events, gaucho facts. Edit here to add facts/content. |
 | 04 | `data-letters.js` | `letterAnimals` — real animal photos + credits for Letter Sounds! (photos live in `app/animals/`). |
-| 04b | `data-packs.js` | Content-pack system: `PACKS` registry, `registerPack`, `activePacks`/`activePackItems`/`packItemMedia`. Two built-in packs (South American Animals, from `letterAnimals`; South American Flags, from `saCountries`+`countryFlag`). Loads after 02/04 (derives from them). Pack-driven games (Flashcards, Memory Match!) read from the child's `enabledPacks`. |
+| 04b | `data-packs.js` | Content-pack system: `PACKS` registry, `registerPack`, `activePacks`/`activePackItems`/`packItemMedia`, `registerImportedPacks`. Two built-in packs (South American Animals, from `letterAnimals`; South American Flags, from `saCountries`+`countryFlag`). Loads after 02/04 (derives from them). Pack-driven games (Flashcards, Memory Match!, Letter Sounds!) read from the child's `enabledPacks`. Imported packs (Electron only) are image-only and registered at startup by `32-main.js`. |
 | 05 | `state.js` | `$`/`root`/`modalRoot` bootstrap, profile schema, `sanitize*`/migration, `save`/`current`, theming (`theme`/`contrast`/`shade`). |
 | 06 | `audio.js` | Web Audio tones (`tone`, `fanfare`, `moo`), `speakText` (read-aloud), `audioSync`, `unlockAudio`. Add new sound effects here. |
 | 07 | `audio-map.js` | `AUDIO_MAP` — exact spoken text → pre-recorded filename in `app/audio/`. Generated, not hand-written; see "Read-aloud audio" below before touching this. |
@@ -359,6 +359,36 @@ from the paths), don't trust it — measure `getBBox()` against it directly.
 rendering engine (it's pure path math, not a rendering quirk), so this
 diagnostic is trustworthy even from the Chromium preview, unlike
 audio/TTS or font-rendering questions which do need real WebKitGTK.
+
+## Content packs (built-in and imported)
+
+A pack is a set of items `{id, label, image?, svg?, pt?, credit?}`; a game shows
+`image` (a photo path or data: URI) or `svg` (inline markup) via
+`packItemMedia()`. Read-aloud uses `speakText(item.label)` → `AUDIO_MAP`, so
+only labels with a bundled clip speak (imported packs are silent until an audio
+story is added — consistent with the rest of the app pre-Polly).
+
+- **Built-in packs** are registered in `04b-data-packs.js` (derived from
+  existing data, so no duplication). They may use `svg` items (trusted — our
+  flag markup).
+- **Imported packs** (Electron only): single self-contained `.bop`/`.json`
+  files under `<userData>/packs/`, each `{id,name,blurb,tag,items}` with every
+  image a `data:` URI. The Electron main process (`electron/main.js`) validates
+  and stores them; `electron/preload.js` exposes `window.bopPacks`
+  (`list`/`importPack`/`removePack`) over `contextBridge`; `32-main.js` loads
+  them at startup and after an import. **Imported items are image-only** —
+  `registerImportedPacks()` drops any `svg`/non-data-URI item, so a downloaded
+  pack can't inject markup (belt-and-suspenders with the page CSP, which allows
+  `data:` images but blocks inline script). Parents add/remove packs and toggle
+  them per child in the Parent Area; in the browser build the add/remove UI is
+  hidden (no `window.bopPacks`).
+- **Authoring**: `tools/packs/build_pack.py` turns a folder of images into a
+  `.bop` file (images embedded as data URIs, `pt` computed with Pillow if
+  present). This is how you (or, later, buyers) make distributable packs.
+
+Pack-driven games: Flashcards!, Memory Match!, Letter Sounds!. Games on fixed
+content (map/geography, Animal Sort!, SA-unit, procedural) are not pack-driven
+by design.
 
 ## Adding a new game, end to end
 

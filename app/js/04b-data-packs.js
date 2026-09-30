@@ -26,6 +26,23 @@ function packItemMedia(it,cls){
  if(it.svg)return '<span class="'+cls+' pack-svg" aria-label="'+esc(it.label)+'">'+it.svg+'</span>';
  return '<img class="'+cls+'" src="'+it.image+'" alt="'+esc(it.label)+'">';
 }
+/* Register user-imported packs (from the Electron file bridge). These are
+   untrusted files a parent chose to add, so only image items are accepted —
+   never inline svg — and each image must be a data: URI. Built-in packs are
+   never overridden. Called at startup and after an import (see main.js). */
+function registerImportedPacks(list){
+ var added=0;
+ (list||[]).forEach(function(p){
+  if(!p||typeof p.id!=='string'||packById(p.id))return;
+  var items=(p.items||[]).filter(function(it){
+   return it&&typeof it.label==='string'&&typeof it.image==='string'&&it.image.indexOf('data:image/')===0;
+  }).map(function(it,i){
+   return {id:(typeof it.id==='string'&&it.id)||(p.id+'-'+i),label:it.label,image:it.image,pt:(typeof it.pt==='number'?it.pt:75)};
+  });
+  if(items.length){registerPack({id:p.id,name:p.name||p.id,blurb:p.blurb||'',tag:p.tag||'Imported',builtin:false,imported:true,items:items});added++;}
+ });
+ return added;
+}
 
 registerPack({
  id:'sa-animals',name:'South American Animals',blurb:'30 real animal photos',tag:'South America',builtin:true,

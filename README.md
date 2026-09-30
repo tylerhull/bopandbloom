@@ -57,7 +57,7 @@ Tap the lock icon in the top bar and enter the 4-digit parent PIN (**1234** by d
 
 - **Games shown** — turn any game on or off per child, so the playroom menu only shows what's appropriate for them right now.
 - **Difficulty levels shown** — turn Easy/Medium/Hard on or off per child; whatever stays on is what that child can choose from on each game's own screen. At least one game and one difficulty level always stay on.
-- **Content packs** — choose which sets of pictures and words the picture games (Flashcards!, Memory Match!, Letter Sounds!) draw from, per child. At least one pack always stays on.
+- **Content packs** — choose which sets of pictures and words the picture games (Flashcards!, Memory Match!, Letter Sounds!) draw from, per child. At least one pack always stays on. In the desktop (Electron) app you can also **Add a pack…** — import a `.bop` pack file you downloaded or made yourself — and remove imported packs.
 - **Assign schoolwork** — pick a game and assign it to a child. It shows up under the **School** tab on their playroom menu (next to **Play**), with a badge for how many assignments are waiting.
 - **Review completed work** — every finished assignment records the date, the score, and the points earned (10 points plus the score achieved) for the parent to look back on.
 
@@ -138,6 +138,22 @@ Notes:
 - App icons come from `build/` — see [build/README.md](build/README.md). Until you add them, the build uses Electron's default icon.
 - For public distribution, sign the apps: macOS needs an Apple Developer account + notarization to clear Gatekeeper; Windows needs a code-signing certificate to avoid SmartScreen warnings. Unsigned builds run but show "unknown developer" warnings.
 - Keep `package.json`'s `version` in sync with `APP_VERSION` in `app/js/01-data-core.js`.
+
+### Making content packs
+
+A content pack is a single self-contained `.bop` file (JSON with images embedded
+as data URIs) that anyone can add in the desktop app's Parent Area. Build one
+from a folder of images:
+
+```sh
+python3 tools/packs/build_pack.py --dir path/to/images --id farm-animals \
+    --name "Farm Animals" --blurb "12 friendly farm animals" --tag Animals
+```
+
+This writes `farm-animals.bop`. Each image becomes a card; the label defaults to
+the file name (override with `--labels labels.csv` rows of `filename,Label`).
+Install [Pillow](https://python-pillow.org/) for exact card shapes. Packs are
+image-only by design, so they're safe to share.
 
 Test storage:
 
