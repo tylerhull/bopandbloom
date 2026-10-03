@@ -29,6 +29,10 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-acti
  else if(a==='report-save-csv'){saveReportCsv();}
  else if(a==='report-print'){window.print();}
  else if(a==='records-folder'){setupRecordsFolder();}
+ else if(a==='update-check'){if(window.bopUpdate&&window.bopUpdate.check){appUpdate={status:'checking',info:null};window.bopUpdate.check();if(uiScreen==='settings')render();}}
+ else if(a==='update-install'){if(window.bopUpdate&&window.bopUpdate.install)window.bopUpdate.install();}
+ else if(a==='backup-data'){backupDataToFile();}
+ else if(a==='restore-data'){restoreDataFromFile();}
  else if(a==='assign-game'){var mp3=managedProfile(),sel=$('#assign-game'),recurEl=$('#assign-recurring');mp3.assignments=mp3.assignments||[];mp3.assignments.push({id:id(),gameId:sel.value,assignedAt:Date.now(),recurring:!recurEl||recurEl.getAttribute('aria-checked')==='true',completed:false,completedAt:null,score:0,timesPlayed:0});save();render();toast('Assigned to '+esc(mp3.name)+'!');}
  else if(a==='toggle-assign-recurring'){var checked=b.getAttribute('aria-checked')==='true';b.setAttribute('aria-checked',!checked);}
  else if(a==='remove-assignment'){var mp4=managedProfile(),aid=b.getAttribute('data-id');mp4.assignments=(mp4.assignments||[]).filter(function(x){return x.id!==aid;});save();render();}
@@ -117,4 +121,12 @@ if(window.bopPacks&&window.bopPacks.available){
  window.bopPacks.list().then(function(list){
   if(registerImportedPacks(list)&&(uiScreen==='home'||uiScreen==='parent'))render();
  }).catch(function(){});
+}
+// Auto-update status (Electron only): notify the parent when a new version is ready.
+if(window.bopUpdate&&window.bopUpdate.available&&window.bopUpdate.onStatus){
+ window.bopUpdate.onStatus(function(data){
+  appUpdate=data||{status:'',info:null};
+  if(appUpdate.status==='ready')toast('A new version is ready! Open Settings to update.');
+  if(uiScreen==='settings')render();
+ });
 }

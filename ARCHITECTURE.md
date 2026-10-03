@@ -37,7 +37,14 @@ The same static app under `app/` is shipped two ways:
   (`nodeIntegration:false`, `contextIsolation:true`, `sandbox:true`); the app
   stays pure client-side and saves to `localStorage` (Electron persists it in
   the OS user-data dir; `05-state.js` `save()` already falls back to
-  `localStorage` when the GTK `window.webkit` bridge is absent).
+  `localStorage` when the GTK `window.webkit` bridge is absent). **Auto-update:**
+  `electron-updater` (GitHub Releases feed in `package.json` `build.publish`,
+  publish with `npm run release`) checks on launch + every 6h and pushes status
+  to the renderer via `window.bopUpdate`; Settings → "App updates" installs when
+  ready. Updates replace only the app bundle — `userData` (localStorage + packs)
+  is untouched, so **no data is lost** (requires signing to auto-update on
+  macOS). `backupData`/`restoreData` (05-state.js) + Parent Area give a manual
+  full-state backup/restore file as extra insurance.
 
 Both hosts load the exact same `app/index.html`, so a change made for one works
 in the other. Keep both working until the Electron path is proven in the wild.

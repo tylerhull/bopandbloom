@@ -5,7 +5,7 @@ var storageKey = 'bop-and-bloom-v1';
 var defaults={muted:false,music:true,effects:true,volume:65,musicVolume:25,effectsVolume:75,reduced:false};
 var ACTIVITY_CAP=20000;
 var state={version:1,active:null,profiles:[],settings:copy(defaults),parentPin:'1234',knownGameIds:GAME_IDS.slice(),recordsFolder:''};
-var uiScreen='home', draft=null, game=null, lastFocus=null, homeTab='play', pinEntry='', pinTarget='gate', managing=null;
+var uiScreen='home', draft=null, game=null, lastFocus=null, homeTab='play', pinEntry='', pinTarget='gate', managing=null, appUpdate={status:'',info:null};
 function copy(x){return JSON.parse(JSON.stringify(x));}
 function esc(x){return String(x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function clamp(n,min,max){return Math.max(min,Math.min(max,Number(n)||0));}
@@ -72,6 +72,15 @@ function save(){
 }
 window.bopSaveError=function(){toast('Could not save your profile. Please check free disk space.');};
 function current(){return state.profiles.filter(function(p){return p.id===state.active;})[0];}
+function backupData(){return JSON.stringify(state);}
+function restoreData(text){
+ var raw;try{raw=JSON.parse(text);}catch(e){return false;}
+ if(!raw||raw.version!==1||!Array.isArray(raw.profiles))return false;
+ state.profiles=[];state.active=null;
+ sanitize(raw);
+ save();
+ return true;
+}
 function contrast(hex){var a=hex.slice(1).match(/../g).map(function(v){v=parseInt(v,16)/255;return v<=.04045?v/12.92:Math.pow((v+.055)/1.055,2.4);});return a[0]*.2126+a[1]*.7152+a[2]*.0722>.39?'#24382e':'#ffffff';}
 function shade(hex,percent){var num=parseInt(hex.slice(1),16),r=(num>>16)+Math.round(2.55*percent),g=((num>>8)&255)+Math.round(2.55*percent),b=(num&255)+Math.round(2.55*percent);r=Math.max(0,Math.min(255,r));g=Math.max(0,Math.min(255,g));b=Math.max(0,Math.min(255,b));return '#'+(r<16?'0':'')+r.toString(16)+(g<16?'0':'')+g.toString(16)+(b<16?'0':'')+b.toString(16);}
 function theme(p){var c=colors(p&&p.colors);colorKeys.forEach(function(k){document.documentElement.style.setProperty('--'+k,c[k]);});['primary','secondary','garden','surface'].forEach(function(k){document.documentElement.style.setProperty('--on-'+k,contrast(c[k]));});document.body.classList.toggle('reduced',state.settings.reduced);document.body.setAttribute('data-pattern',(p&&p.pattern)||'dots');}

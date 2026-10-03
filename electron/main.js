@@ -18,6 +18,31 @@ const fs = require('fs');
 
 const APP_INDEX = path.join(__dirname, '..', 'app', 'index.html');
 
+// ---- Auto-update ---------------------------------------------------------
+// Uses electron-updater against the GitHub Releases feed configured in
+// package.json `build.publish`. Updates replace only the app bundle — user
+// data (profiles, settings, imported packs) lives in app.getPath('userData'),
+// which is untouched by an update, so nothing is lost. Auto-update only runs in
+// a packaged, (for macOS) signed build; in dev it's a no-op.
+function initAutoUpdate(win) {
+  if (!app.isPackaged) return;
+  let autoUpdater;
+  try { autoUpdater = require('electron-updater').autoUpdater; } catch (e) { return; }
+  const send = (status, info) => { if (win && !win.isDestroyed()) win.webContents.send('update:status', { status: status, info: info || null }); };
+  autoUpdater.autoDownload = true;
+  autoUpdater.autoInstallOnAppQuit = true;
+  autoUpdater.on('checking-for-update', () => send('checking'));
+  autoUpdater.on('update-available', (info) => send('available', { version: info && info.version }));
+  autoUpdater.on('update-not-available', () => send('none'));
+  autoUpdater.on('error', (err) => send('error', { message: String((err && err.message) || err) }));
+  autoUpdater.on('download-progress', (p) => send('downloading', { percent: Math.round(p.percent) }));
+  autoUpdater.on('update-downloaded', (info) => send('ready', { version: info && info.version }));
+  ipcMain.handle('update:install', () => { try { autoUpdater.quitAndInstall(); } catch (e) { /* ignore */ } return { ok: true }; });
+  ipcMain.handle('update:check', () => { try { autoUpdater.checkForUpdates(); } catch (e) { /* ignore */ } return { ok: true }; });
+  try { autoUpdater.checkForUpdates(); } catch (e) { /* ignore */ }
+  setInterval(() => { try { autoUpdater.checkForUpdates(); } catch (e) { /* ignore */ } }, 6 * 60 * 60 * 1000);
+}
+
 // ---- Content packs -------------------------------------------------------
 // Imported packs are single JSON files kept under <userData>/packs/. Each is a
 // {id,name,blurb,tag,items:[{id,label,image,pt}]} where every image is a
@@ -122,6 +147,23 @@ ipcMain.handle('records:folder', async () => {
   return { ok: true, folder: res.filePaths[0] };
 });
 
+// Open a backup file and return its text (for "Restore from backup").
+ipcMain.handle('records:openText', async () => {
+  const res = await dialog.showOpenDialog({
+    title: 'Restore from a Bop & Bloom backup',
+    filters: [{ name: 'Bop & Bloom backup', extensions: ['json', 'bak'] }],
+    properties: ['openFile']
+  });
+  if (res.canceled || !res.filePaths.length) return { ok: false, canceled: true };
+  try {
+    const content = fs.readFileSync(res.filePaths[0], 'utf8');
+    if (content.length > 50 * 1024 * 1024) return { ok: false, error: 'That file is too large.' };
+    return { ok: true, content: content };
+  } catch (e) {
+    return { ok: false, error: 'Could not read the file.' };
+  }
+});
+
 // Append new record lines to a per-child CSV in the chosen folder, writing the
 // header first if the file is new. Append-only so the file keeps full history.
 ipcMain.handle('records:append', (_e, opts) => {
@@ -161,6 +203,7 @@ function createWindow() {
   });
 
   win.loadFile(APP_INDEX);
+  initAutoUpdate(win);
 
   // Open any external links (should be none) in the real browser, never in-app.
   win.webContents.setWindowOpenHandler(({ url }) => {

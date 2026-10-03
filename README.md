@@ -67,6 +67,9 @@ Tap the lock icon in the top bar and enter the 4-digit parent PIN (**1234** by d
 - **Games shown** — turn any game on or off per child, so the playroom menu only shows what's appropriate for them right now.
 - **Difficulty levels shown** — turn Easy/Medium/Hard on or off per child; whatever stays on is what that child can choose from on each game's own screen. At least one game and one difficulty level always stay on.
 - **Content packs** — choose which sets of pictures and words the picture games (Flashcards!, Memory Match!, Letter Sounds!) draw from, per child. At least one pack always stays on. In the desktop (Electron) app you can also **Add a pack…** — import a `.bop` pack file you downloaded or made yourself — and remove imported packs.
+- **Back up your data** — all players, settings, points, and records stay on this computer and are kept when the app updates. You can also save a backup file (keep it in a Dropbox/Drive folder) and restore from it later.
+
+In the desktop app, new versions **install automatically** — when one is ready you'll get a gentle notice, and Settings → **App updates** has an "Install & restart" button. Updating never deletes your players, settings, records, or content packs.
 - **Assign schoolwork** — pick a game and assign it to a child. It shows up under the **School** tab on their playroom menu (next to **Play**), with a badge for how many assignments are waiting.
 - **Review completed work** — every finished assignment records the date, the score, and the points earned (10 points plus the score achieved) for the parent to look back on.
 
@@ -142,7 +145,18 @@ npm run dist:mac      # .dmg   (build on macOS)
 npm run dist:win      # NSIS installer (build on Windows)
 ```
 
+Publish an update (users auto-update from GitHub Releases):
+
+```sh
+export GH_TOKEN=<a GitHub token with repo access>
+npm version patch        # bump the version (keep APP_VERSION in sync — see below)
+npm run release          # builds + uploads installers and the update feed
+```
+
+Installed apps check on launch and every few hours, download in the background, and prompt the parent to install. Auto-update needs the macOS build to be signed + notarized; Windows works unsigned but shows a warning.
+
 Notes:
+- Keep `package.json`'s `version` and `APP_VERSION` in `app/js/01-data-core.js` in sync when you bump a release.
 - Each OS's installer is normally built on that OS (especially macOS, which needs Xcode tooling to sign/notarize).
 - App icons come from `build/` — see [build/README.md](build/README.md). Until you add them, the build uses Electron's default icon.
 - For public distribution, sign the apps: macOS needs an Apple Developer account + notarization to clear Gatekeeper; Windows needs a code-signing certificate to avoid SmartScreen warnings. Unsigned builds run but show "unknown developer" warnings.

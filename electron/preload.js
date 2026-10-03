@@ -19,5 +19,15 @@ contextBridge.exposeInMainWorld('bopRecords', {
   available: true,
   saveFile: (opts) => ipcRenderer.invoke('records:save', opts),
   setupFolder: () => ipcRenderer.invoke('records:folder'),
-  appendRecords: (opts) => ipcRenderer.invoke('records:append', opts)
+  appendRecords: (opts) => ipcRenderer.invoke('records:append', opts),
+  openText: () => ipcRenderer.invoke('records:openText')
+});
+
+// Auto-update status + controls. onStatus registers a listener for update
+// events pushed from the main process (checking/available/downloading/ready/…).
+contextBridge.exposeInMainWorld('bopUpdate', {
+  available: true,
+  onStatus: (cb) => { if (typeof cb === 'function') ipcRenderer.on('update:status', (_e, data) => cb(data)); },
+  check: () => ipcRenderer.invoke('update:check'),
+  install: () => ipcRenderer.invoke('update:install')
 });

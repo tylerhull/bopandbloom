@@ -103,6 +103,23 @@ function reportsView(){
   +'</main>');
 }
 function slugName(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
+function backupDataToFile(){
+ var content=backupData(),d=new Date(),pad=function(n){return ('0'+n).slice(-2);};
+ var name='bopandbloom-backup-'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'.json';
+ if(window.bopRecords&&window.bopRecords.available&&window.bopRecords.saveFile){
+  window.bopRecords.saveFile({name:name,content:content,type:'application/json'}).then(function(res){if(res&&res.ok)toast('Backup saved to '+res.path);else if(res&&!res.canceled)toast('Could not save the backup.');}).catch(function(){toast('Could not save the backup.');});
+ } else {
+  try{var blob=new Blob([content],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(url);},1000);toast('Downloaded '+name);}catch(e){toast('Backup needs the desktop app.');}
+ }
+}
+function restoreDataFromFile(){
+ if(!(window.bopRecords&&window.bopRecords.available&&window.bopRecords.openText)){toast('Restore needs the desktop app.');return;}
+ window.bopRecords.openText().then(function(res){
+  if(!res||!res.ok){if(res&&res.error)toast(res.error);return;}
+  if(restoreData(res.content)){managing=null;draft=null;uiScreen='home';render();toast('Your data was restored.');}
+  else toast('That file is not a valid backup.');
+ }).catch(function(){toast('Could not restore the backup.');});
+}
 function reportFileName(p,ext){var d=new Date(),pad=function(n){return ('0'+n).slice(-2);};return 'bopandbloom-'+(slugName(p.name)||'child')+'-'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'.'+ext;}
 function reportCsv(p,entries){
  var rows=[['Date','Time','Game','Subject','Score','Minutes']];
