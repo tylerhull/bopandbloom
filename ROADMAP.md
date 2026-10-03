@@ -41,14 +41,18 @@ A pedagogically ordered path: letter → sound → blend → pattern → whole w
 
 | Game | Status | Effort | Teaches | How it works | Needs |
 |---|---|---|---|---|---|
-| **Beginning Sounds** | `[planned]` | M | words start with sounds | see a photo, hear the word, tap the starting letter | *reuses* the 30 South American animal photos — cheapest to build |
-| **Sound It Out** (CVC blending) | `[planned]` | L | actually reading | show `c a t` + picture, tap each letter for its sound, tap word to blend | ~30 CVC words + simple pictures + audio (letter sounds + blended word) |
-| **Rhyme Time** (word families) | `[planned]` | M | -at/-an/-ig patterns | match words that rhyme | word-family sets + pictures + audio |
-| **Sight Words** | `[planned]` | M | the/was/said (unsoundable) | flash card + "tap the word you hear" | ~40 word list + audio |
+| **Beginning Sounds** | `[done]` | M | words start with sounds | `36-game-begin.js` — hear a letter, tap the pack picture that starts with it (pack-driven) | existing pack pictures + letter-prompt audio |
+| **Sound It Out** (CVC blending) | `[done]` | L | reading | `37-game-sound.js` — a CVC word as letter tiles; tap each to light it, tap "Say the word" to blend, Next | `CVC_WORDS` + word audio (word-focused; isolated-phoneme audio is a possible later refinement) |
+| **Rhyme Time** (word families) | `[done]` | M | -at/-an/-ig patterns | `38-game-rhyme.js` — hear a word, tap the word that rhymes | `RHYME_FAMILIES` + word audio |
+| **Sight Words** | `[done]` | M | the/was/said (unsoundable) | `39-game-sight.js` — hear a word, tap it | `SIGHT_WORDS` + word audio |
 
-Open decision: CVC/rhyme pictures — reuse simple SVG icons (clearer for
-little kids, no sourcing) vs. real photos (more work, needs Wikimedia +
-license checks). Lean icons for these.
+All four are **silent until the Polly run**. Word/letter lists are
+single-sourced in `tools/phonics/build_phonics.py`, which generates both
+`app/js/04c-data-phonics.js` and `tools/audio/phonics_manifest.csv` (115
+clips under `app/audio/phonics/`); `build_audio_map.py` now reads that
+manifest too. Decision: no new picture assets — these are letter/word +
+audio based (Beginning Sounds reuses pack pictures), sidestepping emoji-font
+and image-sourcing risk.
 
 ---
 

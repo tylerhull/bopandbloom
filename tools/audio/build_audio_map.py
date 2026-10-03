@@ -22,18 +22,22 @@ OUT = os.path.join(HERE, "..", "..", "app", "js", "07-audio-map.js")
 
 def main():
     audio_map = {}
-    with open(MANIFEST, newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            phrase = row["Phrase"].strip()
-            file = row["File"].strip()
-            if not phrase or not file:
-                continue
-            if phrase in audio_map and audio_map[phrase] != file:
-                raise SystemExit(
-                    f"Duplicate phrase with two different files:\n  {phrase!r}\n"
-                    f"  -> {audio_map[phrase]}\n  -> {file}"
-                )
-            audio_map[phrase] = file
+    manifests = [MANIFEST, os.path.join(HERE, "phonics_manifest.csv")]
+    for path in manifests:
+        if not os.path.exists(path):
+            continue
+        with open(path, newline="", encoding="utf-8") as f:
+            for row in csv.DictReader(f):
+                phrase = row["Phrase"].strip()
+                file = row["File"].strip()
+                if not phrase or not file:
+                    continue
+                if phrase in audio_map and audio_map[phrase] != file:
+                    raise SystemExit(
+                        f"Duplicate phrase with two different files:\n  {phrase!r}\n"
+                        f"  -> {audio_map[phrase]}\n  -> {file}"
+                    )
+                audio_map[phrase] = file
 
     header = (
         "/* Pre-recorded read-aloud audio: exact spoken text -> filename under app/audio/.\n"

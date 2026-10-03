@@ -1,0 +1,29 @@
+/* Phonics games: Beginning Sounds!, Sound It Out!, Rhyme Time!, Sight Words! */
+/* Beginning Sounds */
+.begin-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.begin-letter{display:flex;align-items:center;gap:12px}
+.begin-letter strong{font-size:72px;font-weight:900;color:var(--primary);line-height:1}
+.begin-choices{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;max-width:560px}
+.begin-choice{padding:8px;background:var(--surface);border:3px solid var(--line);border-radius:16px;cursor:pointer;width:140px;height:120px;transition:transform .1s}
+.begin-choice:hover{transform:scale(1.04);border-color:var(--primary)}
+.begin-choice.nope{animation:nopeshake .35s}
+.begin-media{width:100%;height:100%;object-fit:contain;display:block}
+.begin-media.pack-svg{display:flex;align-items:center;justify-content:center}
+.begin-media.pack-svg svg{width:100%;height:100%}
+
+/* Sound It Out */
+.sound-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
+.sound-letters{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.sound-tile{width:72px;height:88px;font-size:46px;font-weight:900;background:var(--surface);border:3px solid var(--line);border-radius:14px;color:var(--ink);cursor:pointer;transition:transform .1s,background .1s}
+.sound-tile:hover{transform:scale(1.05)}
+.sound-tile.lit{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+
+/* Rhyme Time + Sight Words (word choices) */
+.word-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.word-target{display:flex;align-items:center;gap:12px}
+.word-target strong{font-size:48px;font-weight:900;color:var(--primary)}
+.word-choices{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;max-width:520px}
+.word-choice{font-size:28px;font-weight:800;padding:12px 22px;background:var(--surface);border:3px solid var(--line);border-radius:14px;cursor:pointer;transition:transform .1s}
+.word-choice.big{font-size:34px;padding:16px 28px}
+.word-choice:hover{transform:scale(1.05);border-color:var(--primary)}
+.word-choice.nope{animation:nopeshake .35s}

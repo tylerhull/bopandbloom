@@ -1,0 +1,116 @@
+Game,Track,File,Phrase
+Phonics,1,phonics/letter_a.mp3,The letter A
+Phonics,2,phonics/letter_b.mp3,The letter B
+Phonics,3,phonics/letter_c.mp3,The letter C
+Phonics,4,phonics/letter_d.mp3,The letter D
+Phonics,5,phonics/letter_e.mp3,The letter E
+Phonics,6,phonics/letter_f.mp3,The letter F
+Phonics,7,phonics/letter_g.mp3,The letter G
+Phonics,8,phonics/letter_h.mp3,The letter H
+Phonics,9,phonics/letter_i.mp3,The letter I
+Phonics,10,phonics/letter_j.mp3,The letter J
+Phonics,11,phonics/letter_k.mp3,The letter K
+Phonics,12,phonics/letter_l.mp3,The letter L
+Phonics,13,phonics/letter_m.mp3,The letter M
+Phonics,14,phonics/letter_n.mp3,The letter N
+Phonics,15,phonics/letter_o.mp3,The letter O
+Phonics,16,phonics/letter_p.mp3,The letter P
+Phonics,17,phonics/letter_q.mp3,The letter Q
+Phonics,18,phonics/letter_r.mp3,The letter R
+Phonics,19,phonics/letter_s.mp3,The letter S
+Phonics,20,phonics/letter_t.mp3,The letter T
+Phonics,21,phonics/letter_u.mp3,The letter U
+Phonics,22,phonics/letter_v.mp3,The letter V
+Phonics,23,phonics/letter_w.mp3,The letter W
+Phonics,24,phonics/letter_x.mp3,The letter X
+Phonics,25,phonics/letter_y.mp3,The letter Y
+Phonics,26,phonics/letter_z.mp3,The letter Z
+Phonics,27,phonics/word_a.mp3,a
+Phonics,28,phonics/word_all.mp3,all
+Phonics,29,phonics/word_and.mp3,and
+Phonics,30,phonics/word_are.mp3,are
+Phonics,31,phonics/word_at.mp3,at
+Phonics,32,phonics/word_bat.mp3,bat
+Phonics,33,phonics/word_bed.mp3,bed
+Phonics,34,phonics/word_big.mp3,big
+Phonics,35,phonics/word_bug.mp3,bug
+Phonics,36,phonics/word_bun.mp3,bun
+Phonics,37,phonics/word_bus.mp3,bus
+Phonics,38,phonics/word_can.mp3,can
+Phonics,39,phonics/word_cap.mp3,cap
+Phonics,40,phonics/word_cat.mp3,cat
+Phonics,41,phonics/word_come.mp3,come
+Phonics,42,phonics/word_cot.mp3,cot
+Phonics,43,phonics/word_cup.mp3,cup
+Phonics,44,phonics/word_den.mp3,den
+Phonics,45,phonics/word_dig.mp3,dig
+Phonics,46,phonics/word_dog.mp3,dog
+Phonics,47,phonics/word_dot.mp3,dot
+Phonics,48,phonics/word_fan.mp3,fan
+Phonics,49,phonics/word_fog.mp3,fog
+Phonics,50,phonics/word_for.mp3,for
+Phonics,51,phonics/word_fox.mp3,fox
+Phonics,52,phonics/word_fun.mp3,fun
+Phonics,53,phonics/word_go.mp3,go
+Phonics,54,phonics/word_hat.mp3,hat
+Phonics,55,phonics/word_have.mp3,have
+Phonics,56,phonics/word_he.mp3,he
+Phonics,57,phonics/word_hen.mp3,hen
+Phonics,58,phonics/word_here.mp3,here
+Phonics,59,phonics/word_hop.mp3,hop
+Phonics,60,phonics/word_hot.mp3,hot
+Phonics,61,phonics/word_hug.mp3,hug
+Phonics,62,phonics/word_in.mp3,in
+Phonics,63,phonics/word_is.mp3,is
+Phonics,64,phonics/word_it.mp3,it
+Phonics,65,phonics/word_jam.mp3,jam
+Phonics,66,phonics/word_jog.mp3,jog
+Phonics,67,phonics/word_like.mp3,like
+Phonics,68,phonics/word_little.mp3,little
+Phonics,69,phonics/word_log.mp3,log
+Phonics,70,phonics/word_look.mp3,look
+Phonics,71,phonics/word_man.mp3,man
+Phonics,72,phonics/word_map.mp3,map
+Phonics,73,phonics/word_me.mp3,me
+Phonics,74,phonics/word_mop.mp3,mop
+Phonics,75,phonics/word_mud.mp3,mud
+Phonics,76,phonics/word_mug.mp3,mug
+Phonics,77,phonics/word_my.mp3,my
+Phonics,78,phonics/word_nap.mp3,nap
+Phonics,79,phonics/word_net.mp3,net
+Phonics,80,phonics/word_no.mp3,no
+Phonics,81,phonics/word_nut.mp3,nut
+Phonics,82,phonics/word_of.mp3,of
+Phonics,83,phonics/word_on.mp3,on
+Phonics,84,phonics/word_pen.mp3,pen
+Phonics,85,phonics/word_pig.mp3,pig
+Phonics,86,phonics/word_pin.mp3,pin
+Phonics,87,phonics/word_play.mp3,play
+Phonics,88,phonics/word_pop.mp3,pop
+Phonics,89,phonics/word_pot.mp3,pot
+Phonics,90,phonics/word_rat.mp3,rat
+Phonics,91,phonics/word_red.mp3,red
+Phonics,92,phonics/word_rug.mp3,rug
+Phonics,93,phonics/word_run.mp3,run
+Phonics,94,phonics/word_said.mp3,said
+Phonics,95,phonics/word_see.mp3,see
+Phonics,96,phonics/word_she.mp3,she
+Phonics,97,phonics/word_so.mp3,so
+Phonics,98,phonics/word_sun.mp3,sun
+Phonics,99,phonics/word_tap.mp3,tap
+Phonics,100,phonics/word_ten.mp3,ten
+Phonics,101,phonics/word_that.mp3,that
+Phonics,102,phonics/word_the.mp3,the
+Phonics,103,phonics/word_they.mp3,they
+Phonics,104,phonics/word_this.mp3,this
+Phonics,105,phonics/word_to.mp3,to
+Phonics,106,phonics/word_top.mp3,top
+Phonics,107,phonics/word_up.mp3,up
+Phonics,108,phonics/word_van.mp3,van
+Phonics,109,phonics/word_was.mp3,was
+Phonics,110,phonics/word_we.mp3,we
+Phonics,111,phonics/word_wig.mp3,wig
+Phonics,112,phonics/word_with.mp3,with
+Phonics,113,phonics/word_yes.mp3,yes
+Phonics,114,phonics/word_you.mp3,you
+Phonics,115,phonics/word_zip.mp3,zip

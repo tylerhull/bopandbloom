@@ -36,7 +36,16 @@ Ubuntu 18.04 should have its normal system updates installed. The package requir
 - **Shape Sort!** A colorful shape appears; tap the bin it belongs in. Rounds alternate between sorting by shape and by color, so it teaches both. Easy uses 3 shapes/colors, Medium 4, Hard 5. No timer — made for the littlest players.
 - **Pattern Play!** A repeating pattern of colorful shapes is shown with the next one hidden; tap the shape that comes next. Easy repeats a 2-shape pattern, Medium 3, Hard 4. No timer — a gentle early-reasoning game.
 - **Flashcards!** Flip through big pictures — animals, flags, and whatever content packs are turned on — with each name read aloud, at your own pace. No timer, no wrong answers. Grown-ups choose which content packs to include in the Parent Area.
-- Wherever a game shows a fact or a name to learn (Country Match!, Gaucho Herd!, Peak Climber!, Wild Places!, Animal Sort!, Letter Sounds!, Flag Match!), it's read aloud automatically the first time, with a speaker icon next to it to hear it again any time.
+- **Build the Word!** Spell the name of each picture by tapping letter tiles in order (only the right next letter lands, so there's no way to misspell). Pack-driven. Easy shows the word to copy; Hard mixes in extra letters.
+- **Count It!** Count the things, then tap how many. Easy counts to 5, Medium to 10, Hard to 20.
+- **Add & Take!** Add groups together or take some away, then tap the answer, with the objects shown. Easy adds within 5; Medium and Hard add and subtract within 10.
+- **More or Less!** Look at two groups and tap the one with more — or fewer. Easy keeps the counts far apart; Hard makes them close.
+- **Number Order!** Tap the numbers in order, smallest first. Easy uses four, Hard uses six, sometimes starting higher.
+- **Beginning Sounds!** Hear a letter, then tap the picture (from your content packs) that starts with it.
+- **Sound It Out!** A little word appears as letter tiles; tap each to light it up, then blend them into the whole word. A gentle first-reading practice.
+- **Rhyme Time!** Hear a word, then tap the word that rhymes with it — cat, hat, bat.
+- **Sight Words!** Hear one of the everyday words that don't sound out (the, was, said), then tap it.
+- Wherever a game shows a fact, name, or word to learn (Country Match!, Gaucho Herd!, Peak Climber!, Wild Places!, Animal Sort!, Letter Sounds!, Flag Match!, Flashcards!, Build the Word!, Beginning Sounds!, Sound It Out!, Rhyme Time!, Sight Words!), it's read aloud, with a speaker icon to hear it again any time. (The phonics words and letters come from `tools/phonics/build_phonics.py`; see the development section.)
 - **Easy, Medium, and Hard** are chosen separately for each game, right on that game's own screen, and each game remembers its own choice. Easy has no timer and is the original, gentlest version of each game. Medium and Hard add a 60-second timer (except Scurry's corridor shortcuts, which don't need one) and a bit more challenge — never a point penalty for missing.
 - Choose **All done**, or the home button mid-round, to head straight back to the playroom — no extra confirmation step.
 - Keyboard: `Q W E / A S D / Z X C` or `1–9` map to the nine targets in Bop!/Bloom!/Bouquet!; arrow keys or WASD move the mouse in Scurry!. Space or Escape pauses/resumes. F11 toggles fullscreen in the desktop app. Tab and Enter work on menu controls.
