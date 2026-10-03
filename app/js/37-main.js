@@ -28,6 +28,7 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-acti
  else if(a==='report-subject'){reportSubject=v;render();}
  else if(a==='report-save-csv'){saveReportCsv();}
  else if(a==='report-print'){window.print();}
+ else if(a==='records-folder'){setupRecordsFolder();}
  else if(a==='assign-game'){var mp3=managedProfile(),sel=$('#assign-game'),recurEl=$('#assign-recurring');mp3.assignments=mp3.assignments||[];mp3.assignments.push({id:id(),gameId:sel.value,assignedAt:Date.now(),recurring:!recurEl||recurEl.getAttribute('aria-checked')==='true',completed:false,completedAt:null,score:0,timesPlayed:0});save();render();toast('Assigned to '+esc(mp3.name)+'!');}
  else if(a==='toggle-assign-recurring'){var checked=b.getAttribute('aria-checked')==='true';b.setAttribute('aria-checked',!checked);}
  else if(a==='remove-assignment'){var mp4=managedProfile(),aid=b.getAttribute('data-id');mp4.assignments=(mp4.assignments||[]).filter(function(x){return x.id!==aid;});save();render();}

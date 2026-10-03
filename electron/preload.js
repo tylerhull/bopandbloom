@@ -17,5 +17,7 @@ contextBridge.exposeInMainWorld('bopPacks', {
 // cloud — no backend involved.
 contextBridge.exposeInMainWorld('bopRecords', {
   available: true,
-  saveFile: (opts) => ipcRenderer.invoke('records:save', opts)
+  saveFile: (opts) => ipcRenderer.invoke('records:save', opts),
+  setupFolder: () => ipcRenderer.invoke('records:folder'),
+  appendRecords: (opts) => ipcRenderer.invoke('records:append', opts)
 });

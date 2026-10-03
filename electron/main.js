@@ -112,6 +112,35 @@ ipcMain.handle('records:save', async (_e, opts) => {
   return { ok: true, path: res.filePath };
 });
 
+// Pick a folder for automatic record saving (e.g. a Dropbox/Drive sync folder).
+ipcMain.handle('records:folder', async () => {
+  const res = await dialog.showOpenDialog({
+    title: 'Choose a folder to auto-save records (e.g. your Dropbox or Google Drive folder)',
+    properties: ['openDirectory', 'createDirectory']
+  });
+  if (res.canceled || !res.filePaths.length) return { ok: false, canceled: true };
+  return { ok: true, folder: res.filePaths[0] };
+});
+
+// Append new record lines to a per-child CSV in the chosen folder, writing the
+// header first if the file is new. Append-only so the file keeps full history.
+ipcMain.handle('records:append', (_e, opts) => {
+  opts = opts || {};
+  if (typeof opts.folder !== 'string' || typeof opts.file !== 'string' || typeof opts.lines !== 'string') return { ok: false };
+  const safeFile = opts.file.replace(/[\/\\]/g, '_');
+  if (!/\.(csv|txt)$/i.test(safeFile)) return { ok: false };
+  const target = path.join(opts.folder, safeFile);
+  try {
+    if (!fs.existsSync(opts.folder)) return { ok: false, error: 'Folder not found.' };
+    let prefix = '';
+    if (!fs.existsSync(target) && typeof opts.header === 'string') prefix = opts.header + '\n';
+    fs.appendFileSync(target, prefix + opts.lines + '\n', 'utf8');
+  } catch (e) {
+    return { ok: false, error: 'Could not write records.' };
+  }
+  return { ok: true, path: target };
+});
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 1120,

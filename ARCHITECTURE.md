@@ -83,7 +83,7 @@ has the GTK/WebKit2 bindings needed to do this already installed.
 | 12 | `ui-settings.js` | Settings screen. |
 | 13 | `ui-parent.js` | Parent PIN gate, per-child game/difficulty toggles, assignments. |
 | 14 | `ui-home.js` | Playroom home screen, game cards, School tab, onboarding, new-profile creation. |
-| 14b | `ui-reports.js` | Parent progress-report screen (`uiScreen==='reports'`): interactive SVG charts from each child's `activityLog`, CSV export (Electron `window.bopRecords` save dialog, or a browser download fallback), and print / save-as-PDF. |
+| 14b | `ui-reports.js` | Parent progress-report screen (`uiScreen==='reports'`): interactive SVG charts from each child's `activityLog` (sessions/day with adaptive day→week→month bucketing, multi-line score-over-time, time-by-subject), subject filter, 7/30/90/180/school-year ranges. One-time CSV export + print/PDF, and **auto-save**: `flushRecords()` appends new sessions to a per-child CSV in a parent-chosen folder (via `window.bopRecords`) after every game — append-only, using `profile.lastRecordSync` so the file keeps full history even though the in-app log is capped (`ACTIVITY_CAP`, 05-state.js). |
 | 15 | `game-flowers.js` | Bloom!/Bouquet!: flower art, vases, and `classicField` (the 3×3 target grid also used by Bop!). |
 | 16 | `game-scurry.js` | Procedural maze generation and play. |
 | 17 | `game-countries.js` | Country Match!: place countries on the real map. |

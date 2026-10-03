@@ -3,7 +3,8 @@ var $ = function(s) { return document.querySelector(s); };
 var root = $('#app'), modalRoot = $('#modal-root');
 var storageKey = 'bop-and-bloom-v1';
 var defaults={muted:false,music:true,effects:true,volume:65,musicVolume:25,effectsVolume:75,reduced:false};
-var state={version:1,active:null,profiles:[],settings:copy(defaults),parentPin:'1234',knownGameIds:GAME_IDS.slice()};
+var ACTIVITY_CAP=20000;
+var state={version:1,active:null,profiles:[],settings:copy(defaults),parentPin:'1234',knownGameIds:GAME_IDS.slice(),recordsFolder:''};
 var uiScreen='home', draft=null, game=null, lastFocus=null, homeTab='play', pinEntry='', pinTarget='gate', managing=null;
 function copy(x){return JSON.parse(JSON.stringify(x));}
 function esc(x){return String(x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -21,14 +22,15 @@ function sanitizeEnabledGames(list,newGameIds){
 }
 function sanitizeActivity(list){
  if(!Array.isArray(list))return [];
- return list.slice(-2000).filter(function(e){return e&&typeof e.t==='number';}).map(function(e){return {t:Number(e.t)||Date.now(),game:GAME_IDS.indexOf(e.game)>=0?e.game:'',score:clamp(e.score,0,999999),secs:clamp(e.secs,0,86400)};});
+ return list.slice(-ACTIVITY_CAP).filter(function(e){return e&&typeof e.t==='number';}).map(function(e){return {t:Number(e.t)||Date.now(),game:GAME_IDS.indexOf(e.game)>=0?e.game:'',score:clamp(e.score,0,999999),secs:clamp(e.secs,0,86400)};});
 }
 function logActivity(type,score,secs){
  var p=current();if(!p)return;
  p.activityLog=p.activityLog||[];
  p.activityLog.push({t:Date.now(),game:type,score:score||0,secs:secs||0});
- if(p.activityLog.length>2000)p.activityLog=p.activityLog.slice(-2000);
+ if(p.activityLog.length>ACTIVITY_CAP)p.activityLog=p.activityLog.slice(-ACTIVITY_CAP);
  save();
+ if(typeof flushRecords==='function')flushRecords();
 }
 function sanitizeAssignments(list){
  if(!Array.isArray(list))return [];
@@ -50,6 +52,7 @@ function sanitize(raw){
   enabledDifficulties:sanitizeList(p.enabledDifficulties,DIFF_LEVELS)||DIFF_LEVELS.slice(),
   enabledPacks:sanitizeList(p.enabledPacks,allPackIds()),
   activityLog:sanitizeActivity(p.activityLog),
+  lastRecordSync:Number(p.lastRecordSync)||0,
   assignments:sanitizeAssignments(p.assignments),
   points:clamp(p.points,0,9999999),
   best:sanitizeBest(p.best)
@@ -57,6 +60,7 @@ function sanitize(raw){
  state.active=state.profiles.some(function(p){return p.id===raw.active;})?raw.active:(state.profiles[0]||{}).id||null;
  var s=raw.settings||{};Object.keys(defaults).forEach(function(k){state.settings[k]=typeof defaults[k]==='boolean'?(typeof s[k]==='boolean'?s[k]:defaults[k]):(typeof s[k]==='number'?clamp(s[k],0,100):defaults[k]);});
  state.parentPin=/^\d{4}$/.test(raw.parentPin)?raw.parentPin:'1234';
+ state.recordsFolder=typeof raw.recordsFolder==='string'?raw.recordsFolder:'';
  state.knownGameIds=GAME_IDS.slice();
 }
 try{sanitize(window.__BOP_DATA__||JSON.parse(localStorage.getItem(storageKey)||'null'));}catch(e){}

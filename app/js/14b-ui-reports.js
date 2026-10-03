@@ -98,7 +98,8 @@ function reportsView(){
   +'<section class="panel"><h2>Time by subject <span class="quiet">'+rl+'</span></h2>'+reportByArea(entries)+'</section>'
   +'<section class="panel"><h2>Recent sessions</h2>'+reportRecentList(entries)+'</section>'
   +'<div class="report-actions"><button class="big-button" data-action="report-save-csv">'+icon('check')+'Save records (CSV)</button><button class="pill" data-action="report-print">'+icon('spark')+'Print / Save as PDF</button></div>'
-  +'<p class="hint">Records save to your computer (all subjects, '+rl+'). Tip: save into your Dropbox or Google Drive folder to keep a copy in the cloud.</p>'
+  +'<p class="hint">A one-time export saves all subjects for the '+rl+'.</p>'
+  +autoSaveControls()
   +'</main>');
 }
 function slugName(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
@@ -107,6 +108,34 @@ function reportCsv(p,entries){
  var rows=[['Date','Time','Game','Subject','Score','Minutes']];
  entries.forEach(function(e){var d=new Date(e.t);rows.push([d.toLocaleDateString(),d.toLocaleTimeString(),(gameNames[e.game]||e.game||'Game'),gameArea(e.game),e.score,Math.max(1,Math.round(e.secs/60))]);});
  return rows.map(function(r){return r.map(function(c){var s=String(c);return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}).join(',');}).join('\n');
+}
+/* Auto-save: append new sessions to a per-child CSV in the parent's chosen
+   folder (e.g. a Dropbox/Drive sync folder). Append-only + a per-profile
+   lastRecordSync watermark means the file keeps the FULL history even though the
+   in-app log is a rolling window, and nothing is written twice. Fires after
+   every finished game (via logActivity) and on folder setup. Electron only. */
+function recordsFileFor(p){return 'bopandbloom-'+(slugName(p.name)||'child')+'.csv';}
+function csvLine(e){var d=new Date(e.t);return [d.toLocaleDateString(),d.toLocaleTimeString(),(gameNames[e.game]||e.game||'Game'),gameArea(e.game),e.score,Math.max(1,Math.round(e.secs/60))].map(function(c){var s=String(c);return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}).join(',');}
+function flushRecords(){
+ if(!state.recordsFolder||!(window.bopRecords&&window.bopRecords.available&&window.bopRecords.appendRecords))return;
+ var p=current();if(!p)return;
+ var since=p.lastRecordSync||0,neu=(p.activityLog||[]).filter(function(e){return e.t>since;});
+ if(!neu.length)return;
+ var maxT=neu.reduce(function(m,e){return Math.max(m,e.t);},since);
+ var header=['Date','Time','Game','Subject','Score','Minutes'].join(',');
+ var lines=neu.map(csvLine).join('\n');
+ window.bopRecords.appendRecords({folder:state.recordsFolder,file:recordsFileFor(p),header:header,lines:lines}).then(function(res){if(res&&res.ok){p.lastRecordSync=maxT;save();}}).catch(function(){});
+}
+function setupRecordsFolder(){
+ if(!(window.bopRecords&&window.bopRecords.available&&window.bopRecords.setupFolder))return;
+ window.bopRecords.setupFolder().then(function(res){
+  if(res&&res.ok&&res.folder){state.recordsFolder=res.folder;save();flushRecords();toast('Auto-saving records to '+res.folder);render();}
+ }).catch(function(){toast('Could not set the folder.');});
+}
+function autoSaveControls(){
+ if(!(window.bopRecords&&window.bopRecords.available&&window.bopRecords.setupFolder))return '';
+ if(state.recordsFolder)return '<p class="hint">Auto-saving records to <strong>'+esc(state.recordsFolder)+'</strong> after every game. <button class="text-button" data-action="records-folder">Change folder</button></p>';
+ return '<div class="report-actions"><button class="pill" data-action="records-folder">'+icon('leaf')+'Auto-save to a folder…</button></div><p class="hint">Pick a Dropbox or Google Drive sync folder and records save there automatically — no manual upload.</p>';
 }
 function saveReportCsv(){
  var p=managedProfile(),entries=entriesInRange(p),csv=reportCsv(p,entries),name=reportFileName(p,'csv');
