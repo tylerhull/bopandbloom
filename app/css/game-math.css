@@ -1,0 +1,23 @@
+/* Shared styling for the number games: Count It!, Add & Take!, More or Less!, Number Order! */
+.math-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
+.math-wrap strong{font-size:22px}
+.count-objs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;max-width:460px}
+.count-obj{width:46px;height:46px;display:inline-flex}
+.count-obj .shape-art{width:100%;height:100%;display:block}
+.count-obj.gone{opacity:.28;position:relative}
+.count-obj.gone::after{content:"";position:absolute;left:8%;top:46%;width:84%;height:4px;background:var(--ink);transform:rotate(-18deg);border-radius:2px}
+.add-scene{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center}
+.add-op{font-size:40px;font-weight:900;color:var(--ink)}
+.num-choices{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.num-choice{min-width:64px;font-size:30px;font-weight:900;padding:12px 18px;background:var(--surface);border:3px solid var(--line);border-radius:16px;cursor:pointer;transition:transform .1s}
+.num-choice:hover{transform:scale(1.06)}
+.num-choice.nope{animation:nopeshake .35s}
+.more-groups{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+.more-group{background:var(--surface);border:3px solid var(--line);border-radius:20px;padding:16px;cursor:pointer;min-width:150px;transition:transform .1s}
+.more-group:hover{transform:scale(1.03);border-color:var(--primary)}
+.more-group.nope{animation:nopeshake .35s}
+.num-tiles{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.num-tile{min-width:64px;height:76px;font-size:34px;font-weight:900;background:var(--surface);border:3px solid var(--line);border-radius:14px;cursor:pointer;color:var(--primary);transition:transform .1s}
+.num-tile:hover{transform:scale(1.06)}
+.num-tile.placed{background:var(--primary);color:var(--on-primary);border-color:var(--primary);opacity:.9;cursor:default}
+.num-tile.nope{animation:nopeshake .35s}

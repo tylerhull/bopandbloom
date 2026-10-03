@@ -24,6 +24,10 @@
 .rbar-fill{height:100%;background:var(--secondary);border-radius:9px;min-width:4px}
 .rbar-num{flex:0 0 44px;font-size:12px;font-weight:800;opacity:.8}
 
+.rlegend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:10px;justify-content:center}
+.rleg{display:inline-flex;align-items:center;gap:6px;font-size:12px}
+.rdot{width:12px;height:12px;border-radius:50%;display:inline-block}
+
 .report-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:center}
 
 @media(max-width:620px){

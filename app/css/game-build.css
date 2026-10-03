@@ -1,0 +1,18 @@
+/* Build the Word!: picture + letter slots + a tray of letter tiles. */
+.build-wrap{display:flex;flex-direction:column;align-items:center;gap:16px}
+.build-card{position:relative;width:100%;max-width:300px;min-height:200px;display:flex;align-items:center;justify-content:center;background:var(--surface);border:3px solid var(--ink);border-radius:20px;overflow:hidden;padding:12px;box-sizing:border-box}
+.build-media{max-width:100%;max-height:230px;object-fit:contain;border-radius:10px}
+.build-media.pack-svg{display:flex;align-items:center;justify-content:center;width:100%}
+.build-media.pack-svg svg{width:100%;max-height:200px}
+.build-hear{position:absolute;right:8px;bottom:8px}
+.wslots{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.wslot{width:46px;height:56px;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;color:var(--primary);border-bottom:4px solid var(--line)}
+.wslot.wfilled{border-bottom-color:var(--primary)}
+.wslot.wnext{border-bottom-color:var(--secondary);background:rgba(0,0,0,.03);border-radius:8px 8px 0 0}
+.wslot.wspace{border-bottom:0;width:20px}
+.wguide{opacity:.25}
+.wtray{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:460px}
+.wtile{width:52px;height:60px;font-size:28px;font-weight:900;background:var(--surface);border:3px solid var(--line);border-radius:12px;cursor:pointer;transition:transform .1s}
+.wtile:hover:not([disabled]){transform:scale(1.06)}
+.wtile[disabled]{opacity:.28;cursor:default}
+.wtile.nope{animation:nopeshake .35s}

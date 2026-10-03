@@ -35,7 +35,7 @@ var MAZE_SIZE=5;
 var mazeKeyDirs={arrowup:'n',w:'n',arrowdown:'s',s:'s',arrowleft:'w',a:'w',arrowright:'e',d:'e'};
 var DIFF_LEVELS=['easy','medium','hard'];
 var diffLabels={easy:'Easy',medium:'Medium',hard:'Hard'};
-var GAME_IDS=['bop','bloom','scurry','bouquet','countries','gauchos','peaks','biomes','animals','market','timeline','letters','trace','flags','memory','shapes','patterns','flash'];
+var GAME_IDS=['bop','bloom','scurry','bouquet','countries','gauchos','peaks','biomes','animals','market','timeline','letters','trace','flags','memory','shapes','patterns','flash','build','count','add','more','order'];
 var PRE_KNOWN_GAME_IDS=['bop','bloom','scurry','bouquet','countries','gauchos'];
 var GAME_CATALOG=[
  {id:'bop',title:'Bop!',desc:'Peekaboo, little mice. Can you catch them?',label:'PEEK · BOP · GIGGLE',secondary:false,verb:'bop'},
@@ -55,7 +55,12 @@ var GAME_CATALOG=[
  {id:'memory',title:'Memory Match!',desc:'Flip the cards two at a time to find matching pairs of South American animals.',label:'FLIP · FIND · MATCH',secondary:false,verb:'play'},
  {id:'shapes',title:'Shape Sort!',desc:'Sort colorful shapes into the right bin — by shape, then by color.',label:'SHAPES · COLORS · SORT',secondary:true,verb:'sort'},
  {id:'patterns',title:'Pattern Play!',desc:'Look at the repeating pattern of shapes and tap what comes next.',label:'LOOK · THINK · NEXT',secondary:false,verb:'play'},
- {id:'flash',title:'Flashcards!',desc:'Flip through pictures and hear their names — pick the packs in the Parent Area.',label:'LOOK · LISTEN · LEARN',secondary:true,verb:'flip'}
+ {id:'flash',title:'Flashcards!',desc:'Flip through pictures and hear their names — pick the packs in the Parent Area.',label:'LOOK · LISTEN · LEARN',secondary:true,verb:'flip'},
+ {id:'build',title:'Build the Word!',desc:'Spell the name of each picture by tapping the letters in order. Uses your content packs.',label:'SPELL · READ · LEARN',secondary:false,verb:'spell'},
+ {id:'count',title:'Count It!',desc:'Count the things, then tap how many there are.',label:'COUNT · NUMBERS · MATH',secondary:true,verb:'count'},
+ {id:'add',title:'Add & Take!',desc:'Add groups together or take some away, then tap the answer.',label:'ADD · TAKE · MATH',secondary:false,verb:'add'},
+ {id:'more',title:'More or Less!',desc:'Look at two groups and tap the one with more — or fewer.',label:'COMPARE · MORE · LESS',secondary:true,verb:'compare'},
+ {id:'order',title:'Number Order!',desc:'Tap the numbers in order, smallest first.',label:'ORDER · COUNT · MATH',secondary:false,verb:'order'}
 ];
 /* Home-screen groupings for the Play tab. Every game id should live in exactly
    one group; any visible game missing from these lists falls into a "More games"
@@ -63,8 +68,9 @@ var GAME_CATALOG=[
 var GAME_GROUPS=[
  {id:'playroom',title:'Playroom',blurb:'Gentle taps, snips, and giggles',ids:['bop','bloom','scurry','bouquet']},
  {id:'southamerica',title:'Explore South America',blurb:'A whole continent to discover',ids:['countries','gauchos','peaks','biomes','animals','market','timeline','flags']},
- {id:'learning',title:'Letters, numbers & thinking',blurb:'Warm-ups for reading and school',ids:['letters','trace','shapes','patterns','memory','flash']}
+ {id:'learning',title:'Letters & reading',blurb:'Warm-ups for reading',ids:['letters','build','trace','flash','memory']},
+ {id:'numbers',title:'Numbers & thinking',blurb:'Early math and reasoning',ids:['count','add','more','order','shapes','patterns']}
 ];
-var gameNames={bop:'Bop!',bloom:'Bloom!',scurry:'Scurry!',bouquet:'Bouquet!',countries:'Country Match!',gauchos:'Gaucho Herd!',peaks:'Peak Climber!',biomes:'Wild Places!',animals:'Animal Sort!',market:'Market Day!',timeline:'Time Traveler!',letters:'Letter Sounds!',trace:'Trace It!',flags:'Flag Match!',memory:'Memory Match!',shapes:'Shape Sort!',patterns:'Pattern Play!',flash:'Flashcards!'};
-var gameScores={bop:'BOPS',bloom:'FLOWERS',scurry:'MICE',bouquet:'BOUQUETS',countries:'COUNTRIES',gauchos:'COWS',peaks:'SUMMITS',biomes:'PLACES',animals:'ANIMALS',market:'BOUGHT',timeline:'IN ORDER',letters:'MATCHED',trace:'TRACED',flags:'MATCHED',memory:'PAIRS',shapes:'SORTED',patterns:'SOLVED',flash:'SEEN'};
-var gameLabels={bop:'happy little bops',bloom:'flowers snipped',scurry:'mice guided home',bouquet:'bouquets made',countries:'countries placed',gauchos:'cows herded home',peaks:'peaks summited',biomes:'wild places found',animals:'animals sorted home',market:'market treats bought',timeline:'timelines sorted',letters:'letters matched',trace:'letters and numbers traced',flags:'flags matched',memory:'pairs found',shapes:'shapes and colors sorted',patterns:'patterns solved',flash:'cards seen'};
+var gameNames={bop:'Bop!',bloom:'Bloom!',scurry:'Scurry!',bouquet:'Bouquet!',countries:'Country Match!',gauchos:'Gaucho Herd!',peaks:'Peak Climber!',biomes:'Wild Places!',animals:'Animal Sort!',market:'Market Day!',timeline:'Time Traveler!',letters:'Letter Sounds!',trace:'Trace It!',flags:'Flag Match!',memory:'Memory Match!',shapes:'Shape Sort!',patterns:'Pattern Play!',flash:'Flashcards!',build:'Build the Word!',count:'Count It!',add:'Add & Take!',more:'More or Less!',order:'Number Order!'};
+var gameScores={bop:'BOPS',bloom:'FLOWERS',scurry:'MICE',bouquet:'BOUQUETS',countries:'COUNTRIES',gauchos:'COWS',peaks:'SUMMITS',biomes:'PLACES',animals:'ANIMALS',market:'BOUGHT',timeline:'IN ORDER',letters:'MATCHED',trace:'TRACED',flags:'MATCHED',memory:'PAIRS',shapes:'SORTED',patterns:'SOLVED',flash:'SEEN',build:'SPELLED',count:'COUNTED',add:'SOLVED',more:'CORRECT',order:'ORDERED'};
+var gameLabels={bop:'happy little bops',bloom:'flowers snipped',scurry:'mice guided home',bouquet:'bouquets made',countries:'countries placed',gauchos:'cows herded home',peaks:'peaks summited',biomes:'wild places found',animals:'animals sorted home',market:'market treats bought',timeline:'timelines sorted',letters:'letters matched',trace:'letters and numbers traced',flags:'flags matched',memory:'pairs found',shapes:'shapes and colors sorted',patterns:'patterns solved',flash:'cards seen',build:'words spelled',count:'numbers counted',add:'math problems solved',more:'comparisons made',order:'sequences ordered'};

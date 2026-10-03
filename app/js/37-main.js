@@ -25,6 +25,7 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-acti
  else if(a==='open-parent'){uiScreen='parent';render();}
  else if(a==='report-child'){managing=b.getAttribute('data-id');render();}
  else if(a==='report-range'){reportRange=v;render();}
+ else if(a==='report-subject'){reportSubject=v;render();}
  else if(a==='report-save-csv'){saveReportCsv();}
  else if(a==='report-print'){window.print();}
  else if(a==='assign-game'){var mp3=managedProfile(),sel=$('#assign-game'),recurEl=$('#assign-recurring');mp3.assignments=mp3.assignments||[];mp3.assignments.push({id:id(),gameId:sel.value,assignedAt:Date.now(),recurring:!recurEl||recurEl.getAttribute('aria-checked')==='true',completed:false,completedAt:null,score:0,timesPlayed:0});save();render();toast('Assigned to '+esc(mp3.name)+'!');}
@@ -79,6 +80,11 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-acti
  else if(a==='shape-bin'){shapePick(b.getAttribute('data-bin'));}
  else if(a==='pattern-pick'){patternPick(Number(b.getAttribute('data-index')));}
  else if(a==='flash-next'){flashNext();}
+ else if(a==='build-tap'){buildTap(Number(b.getAttribute('data-id')));}
+ else if(a==='count-pick'){countPick(Number(b.getAttribute('data-n')));}
+ else if(a==='add-pick'){addPick(Number(b.getAttribute('data-n')));}
+ else if(a==='more-pick'){morePick(b.getAttribute('data-side'));}
+ else if(a==='order-pick'){orderPick(Number(b.getAttribute('data-n')));}
  else if(a==='set-difficulty'){var p=current();p.difficulty[game.type]=v;save();startGame(game.type,game.assignmentId);}
 });
 document.addEventListener('keydown',function(e){
@@ -88,13 +94,13 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape'||e.key===' '){e.preventDefault();game.paused?resumeGame():pauseGame();return;}
   var k=e.key.toLowerCase();
   if(game.type==='scurry'){if(!e.repeat&&mazeKeyDirs.hasOwnProperty(k)){e.preventDefault();unlockAudio();mazeDirectionMove(k);}return;}
-  if(['countries','gauchos','peaks','biomes','animals','market','timeline','letters','trace','flags','memory','shapes','patterns','flash'].indexOf(game.type)>=0)return;
+  if(['countries','gauchos','peaks','biomes','animals','market','timeline','letters','trace','flags','memory','shapes','patterns','flash','build','count','add','more','order'].indexOf(game.type)>=0)return;
   var idx='qweasdzxc'.indexOf(k);
   if(/^[1-9]$/.test(k))idx=Number(k)-1;
   if(idx>=0&&!e.repeat){e.preventDefault();unlockAudio();hit(idx);}
  }
 });
-document.addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='IMG'&&(t.classList.contains('climb-photo')||t.classList.contains('summit-photo')||t.classList.contains('letters-photo')||t.classList.contains('mem-photo')||t.classList.contains('flash-media')))t.classList.add('img-fallback');},true);
+document.addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='IMG'&&(t.classList.contains('climb-photo')||t.classList.contains('summit-photo')||t.classList.contains('letters-photo')||t.classList.contains('mem-photo')||t.classList.contains('flash-media')||t.classList.contains('build-media')))t.classList.add('img-fallback');},true);
 document.addEventListener('visibilitychange',function(){if(document.hidden)pauseGame();audioSync();});
 window.addEventListener('blur',function(){pauseGame();});
 window.addEventListener('beforeunload',save);
