@@ -19,29 +19,51 @@ const fs = require('fs');
 const APP_INDEX = path.join(__dirname, '..', 'app', 'index.html');
 
 // ---- Auto-update ---------------------------------------------------------
-// Uses electron-updater against the GitHub Releases feed configured in
-// package.json `build.publish`. Updates replace only the app bundle — user
-// data (profiles, settings, imported packs) lives in app.getPath('userData'),
-// which is untouched by an update, so nothing is lost. Auto-update only runs in
-// a packaged, (for macOS) signed build; in dev it's a no-op.
-function initAutoUpdate(win) {
-  if (!app.isPackaged) return;
-  let autoUpdater;
-  try { autoUpdater = require('electron-updater').autoUpdater; } catch (e) { return; }
-  const send = (status, info) => { if (win && !win.isDestroyed()) win.webContents.send('update:status', { status: status, info: info || null }); };
-  autoUpdater.autoDownload = true;
-  autoUpdater.autoInstallOnAppQuit = true;
-  autoUpdater.on('checking-for-update', () => send('checking'));
-  autoUpdater.on('update-available', (info) => send('available', { version: info && info.version }));
-  autoUpdater.on('update-not-available', () => send('none'));
-  autoUpdater.on('error', (err) => send('error', { message: String((err && err.message) || err) }));
-  autoUpdater.on('download-progress', (p) => send('downloading', { percent: Math.round(p.percent) }));
-  autoUpdater.on('update-downloaded', (info) => send('ready', { version: info && info.version }));
-  ipcMain.handle('update:install', () => { try { autoUpdater.quitAndInstall(); } catch (e) { /* ignore */ } return { ok: true }; });
-  ipcMain.handle('update:check', () => { try { autoUpdater.checkForUpdates(); } catch (e) { /* ignore */ } return { ok: true }; });
-  try { autoUpdater.checkForUpdates(); } catch (e) { /* ignore */ }
-  setInterval(() => { try { autoUpdater.checkForUpdates(); } catch (e) { /* ignore */ } }, 6 * 60 * 60 * 1000);
+// electron-updater against the GitHub Releases feed in package.json
+// `build.publish`. Updates replace only the app bundle — user data lives in
+// app.getPath('userData'), untouched by an update, so nothing is lost.
+//
+// Where auto-update actually works:
+//   - macOS: yes, but only a signed + notarized build.
+//   - Windows (NSIS): yes (signed avoids SmartScreen warnings).
+//   - Linux: yes for the AppImage build ONLY. The .deb can't self-update —
+//     those users update via their package manager or by installing a new .deb.
+//     So we skip the updater on non-AppImage Linux to avoid a spurious error,
+//     and the UI tells those users updates come another way.
+let au = null;          // the electron-updater autoUpdater, when active
+let updaterReady = false;
+let updaterWin = null;
+
+function supportsAutoUpdate() {
+  if (!app.isPackaged) return false;
+  if (process.platform === 'linux' && !process.env.APPIMAGE) return false; // .deb / unpacked
+  return true;
 }
+function sendUpdate(status, info) {
+  if (updaterWin && !updaterWin.isDestroyed()) updaterWin.webContents.send('update:status', { status: status, info: info || null });
+}
+function initAutoUpdate(win) {
+  updaterWin = win;
+  win.webContents.once('did-finish-load', () => {
+    if (!supportsAutoUpdate()) { sendUpdate('unsupported'); return; }
+    try { au = require('electron-updater').autoUpdater; } catch (e) { sendUpdate('unsupported'); return; }
+    au.autoDownload = true;
+    au.autoInstallOnAppQuit = true;
+    au.on('checking-for-update', () => sendUpdate('checking'));
+    au.on('update-available', (info) => sendUpdate('available', { version: info && info.version }));
+    au.on('update-not-available', () => sendUpdate('none'));
+    au.on('error', (err) => sendUpdate('error', { message: String((err && err.message) || err) }));
+    au.on('download-progress', (p) => sendUpdate('downloading', { percent: Math.round(p.percent) }));
+    au.on('update-downloaded', (info) => sendUpdate('ready', { version: info && info.version }));
+    updaterReady = true;
+    try { au.checkForUpdates(); } catch (e) { /* ignore */ }
+    setInterval(() => { try { au.checkForUpdates(); } catch (e) { /* ignore */ } }, 6 * 60 * 60 * 1000);
+  });
+}
+// Registered once, always safe: no-op (reporting 'unsupported') when the updater
+// isn't active, so the renderer's invoke never rejects.
+ipcMain.handle('update:check', () => { if (updaterReady && au) { try { au.checkForUpdates(); } catch (e) { /* ignore */ } } else { sendUpdate('unsupported'); } return { ok: updaterReady }; });
+ipcMain.handle('update:install', () => { if (updaterReady && au) { try { au.quitAndInstall(); } catch (e) { /* ignore */ } } return { ok: updaterReady }; });
 
 // ---- Content packs -------------------------------------------------------
 // Imported packs are single JSON files kept under <userData>/packs/. Each is a

@@ -153,7 +153,10 @@ npm version patch        # bump the version (keep APP_VERSION in sync — see be
 npm run release          # builds + uploads installers and the update feed
 ```
 
-Installed apps check on launch and every few hours, download in the background, and prompt the parent to install. Auto-update needs the macOS build to be signed + notarized; Windows works unsigned but shows a warning.
+Installed apps check on launch and every few hours, download in the background, and prompt the parent to install. Auto-update support per OS:
+- **macOS** — needs the build signed + notarized (required for auto-update at all).
+- **Windows** — works; sign to avoid SmartScreen warnings. No extra setup for updates.
+- **Linux** — auto-updates the **AppImage** build only (no signing needed). The `.deb` can't self-update, so `.deb` users update by installing a new `.deb` (or via a repo if you set one up); the app detects this and tells them. Recommend offering the **AppImage** as the Linux download for the auto-update experience.
 
 Notes:
 - Keep `package.json`'s `version` and `APP_VERSION` in `app/js/01-data-core.js` in sync when you bump a release.
