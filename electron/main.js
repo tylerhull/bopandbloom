@@ -88,6 +88,30 @@ ipcMain.handle('packs:remove', (_e, id) => {
   return { ok: true };
 });
 
+// ---- Records export ------------------------------------------------------
+// Save a text file (CSV/HTML) wherever the parent chooses. Defaults to the
+// Documents folder; they can pick a Dropbox/Drive sync folder to reach the
+// cloud without any backend.
+ipcMain.handle('records:save', async (_e, opts) => {
+  opts = opts || {};
+  if (typeof opts.content !== 'string') return { ok: false, error: 'Nothing to save.' };
+  const safeName = String(opts.name || 'bopandbloom-records.csv').replace(/[\/\\]/g, '_');
+  let dir = app.getPath('documents');
+  try { if (!fs.existsSync(dir)) dir = app.getPath('home'); } catch (e) { /* ignore */ }
+  const res = await dialog.showSaveDialog({
+    title: 'Save records',
+    defaultPath: path.join(dir, safeName),
+    filters: [{ name: 'Records', extensions: [(safeName.split('.').pop() || 'csv')] }]
+  });
+  if (res.canceled || !res.filePath) return { ok: false, canceled: true };
+  try {
+    fs.writeFileSync(res.filePath, opts.content, 'utf8');
+  } catch (e) {
+    return { ok: false, error: 'Could not write the file.' };
+  }
+  return { ok: true, path: res.filePath };
+});
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 1120,

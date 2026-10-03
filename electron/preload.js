@@ -11,3 +11,11 @@ contextBridge.exposeInMainWorld('bopPacks', {
   importPack: () => ipcRenderer.invoke('packs:import'),
   removePack: (id) => ipcRenderer.invoke('packs:remove', id)
 });
+
+// Save a records file (CSV/HTML/text) to a location the parent picks. The
+// parent can navigate to a Dropbox/Google Drive sync folder to get it in the
+// cloud — no backend involved.
+contextBridge.exposeInMainWorld('bopRecords', {
+  available: true,
+  saveFile: (opts) => ipcRenderer.invoke('records:save', opts)
+});

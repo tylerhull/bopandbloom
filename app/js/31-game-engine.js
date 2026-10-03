@@ -135,6 +135,7 @@ function finishGame(){
  cancelAnimationFrame(game.frame);
  var g=game,p=current(),best=false;
  if(g.mode!=='relaxed'&&g.score>p.best[g.type]){p.best[g.type]=g.score;best=true;save();}
+ logActivity(g.type,g.score,Math.round(g.elapsed));
  var earned=completeAssignment(g);
  tone('finish');
  var resultText=g.type==='bop'?(g.score+' of '+(g.spawned||g.score)+' mice caught'):(g.score+' '+gameLabels[g.type]);

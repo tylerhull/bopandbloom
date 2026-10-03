@@ -19,6 +19,17 @@ function sanitizeEnabledGames(list,newGameIds){
  newGameIds.forEach(function(gid){if(kept.indexOf(gid)<0)kept.push(gid);});
  return kept.length?kept:GAME_IDS.slice();
 }
+function sanitizeActivity(list){
+ if(!Array.isArray(list))return [];
+ return list.slice(-2000).filter(function(e){return e&&typeof e.t==='number';}).map(function(e){return {t:Number(e.t)||Date.now(),game:GAME_IDS.indexOf(e.game)>=0?e.game:'',score:clamp(e.score,0,999999),secs:clamp(e.secs,0,86400)};});
+}
+function logActivity(type,score,secs){
+ var p=current();if(!p)return;
+ p.activityLog=p.activityLog||[];
+ p.activityLog.push({t:Date.now(),game:type,score:score||0,secs:secs||0});
+ if(p.activityLog.length>2000)p.activityLog=p.activityLog.slice(-2000);
+ save();
+}
 function sanitizeAssignments(list){
  if(!Array.isArray(list))return [];
  return list.slice(0,200).filter(function(a){return a&&typeof a.id==='string'&&GAME_IDS.indexOf(a.gameId)>=0;}).map(function(a){return {id:a.id,gameId:a.gameId,assignedAt:Number(a.assignedAt)||Date.now(),recurring:a.recurring!==false,completed:!!a.completed,completedAt:a.completedAt?Number(a.completedAt):null,score:clamp(a.score,0,999999),timesPlayed:clamp(a.timesPlayed,0,999999)};});
@@ -38,6 +49,7 @@ function sanitize(raw){
   enabledGames:sanitizeEnabledGames(p.enabledGames,newGameIds),
   enabledDifficulties:sanitizeList(p.enabledDifficulties,DIFF_LEVELS)||DIFF_LEVELS.slice(),
   enabledPacks:sanitizeList(p.enabledPacks,allPackIds()),
+  activityLog:sanitizeActivity(p.activityLog),
   assignments:sanitizeAssignments(p.assignments),
   points:clamp(p.points,0,9999999),
   best:sanitizeBest(p.best)

@@ -83,6 +83,7 @@ has the GTK/WebKit2 bindings needed to do this already installed.
 | 12 | `ui-settings.js` | Settings screen. |
 | 13 | `ui-parent.js` | Parent PIN gate, per-child game/difficulty toggles, assignments. |
 | 14 | `ui-home.js` | Playroom home screen, game cards, School tab, onboarding, new-profile creation. |
+| 14b | `ui-reports.js` | Parent progress-report screen (`uiScreen==='reports'`): interactive SVG charts from each child's `activityLog`, CSV export (Electron `window.bopRecords` save dialog, or a browser download fallback), and print / save-as-PDF. |
 | 15 | `game-flowers.js` | Bloom!/Bouquet!: flower art, vases, and `classicField` (the 3×3 target grid also used by Bop!). |
 | 16 | `game-scurry.js` | Procedural maze generation and play. |
 | 17 | `game-countries.js` | Country Match!: place countries on the real map. |
@@ -157,6 +158,7 @@ single-IIFE wrapper made this a real global, so don't reintroduce a top-level
 | `game-shapes.css` | Shape Sort! (hero shape + shape/color bins). |
 | `game-patterns.css` | Pattern Play! (pattern row + choice tiles). |
 | `game-flash.css` | Flashcards! (big card + name). |
+| `reports.css` | Parent progress reports (stat cards, bar charts, print styles). |
 
 ## The "fact audio" pattern
 

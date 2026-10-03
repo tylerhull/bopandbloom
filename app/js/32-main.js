@@ -1,5 +1,5 @@
 /* Bootstraps rendering and wires up all pointer/keyboard/lifecycle events. Loaded last. */
-function render(){theme(current());audioSync();if(!current()){welcome();return;}if(uiScreen==='home')home();else if(uiScreen==='workshop')workshop();else if(uiScreen==='settings')settings();else if(uiScreen==='parent')parentArea();else if(uiScreen==='game')renderGame();}
+function render(){theme(current());audioSync();if(!current()){welcome();return;}if(uiScreen==='home')home();else if(uiScreen==='workshop')workshop();else if(uiScreen==='settings')settings();else if(uiScreen==='parent')parentArea();else if(uiScreen==='reports')reportsView();else if(uiScreen==='game')renderGame();}
 function pressTarget(e){var t=e.target.closest('[data-action="hit"]');if(t){e.preventDefault();unlockAudio();hit(Number(t.getAttribute('data-index')));}}
 if(window.PointerEvent){root.addEventListener('pointerdown',pressTarget);}else{root.addEventListener('mousedown',pressTarget);root.addEventListener('touchstart',pressTarget,{passive:false});}
 document.addEventListener('click',function(e){var b=e.target.closest('[data-action]');if(!b)return;unlockAudio();var a=b.getAttribute('data-action'),v=b.getAttribute('data-value');
@@ -21,6 +21,12 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-acti
  else if(a==='toggle-pack'){var mpk=managedProfile(),pid=b.getAttribute('data-id'),list=(mpk.enabledPacks&&mpk.enabledPacks.length)?mpk.enabledPacks.slice():allPackIds(),pi=list.indexOf(pid);if(pi>=0){if(list.length>1)list.splice(pi,1);}else list.push(pid);mpk.enabledPacks=list;save();render();}
  else if(a==='import-pack'){if(window.bopPacks&&window.bopPacks.available){window.bopPacks.importPack().then(function(res){if(res&&res.ok&&res.pack){if(registerImportedPacks([res.pack]))toast('Added pack: '+res.pack.name);else toast('That pack had no usable cards.');}else if(res&&res.error)toast(res.error);render();}).catch(function(){toast('Could not add that pack.');});}}
  else if(a==='remove-pack'){var rid=b.getAttribute('data-id');var go=function(){for(var i=PACKS.length-1;i>=0;i--){if(PACKS[i].id===rid&&PACKS[i].imported)PACKS.splice(i,1);}render();};if(window.bopPacks&&window.bopPacks.available)window.bopPacks.removePack(rid).then(go).catch(go);else go();}
+ else if(a==='open-reports'){uiScreen='reports';render();}
+ else if(a==='open-parent'){uiScreen='parent';render();}
+ else if(a==='report-child'){managing=b.getAttribute('data-id');render();}
+ else if(a==='report-range'){reportRange=v;render();}
+ else if(a==='report-save-csv'){saveReportCsv();}
+ else if(a==='report-print'){window.print();}
  else if(a==='assign-game'){var mp3=managedProfile(),sel=$('#assign-game'),recurEl=$('#assign-recurring');mp3.assignments=mp3.assignments||[];mp3.assignments.push({id:id(),gameId:sel.value,assignedAt:Date.now(),recurring:!recurEl||recurEl.getAttribute('aria-checked')==='true',completed:false,completedAt:null,score:0,timesPlayed:0});save();render();toast('Assigned to '+esc(mp3.name)+'!');}
  else if(a==='toggle-assign-recurring'){var checked=b.getAttribute('aria-checked')==='true';b.setAttribute('aria-checked',!checked);}
  else if(a==='remove-assignment'){var mp4=managedProfile(),aid=b.getAttribute('data-id');mp4.assignments=(mp4.assignments||[]).filter(function(x){return x.id!==aid;});save();render();}

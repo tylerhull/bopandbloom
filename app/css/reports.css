@@ -1,0 +1,36 @@
+/* Parent progress reports: stat cards, interactive charts, export actions. */
+.reports{display:flex;flex-direction:column;gap:16px;max-width:760px;margin:0 auto}
+.stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;text-align:center}
+.stat-num{display:block;font-size:30px;font-weight:900;color:var(--primary);line-height:1}
+.stat-lbl{display:block;font-size:11px;letter-spacing:.5px;text-transform:uppercase;opacity:.7;margin-top:6px}
+.reports .panel h2{font-size:15px;margin:0 0 10px}
+.reports .panel h2 .quiet{font-weight:400}
+
+/* Vertical bar chart (sessions per day) */
+.rchart{width:100%;height:auto;overflow:visible}
+.rchart .raxis{stroke:var(--line);stroke-width:1.5}
+.rbar rect{fill:var(--primary);transition:opacity .1s}
+.rbar:hover rect{opacity:.72}
+.rbar .rx{font-size:10px;fill:var(--ink);opacity:.6;text-anchor:middle}
+.rbar .rval{font-size:11px;font-weight:800;fill:var(--ink);text-anchor:middle;opacity:0;transition:opacity .1s}
+.rbar:hover .rval{opacity:1}
+
+/* Horizontal bars (time by area) */
+.rbars{display:flex;flex-direction:column;gap:10px}
+.rbar-h{display:flex;align-items:center;gap:10px}
+.rbar-label{flex:0 0 150px;font-size:13px;text-align:right}
+.rbar-track{flex:1 1 auto;height:18px;background:var(--line);border-radius:9px;overflow:hidden}
+.rbar-fill{height:100%;background:var(--secondary);border-radius:9px;min-width:4px}
+.rbar-num{flex:0 0 44px;font-size:12px;font-weight:800;opacity:.8}
+
+.report-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:center}
+
+@media(max-width:620px){
+ .stat-cards{grid-template-columns:repeat(2,1fr)}
+ .rbar-label{flex-basis:92px}
+}
+@media print{
+ .topbar,.report-actions,.reports .choice-row,.page-head button{display:none!important}
+ .shell{padding:0}
+}

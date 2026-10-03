@@ -64,11 +64,22 @@ license checks). Lean icons for these.
 | **Memory / Matching Pairs** | `[done]` | S | Memory Match! (`27-game-memory.js`) — flip cards to match animal-photo pairs; Easy/Medium/Hard = 3/6/8 pairs; no audio/timer | `letterAnimals` photos |
 | **Flag Match** | `[done]` | S | Flag Match! (`26-game-flags.js`) — hear/read a country, tap its flag; Easy/Medium/Hard = 3/4/6 choices | `countryFlag()` + `saCountries` names; country names added to audio CSV |
 
-### Needs audio (schedule after Phase 0)
+### Next batch — buildable now (no audio dependency)
+
+Agreed 2026-10-02 (build all of these). Add any spoken text to the Polly CSV as each is built.
 
 | Game | Status | Effort | What it is | Reuses |
 |---|---|---|---|---|
-| **Counting game** | `[idea]` | M | count-and-tap / simple addition; rounds out early math | Market Day! patterns |
+| **Build the Word** | `[planned]` | M | spell a pack picture's name by tapping letter tiles; difficulty = show word → blanks → no help. **Pack-driven** (spells any pack item's label) | `activePackItems()`; optional spoken label via `speakText` |
+| **Count It!** | `[planned]` | S | "how many?" — tap-count objects, pick the number | shape/art primitives |
+| **Add & Take** | `[planned]` | M | simple picture addition/subtraction; size by difficulty | Count It! pieces |
+| **More or Less** | `[planned]` | S | compare two groups, tap the bigger/smaller | shape/art primitives |
+| **Number Order** | `[planned]` | S | put numbers in order / what-comes-next | Pattern Play! mechanic |
+
+### Needs audio (schedule with Phase 0 Polly run)
+
+| Game | Status | Effort | What it is | Reuses |
+|---|---|---|---|---|
 | **Spot-the-difference / Find-it** | `[idea]` | M | "find the toucan" on a scene; listening + vocabulary | existing art/photos |
 
 ---
@@ -79,8 +90,9 @@ Build on the existing Parent Area (assignments, points, per-game/difficulty togg
 
 | Feature | Status | Effort | What it is |
 |---|---|---|---|
+| **Progress reports + records** | `[done]` | L | `14b-ui-reports.js`: every finished game logs a session (`profile.activityLog` in `05-state.js`); Parent Area → "View progress" shows interactive SVG charts (sessions/day, time by area), stat cards, recent sessions, 7/30/90-day ranges. **Save records (CSV)** writes to a chosen location (Electron `records:save` dialog, or a browser download fallback) and **Print / Save as PDF**. Valuable for KY/TN/IN-style attendance + progress records — kept flexible, not a state-specific form. |
+| **Cloud backup of records** | `[partial]` | M | No backend by design. Current path: the save dialog lets parents write records into their own Dropbox/Google Drive **sync folder** (UI hints this) → syncs to the cloud for free. Direct **OAuth** to Drive/Dropbox is a larger, credential-gated follow-up (register a developer app, PKCE loopback flow in Electron) — do it after launch if users want one-click upload. |
 | **Guided reading path** | `[planned]` | M | pre-sequenced assignments that walk a child through the phonics collection in order — no hand-built curriculum needed |
-| **Printable progress report** | `[planned]` | M | per-child mastery record (useful for portfolios/reviews) |
 | **Printable worksheets** | `[idea]` | L | offline tracing/matching pages that mirror the games |
 
 ---
